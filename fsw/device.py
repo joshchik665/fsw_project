@@ -1,5 +1,6 @@
 from RsInstrument import RsInstrument
 
+
 class RsFswInstrument(RsInstrument):
     _instance = None
     
@@ -56,6 +57,8 @@ class RsFswInstrument(RsInstrument):
                 )
             }
             
+            self.mode = 'Spectrum'
+            
             self.initialized = True
     
     
@@ -81,3 +84,6 @@ class RsFswInstrument(RsInstrument):
         self.write('*RST')
         
         self.ip_address = ip_address
+    
+    
+    
