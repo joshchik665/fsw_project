@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (
 
 
 class SettingBox(QWidget):
-    def __init__(self, setting_name:str, default_value:str, default_unit:str, setting_measure:str, parent=None):
+    def __init__(self, setting_name:str, setting_measure:str, parent=None):
         super().__init__(parent)
         
         self.units = {
@@ -32,15 +32,14 @@ class SettingBox(QWidget):
         self.label_button.setFixedHeight(30)
         
         self.value_entry = QLineEdit()
-        self.value_entry.setPlaceholderText(default_value)
         self.value_entry.setFixedWidth(60)
         self.value_entry.setFixedHeight(30)
         
         self.unit_entry = QComboBox()
         self.unit_entry.addItems(list(self.units[setting_measure].keys()))
-        index = self.unit_entry.findText(default_unit)
-        if index != -1:  # Check if the item exists
-            self.unit_entry.setCurrentIndex(index)
+        # index = self.unit_entry.findText(default_unit)
+        # if index != -1:  # Check if the item exists
+        #     self.unit_entry.setCurrentIndex(index)
         self.unit_entry.setFixedWidth(50)
         self.unit_entry.setFixedHeight(30)
         

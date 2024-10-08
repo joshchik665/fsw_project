@@ -52,8 +52,6 @@ class ModeSuper(QWidget):
         self._set_title()
         
         self._set_header()
-        
-        
     
     
     def _set_title(self):
@@ -111,6 +109,10 @@ class ModeSuper(QWidget):
         layout2.addWidget(self.opc_entry)
         
         self.header_layout.addLayout(layout)
+    
+    
+    def configure(self):
+        self.instrument.configure()
     
     
     def activate(self,previous_index):

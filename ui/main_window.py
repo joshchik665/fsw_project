@@ -37,9 +37,17 @@ class MainWindow(QMainWindow):
             self.status_bar.showMessage('Connected to Rhode&Schwarz FSW-43 @' + instrument.ip_address, timeout=0)
         except Exception as e:
             print(f"Error: {e}")
+        
+        self.tab_widget.setCurrentIndex(self.tab_index[instrument.mode])
     
     
     def add_modes(self):
+        self.tab_index = {
+            "Spectrum": 0,
+            "Real-Time Spectrum": 1,
+            "Zero-Span": 2,
+        }
+        
         mode_spec = ModeSpec()
         mode_rts = ModeRts()
         mode_zero_span = ModeZs()

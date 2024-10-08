@@ -12,4 +12,6 @@ class ModeZs(ModeSuper):
         super().__init__()
         
         self.mode = 'Zero-Span'
+        
+        self.setLayout(self.window_layout)
     

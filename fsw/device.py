@@ -12,7 +12,7 @@ class RsFswInstrument(RsInstrument):
     
     
     def __init__(self,ip_address=None,**kwargs):
-        if ip_address and not getattr(self, "inirialized", False):
+        if ip_address and not getattr(self, "initialized", False):
             self.connect_to_device(ip_address)
             
             self.scpi_commands = {
@@ -27,46 +27,45 @@ class RsFswInstrument(RsInstrument):
                 'Video Bandwidth': 'BAND:VID',
             }
             
-            self.settings_for_mode = {
-                'Spectrum': (
-                    'Center Frequency',
-                    'Reference Level',
-                    'Frequency Span',
-                    'Resolution Bandwidth',
-                    'Sweep Time',
-                    'Number of Points',
-                    'Video Bandwidth'
-                ),
-                'Real-Time Spectrum': (
-                    'Center Frequency',
-                    'Reference Level',
-                    'Frequency Span',
-                    'Resolution Bandwidth',
-                    'Sweep Time',
-                    'Memory Depth',
-                    'Video Bandwidth',
-                    'Dwell Time'
-                ),
-                'Zero span': (
-                    'Center Frequency',
-                    'Reference Level',
-                    'Resolution Bandwidth',
-                    'Sweep Time',
-                    'Number of Points',
-                    'Video Bandwidth'
-                )
-            }
-            
-            self.mode = 'Spectrum'
+            # self.settings_for_mode = {
+            #     'Spectrum': (
+            #         'Center Frequency',
+            #         'Reference Level',
+            #         'Frequency Span',
+            #         'Resolution Bandwidth',
+            #         'Sweep Time',
+            #         'Number of Points',
+            #         'Video Bandwidth'
+            #     ),
+            #     'Real-Time Spectrum': (
+            #         'Center Frequency',
+            #         'Reference Level',
+            #         'Frequency Span',
+            #         'Resolution Bandwidth',
+            #         'Sweep Time',
+            #         'Memory Depth',
+            #         'Video Bandwidth',
+            #         'Dwell Time'
+            #     ),
+            #     'Zero span': (
+            #         'Center Frequency',
+            #         'Reference Level',
+            #         'Resolution Bandwidth',
+            #         'Sweep Time',
+            #         'Number of Points',
+            #         'Video Bandwidth'
+            #     )
+            # }
             
             self.config = {
+                "Mode": "Spectrum",
                 "Frequency Span": "10 Hz",
                 "Center Frequency": "2 GHz",
                 }
             
             self.config.update(kwargs)
             
-            self.configure()
+            self.mode = self.config["Mode"]
             
             self.initialized = True
     
@@ -96,7 +95,8 @@ class RsFswInstrument(RsInstrument):
     
     
     def configure(self):
-        print(self.config)
+        for key in self.settings_for_mode[self.mode]:
+            scpi_command = self.scpi_commands[key]
     
     
     def cont_sweep(self):

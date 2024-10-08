@@ -19,15 +19,15 @@ class ModeSpec(ModeSuper):
         self.set_widgets()
         
         self.setLayout(self.window_layout)
+        
+        self.configure()
     
     
     def set_widgets(self):
-        self.test1_setting = SettingBox('Test1','10','Hz','frequency',self)
+        self.test1_setting = SettingBox('Test1','frequency',self)
         self.content_layout.addWidget(self.test1_setting)
         
-        self.test2_setting = SettingBox('Test2','10','GHz','frequency',self)
+        self.test2_setting = SettingBox('Test2','frequency',self)
         self.content_layout.addWidget(self.test2_setting)
-        
-        self.test3_setting = SettingBox('Test3','10','kHz','frequency',self)
-        self.content_layout.addWidget(self.test3_setting)
+
 

@@ -13,3 +13,5 @@ class ModeRts(ModeSuper):
         super().__init__()
         
         self.mode = 'Real-Time Spectrum'
+        
+        self.setLayout(self.window_layout)
