@@ -11,7 +11,7 @@ class RsFswInstrument(RsInstrument):
         return cls._instance
     
     
-    def __init__(self,ip_address=None):
+    def __init__(self,ip_address=None,**kwargs):
         if ip_address and not getattr(self, "inirialized", False):
             self.connect_to_device(ip_address)
             
@@ -59,6 +59,15 @@ class RsFswInstrument(RsInstrument):
             
             self.mode = 'Spectrum'
             
+            self.config = {
+                "Frequency Span": "10 Hz",
+                "Center Frequency": "2 GHz",
+                }
+            
+            self.config.update(kwargs)
+            
+            self.configure()
+            
             self.initialized = True
     
     
@@ -84,6 +93,23 @@ class RsFswInstrument(RsInstrument):
         self.write('*RST')
         
         self.ip_address = ip_address
+    
+    
+    def configure(self):
+        print(self.config)
+    
+    
+    def cont_sweep(self):
+        self.write_str_with_opc("INIT:CONT ON")
+    
+    
+    def single_sweep(self):
+        self.write_str_with_opc('INIT:CONT OFF')
+        self.write_str_with_opc('INIT:IMM;*WAI')
+    
+    
+    def abort(self):
+        self.write_str_with_opc('ABOR')
     
     
     

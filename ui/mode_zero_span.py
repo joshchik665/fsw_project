@@ -11,5 +11,5 @@ class ModeZs(ModeSuper):
     def __init__(self):
         super().__init__()
         
-        self.mode = 'Zero-Span Mode'
+        self.mode = 'Zero-Span'
     

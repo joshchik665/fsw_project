@@ -12,4 +12,4 @@ class ModeRts(ModeSuper):
     def __init__(self):
         super().__init__()
         
-        self.mode = 'Real-Time Spectrum Mode'
+        self.mode = 'Real-Time Spectrum'
