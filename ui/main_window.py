@@ -32,13 +32,13 @@ class MainWindow(QMainWindow):
         
         self.tab_widget.currentChanged.connect(self.on_tab_changed)
         
-        try:
-            instrument = RsFswInstrument.get_instance()
-            self.status_bar.showMessage('Connected to Rhode&Schwarz FSW-43 @' + instrument.ip_address, timeout=0)
-        except Exception as e:
-            print(f"Error: {e}")
+        instrument = RsFswInstrument.get_instance()
+        
+        self.status_bar.showMessage('Connected to Rhode&Schwarz FSW-43 @' + instrument.ip_address, timeout=0)
         
         self.tab_widget.setCurrentIndex(self.tab_index[instrument.mode])
+        
+        
     
     
     def add_modes(self):

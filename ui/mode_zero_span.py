@@ -9,9 +9,7 @@ from fsw.device import RsFswInstrument
 from ui.mode_super import ModeSuper
 class ModeZs(ModeSuper):
     def __init__(self):
-        super().__init__()
-        
-        self.mode = 'Zero-Span'
+        super().__init__('Zero-Span')
         
         self.setLayout(self.window_layout)
     

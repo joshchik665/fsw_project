@@ -10,8 +10,6 @@ from ui.mode_super import ModeSuper
 
 class ModeRts(ModeSuper):
     def __init__(self):
-        super().__init__()
-        
-        self.mode = 'Real-Time Spectrum'
+        super().__init__('Real-Time Spectrum')
         
         self.setLayout(self.window_layout)

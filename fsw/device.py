@@ -15,57 +15,9 @@ class RsFswInstrument(RsInstrument):
         if ip_address and not getattr(self, "initialized", False):
             self.connect_to_device(ip_address)
             
-            self.scpi_commands = {
-                'Center Frequency': 'FREQ:CENT',
-                'Dwell Time': 'SENS:SWE:DTIM',
-                'Reference Level': 'DISP:WIND:TRAC:Y:SCAL:RLEV',
-                'Frequency Span': 'FREQ:SPAN',
-                'Resolution Bandwidth': 'BAND',
-                'Sweep Time': 'SENS:SWE:TIME',
-                'Memory Depth': 'CALC2:SGR:HDEP',
-                'Number of Points': 'SENS:SWE:WIND1:POIN',
-                'Video Bandwidth': 'BAND:VID',
-            }
+            self.json_data = kwargs
             
-            # self.settings_for_mode = {
-            #     'Spectrum': (
-            #         'Center Frequency',
-            #         'Reference Level',
-            #         'Frequency Span',
-            #         'Resolution Bandwidth',
-            #         'Sweep Time',
-            #         'Number of Points',
-            #         'Video Bandwidth'
-            #     ),
-            #     'Real-Time Spectrum': (
-            #         'Center Frequency',
-            #         'Reference Level',
-            #         'Frequency Span',
-            #         'Resolution Bandwidth',
-            #         'Sweep Time',
-            #         'Memory Depth',
-            #         'Video Bandwidth',
-            #         'Dwell Time'
-            #     ),
-            #     'Zero span': (
-            #         'Center Frequency',
-            #         'Reference Level',
-            #         'Resolution Bandwidth',
-            #         'Sweep Time',
-            #         'Number of Points',
-            #         'Video Bandwidth'
-            #     )
-            # }
-            
-            self.config = {
-                "Mode": "Spectrum",
-                "Frequency Span": "10 Hz",
-                "Center Frequency": "2 GHz",
-                }
-            
-            self.config.update(kwargs)
-            
-            self.mode = self.config["Mode"]
+            self.mode = 'Spectrum'
             
             self.initialized = True
     
@@ -94,9 +46,12 @@ class RsFswInstrument(RsInstrument):
         self.ip_address = ip_address
     
     
-    def configure(self):
-        for key in self.settings_for_mode[self.mode]:
-            scpi_command = self.scpi_commands[key]
+    def write_command(self, command:str):
+        self.write_str_with_opc(command)
+    
+    
+    def query_command(self, command:str) -> str:
+        return self.query_str_with_opc(command)
     
     
     def cont_sweep(self):

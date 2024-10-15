@@ -1,18 +1,21 @@
 from PySide6.QtWidgets import (
     QWidget,
     QHBoxLayout,
+    QVBoxLayout,
     QLineEdit,
     QLabel,
     QComboBox,
     QPushButton,
 )
+from PySide6.QtGui import QDoubleValidator
+from fsw.setting import Setting
 
 
 class SettingBox(QWidget):
-    def __init__(self, setting_name:str, setting_measure:str, parent=None):
+    def __init__(self, setting:Setting, parent=None):
         super().__init__(parent)
         
-        self.units = {
+        self.all_units = {
             'frequency': {
                 'mHz': 1e-3,
                 'Hz': 1,
@@ -22,31 +25,79 @@ class SettingBox(QWidget):
                 'THz': 1e12,
             },
             'power': {
-                'dBm': 1
+                'dBm': 1,
+            },
+            'time': {
+                'ms': 1e-3,
+                's': 1,
+            },
+            'number': {
+                'Units': 1
             }
         }
         
-        layout = QHBoxLayout()
+        self.units = self.all_units[setting.measure]
         
-        self.label_button = QPushButton(setting_name)
-        self.label_button.setFixedHeight(30)
+        layout1 = QVBoxLayout()
+        layout2 = QHBoxLayout()
         
-        self.value_entry = QLineEdit()
+        label = QLabel(setting.name)
+        layout1.addWidget(label)
+        
+        self.value_entry = QLineEdit(setting.current_value)
+        
+        validator = QDoubleValidator()
+        validator.setNotation(QDoubleValidator.StandardNotation)
+        # Set the range (optional, adjust as needed)
+        #validator.setRange(-999999.99, 999999.99, 2)  # 2 decimal places
+        self.value_entry.setValidator(validator)
+        
         self.value_entry.setFixedWidth(60)
         self.value_entry.setFixedHeight(30)
+        layout2.addWidget(self.value_entry)
         
         self.unit_entry = QComboBox()
-        self.unit_entry.addItems(list(self.units[setting_measure].keys()))
+        self.unit_entry.addItems(list(self.units.keys()))
         # index = self.unit_entry.findText(default_unit)
         # if index != -1:  # Check if the item exists
         #     self.unit_entry.setCurrentIndex(index)
         self.unit_entry.setFixedWidth(50)
         self.unit_entry.setFixedHeight(30)
+        layout2.addWidget(self.unit_entry)
         
-        layout.addWidget(self.label_button)
-        layout.addWidget(self.value_entry)
-        layout.addWidget(self.unit_entry)
-        layout.addStretch(1)
+        layout2.addStretch(1)
         
-        self.setLayout(layout)
+        layout1.addLayout(layout2)
         
+        self.setLayout(layout2)
+    
+    
+    def get_value(self) -> str:
+        value = self.value_entry.text()
+        unit = self.unit_entry.currentText()
+        
+        value = float(value)
+        
+        widget_value = value * self.units[unit]
+        
+        return str(widget_value)
+    
+    
+    def set_value(self,value:str):
+        value = float(value)
+        
+        eligible_items = {k: v for k, v in self.units.items() if v < value}
+        
+        if not eligible_items:
+            unit = max(self.units, key=self.units.get)
+        else:
+            unit = max(eligible_items, key=eligible_items.get)
+        
+        value = value / self.units[unit]
+        
+        text = f"{value:.4f}"
+        
+        self.value_entry.setText(text)
+        
+        self.unit_entry.setCurrentText(unit)
+

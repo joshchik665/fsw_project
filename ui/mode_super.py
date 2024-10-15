@@ -17,9 +17,11 @@ from PySide6.QtCore import (
     Slot,
 )
 from fsw.device import RsFswInstrument
+from fsw.settings_manager import SettingsManager
+from ui.common_widgets import SettingBox
 
 class ModeSuper(QWidget):
-    def __init__(self):
+    def __init__(self, mode):
         super().__init__()
         
         self.window_layout = QVBoxLayout()
@@ -34,6 +36,7 @@ class ModeSuper(QWidget):
         self.window_layout.addLayout(self.content_layout)
         
         self.instrument = RsFswInstrument.get_instance()
+        self.settings_manager = SettingsManager(self.instrument)
         
         self.mode_index = {
             '0': 'Spectrum',
@@ -47,11 +50,13 @@ class ModeSuper(QWidget):
             'Zero-Span': 'SANALYZER',
         }
         
-        self.mode = ''
+        self.mode = mode
         
         self._set_title()
         
         self._set_header()
+        
+        self._create_entry_widgets()
     
     
     def _set_title(self):
@@ -111,12 +116,22 @@ class ModeSuper(QWidget):
         self.header_layout.addLayout(layout)
     
     
-    def configure(self):
-        self.instrument.configure()
+    def _create_entry_widgets(self):
+        self.setting_widgets = {}
+        for name, setting in self.settings_manager.settings.items():
+            widget = SettingBox(setting)
+            self.setting_widgets[name] = widget
+    
+    
+    def _apply_entry_settings(self, settings: dict):
+        values = {key: setting.get_value() for key, setting in self.setting_widgets.items()}
+        
+        self.settings_manager.set_settings(values)
     
     
     def activate(self,previous_index):
         self.instrument.write_str_with_opc(f"INST:CRE:REPL '{self.mode_index[str(previous_index)]}', {self.mode_scpi_commands[self.mode]}, '{self.mode}'")
+        self.instrument.mode = self.mode
         
 
 
