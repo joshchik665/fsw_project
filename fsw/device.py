@@ -17,7 +17,7 @@ class RsFswInstrument(RsInstrument):
             
             self.json_data = kwargs
             
-            self.mode = 'Spectrum'
+            self.mode = self.json_data['Mode']
             
             self.initialized = True
     

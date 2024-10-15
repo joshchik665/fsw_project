@@ -121,17 +121,44 @@ class ModeSuper(QWidget):
         for name, setting in self.settings_manager.settings.items():
             widget = SettingBox(setting)
             self.setting_widgets[name] = widget
+        self.apply_button = QPushButton('Apply & Verify Settings')
+        self.apply_button.pressed.connect(self._apply_entry_settings)
     
     
-    def _apply_entry_settings(self, settings: dict):
+    @Slot()
+    def _apply_entry_settings(self):
         values = {key: setting.get_value() for key, setting in self.setting_widgets.items()}
         
         self.settings_manager.set_settings(values)
+        
+        correct = self.settings_manager.verify_all_settings()
+        
+        self._display_current_values()
+        
+        self._update_colors(correct)
     
     
-    def activate(self,previous_index):
+    def _display_current_values(self):
+        
+        values = {key: setting.current_value for key, setting in self.settings_manager.settings.items()}
+        
+        for key, widget in self.setting_widgets.items():
+            widget.set_value(values[key])
+            widget.set_status('Unchecked')
+    
+    
+    def _update_colors(self, correct:dict):
+        for key, widget in self.setting_widgets.items():
+            widget.set_status(correct[key])
+    
+    
+    def activate(self,previous_index:int):
         self.instrument.write_str_with_opc(f"INST:CRE:REPL '{self.mode_index[str(previous_index)]}', {self.mode_scpi_commands[self.mode]}, '{self.mode}'")
         self.instrument.mode = self.mode
         
+        self.settings_manager.verify_all_settings()
+        
+        self._display_current_values()
+
 
 

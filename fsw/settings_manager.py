@@ -22,6 +22,10 @@ class SettingsManager:
             print(f"Setting: {setting_name}, is not known!")
             return False
         
+        if not setting.is_applicable(self.instrument.mode):
+            print(f"Setting: {setting_name} is not applicable in mode: {self.instrument.mode}")
+            return False
+        
         if not self.is_number(value):
             print(f"Value: {value}, is not a numeric value!")
             return False
@@ -32,16 +36,16 @@ class SettingsManager:
         return True
     
     
-    def verify_setting(self, setting_name:str) -> bool:
+    def verify_setting(self, setting_name:str) -> str:
         try:
             setting = self.settings[setting_name]
         except KeyError:
             print(f"Setting: {setting_name}, is not known!")
-            return False
+            return 'Error'
         
         if not setting.is_applicable(self.instrument.mode):
             print(f"Setting: {setting_name} is not applicable in mode: {self.instrument.mode}")
-            return False
+            return 'Invalid'
         
         command = setting.get_query_command()
         
@@ -49,17 +53,18 @@ class SettingsManager:
             response = self.instrument.query_command(command)
             
             if self.compare_number_strings(setting.current_value, response):
-                return True
+                return 'Correct'
             else:
                 setting.current_value = response
-                return False
+                return 'Incorrect'
         except Exception as e:
             print(f"Error querying {setting_name}: {str(e)}")
-            return False
+            return 'Error'
     
     
     def verify_all_settings(self) -> dict:
         return {name: self.verify_setting(name) for name in self.settings if self.settings[name].is_applicable(self.instrument.mode)}
+    
     
     
     def compare_number_strings(self, str1:str, str2:str) -> bool:

@@ -64,7 +64,7 @@ SETTINGS = {
     'Video Bandwidth': Setting(
         name='Video Bandwidth',
         scpi_command='BAND:VID',
-        applicable_modes=['Spectrum','Real-Time Spectrum','Zero Span'],
+        applicable_modes=['Spectrum','Zero Span'],
         measure='frequency',
         default_value='3000000',
     ),

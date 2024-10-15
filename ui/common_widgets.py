@@ -69,7 +69,7 @@ class SettingBox(QWidget):
         
         layout1.addLayout(layout2)
         
-        self.setLayout(layout2)
+        self.setLayout(layout1)
     
     
     def get_value(self) -> str:
@@ -97,7 +97,30 @@ class SettingBox(QWidget):
         
         text = f"{value:.4f}"
         
+        text = self.remove_trailing_zeros(text)
+        
         self.value_entry.setText(text)
         
         self.unit_entry.setCurrentText(unit)
+    
+    
+    def remove_trailing_zeros(self, string):
+        while string.endswith('0'):
+            string = string[:-1]
+        if string.endswith('.'):
+            string = string[:-1]
+        return string
+    
+    
+    def set_status(self, correct:str):
+        if correct == 'Correct':
+            self.value_entry.setStyleSheet("color: green;")
+        elif correct == 'Error':
+            self.value_entry.setStyleSheet("color: red;")
+        elif correct == 'Invalid':
+            self.value_entry.setStyleSheet("color: blue;")
+        elif correct == 'Incorrect':
+            self.value_entry.setStyleSheet("color: orange;")
+        else:
+            self.value_entry.setStyleSheet("color: black;")
 

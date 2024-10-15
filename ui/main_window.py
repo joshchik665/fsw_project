@@ -39,6 +39,8 @@ class MainWindow(QMainWindow):
         self.tab_widget.setCurrentIndex(self.tab_index[instrument.mode])
         
         
+        
+        
     
     
     def add_modes(self):
