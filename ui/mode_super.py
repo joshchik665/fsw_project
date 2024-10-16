@@ -119,8 +119,9 @@ class ModeSuper(QWidget):
     def _create_entry_widgets(self):
         self.setting_widgets = {}
         for name, setting in self.settings_manager.settings.items():
-            widget = SettingBox(setting)
-            self.setting_widgets[name] = widget
+            if setting.is_applicable(self.mode):
+                widget = SettingBox(setting)
+                self.setting_widgets[name] = widget
         self.apply_button = QPushButton('Apply & Verify Settings')
         self.apply_button.pressed.connect(self._apply_entry_settings)
     

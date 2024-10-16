@@ -39,7 +39,7 @@ class IpEntryDialog(QDialog):
     
     
     def load_settings(self):
-        filepath = util.open_file_dialog(self)
+        filepath = util.open_file_dialog(self, 'Open JSON file', '.json')
         
         if filepath:
             with open(filepath, 'r') as file:

@@ -12,15 +12,12 @@ class Setting:
     
     
     def __post_init__(self):
-        self.current_value = self.default_value
+        if self.current_value:
+            self.current_value = self.default_value
     
     
     def is_applicable(self, mode: str) -> bool:
         return mode in self.applicable_modes
-    
-    
-    def set_current_value(self, value:str):
-        self.current_value = value
     
     
     def get_query_command(self) -> str:

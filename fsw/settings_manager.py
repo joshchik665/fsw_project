@@ -1,8 +1,7 @@
 # settings_manager.py
 
-from fsw.config import SETTINGS, MODES
-from fsw.device import RsFswInstrument
-import math
+from fsw.config import SETTINGS
+import common.utilities as util
 
 class SettingsManager:
     def __init__(self, instrument):
@@ -26,7 +25,7 @@ class SettingsManager:
             print(f"Setting: {setting_name} is not applicable in mode: {self.instrument.mode}")
             return False
         
-        if not self.is_number(value):
+        if not util.is_number(value):
             print(f"Value: {value}, is not a numeric value!")
             return False
         
@@ -52,7 +51,7 @@ class SettingsManager:
         try:
             response = self.instrument.query_command(command)
             
-            if self.compare_number_strings(setting.current_value, response):
+            if util.compare_number_strings(setting.current_value, response):
                 return 'Correct'
             else:
                 setting.current_value = response
@@ -64,23 +63,3 @@ class SettingsManager:
     
     def verify_all_settings(self) -> dict:
         return {name: self.verify_setting(name) for name in self.settings if self.settings[name].is_applicable(self.instrument.mode)}
-    
-    
-    
-    def compare_number_strings(self, str1:str, str2:str) -> bool:
-        try:
-            num1 = float(str1)
-            num2 = float(str2)
-            
-            return math.isclose(num1,num2)
-        except ValueError:
-            # conversion failed
-            return False
-    
-    
-    def is_number(self, string:str) -> bool:
-        try:
-            float(string)
-            return True
-        except ValueError:
-            return False
