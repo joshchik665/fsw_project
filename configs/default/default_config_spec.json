@@ -1,0 +1,83 @@
+{
+    "Center Frequency": {
+        "name": "Center Frequency",
+        "scpi_command": "FREQ:CENT",
+        "measure": "frequency",
+        "applicable_modes": [
+            "Spectrum",
+            "Real-Time Spectrum",
+            "Zero Span"
+        ],
+        "default_value": "21500000000",
+        "current_value": "21500000000"
+    },
+    "Reference Level": {
+        "name": "Reference Level",
+        "scpi_command": "DISP:WIND:TRAC:Y:SCAL:RLEV",
+        "measure": "power",
+        "applicable_modes": [
+            "Spectrum",
+            "Real-Time Spectrum",
+            "Zero Span"
+        ],
+        "default_value": "1",
+        "current_value": "1"
+    },
+    "Frequency Span": {
+        "name": "Frequency Span",
+        "scpi_command": "FREQ:SPAN",
+        "measure": "frequency",
+        "applicable_modes": [
+            "Spectrum",
+            "Real-Time Spectrum"
+        ],
+        "default_value": "43000000000",
+        "current_value": "43000000000"
+    },
+    "Resolution Bandwidth": {
+        "name": "Resolution Bandwidth",
+        "scpi_command": "BAND",
+        "measure": "frequency",
+        "applicable_modes": [
+            "Spectrum",
+            "Real-Time Spectrum",
+            "Zero Span"
+        ],
+        "default_value": "3000000",
+        "current_value": "3000000"
+    },
+    "Sweep Time": {
+        "name": "Sweep Time",
+        "scpi_command": "SENS:SWE:TIME",
+        "measure": "time",
+        "applicable_modes": [
+            "Spectrum",
+            "Real-Time Spectrum",
+            "Zero Span"
+        ],
+        "default_value": "0.1",
+        "current_value": "0.1"
+    },
+    "Number of Points": {
+        "name": "Number of Points",
+        "scpi_command": "SENS:SWE:WIND1:POIN",
+        "measure": "number",
+        "applicable_modes": [
+            "Spectrum",
+            "Zero Span"
+        ],
+        "default_value": "1001",
+        "current_value": "1001"
+    },
+    "Video Bandwidth": {
+        "name": "Video Bandwidth",
+        "scpi_command": "BAND:VID",
+        "measure": "frequency",
+        "applicable_modes": [
+            "Spectrum",
+            "Zero Span"
+        ],
+        "default_value": "3000000",
+        "current_value": "3000000"
+    }
+}

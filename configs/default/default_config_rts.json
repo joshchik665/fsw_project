@@ -77,27 +77,5 @@
         ],
         "default_value": "3000",
         "current_value": "3000"
-    },
-    "Number of Points": {
-        "name": "Number of Points",
-        "scpi_command": "SENS:SWE:WIND1:POIN",
-        "measure": "number",
-        "applicable_modes": [
-            "Spectrum",
-            "Zero Span"
-        ],
-        "default_value": "1001",
-        "current_value": "1001"
-    },
-    "Video Bandwidth": {
-        "name": "Video Bandwidth",
-        "scpi_command": "BAND:VID",
-        "measure": "frequency",
-        "applicable_modes": [
-            "Spectrum",
-            "Zero Span"
-        ],
-        "default_value": "3000000",
-        "current_value": "3000000"
     }
 }
