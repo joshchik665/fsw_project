@@ -16,9 +16,12 @@ def main():
     
     ip_dialog = IpEntryDialog()
     if ip_dialog.exec() == QDialog.Accepted:
-        window = MainWindow()
+        config = ip_dialog.config
+        window = MainWindow(config)
         window.show()
-        app.exec()
+        sys.exit(app.exec())
+    else:
+        sys.exit()
 
 
 if __name__ == "__main__":

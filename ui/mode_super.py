@@ -36,7 +36,7 @@ class ModeSuper(QWidget):
         self.window_layout.addLayout(self.content_layout)
         
         self.instrument = RsFswInstrument.get_instance()
-        self.settings_manager = SettingsManager(self.instrument)
+        self.settings_manager = SettingsManager(self.instrument,mode)
         
         self.mode_index = {
             '0': 'Spectrum',
@@ -154,7 +154,7 @@ class ModeSuper(QWidget):
     
     
     def activate(self,previous_index:int):
-        self.instrument.write_str_with_opc(f"INST:CRE:REPL '{self.mode_index[str(previous_index)]}', {self.mode_scpi_commands[self.mode]}, '{self.mode}'")
+        self.instrument.write_command(f"INST:CRE:REPL '{self.mode_index[str(previous_index)]}', {self.mode_scpi_commands[self.mode]}, '{self.mode}'")
         self.instrument.mode = self.mode
         
         # print(f"I have been called: {self.mode}")

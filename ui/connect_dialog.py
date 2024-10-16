@@ -43,14 +43,17 @@ class IpEntryDialog(QDialog):
         
         if filepath:
             with open(filepath, 'r') as file:
-                config = json.load(file)
-            
-            self.instrument = RsFswInstrument(config['ip_address'],**config['data'])
+                self.config = json.load(file)
             
             self.accept()
     
     
     def on_confirm(self):
         ip_address = self.ip_input.text()
-        self.instrument = RsFswInstrument(ip_address)
+        
+        self.config = {
+            'ip_address': ip_address, 
+            'data': {}
+        }
+        
         self.accept()

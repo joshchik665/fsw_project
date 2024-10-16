@@ -1,35 +1,7 @@
 from RsInstrument import RsInstrument
 
-
 class RsFswInstrument(RsInstrument):
-    _instance = None
-    
-    
-    def __new__(cls, *args, **kwargs):
-        if cls._instance is None:
-            cls._instance = super(RsFswInstrument,cls).__new__(cls)
-        return cls._instance
-    
-    
-    def __init__(self,ip_address=None,**kwargs):
-        if ip_address and not getattr(self, "initialized", False):
-            self.connect_to_device(ip_address)
-            
-            self.json_data = kwargs
-            
-            self.mode = self.json_data['Mode']
-            
-            self.initialized = True
-    
-    
-    @classmethod
-    def get_instance(cls):
-        if cls._instance is None:
-            raise Exception("Instrument instance is not intialized")
-        return cls._instance
-    
-    
-    def connect_to_device(self,ip_address):
+    def __init__(self,ip_address):
         try:
             # Adjust the VISA Resource string to fit your instrument
             super().__init__('TCPIP::' + ip_address + '::INSTR', True, False)
@@ -54,17 +26,17 @@ class RsFswInstrument(RsInstrument):
         return self.query_str_with_opc(command)
     
     
-    def cont_sweep(self):
-        self.write_str_with_opc("INIT:CONT ON")
+    # def cont_sweep(self):
+    #     self.write_str_with_opc("INIT:CONT ON")
     
     
-    def single_sweep(self):
-        self.write_str_with_opc('INIT:CONT OFF')
-        self.write_str_with_opc('INIT:IMM;*WAI')
+    # def single_sweep(self):
+    #     self.write_str_with_opc('INIT:CONT OFF')
+    #     self.write_str_with_opc('INIT:IMM;*WAI')
     
     
-    def abort(self):
-        self.write_str_with_opc('ABOR')
+    # def abort(self):
+    #     self.write_str_with_opc('ABOR')
     
     
     

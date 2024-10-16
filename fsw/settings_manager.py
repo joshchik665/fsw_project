@@ -1,15 +1,29 @@
 # settings_manager.py
 
-from fsw.config import SETTINGS
+from fsw.device import RsFswInstrument
 import common.utilities as util
+from fsw.setting import Setting
+import json
 
-class SettingsManager:
-    def __init__(self, instrument):
-        self.settings = SETTINGS
-        self.instrument = instrument
+class SettingsManager(RsFswInstrument):
+    
+    def __init__(self, ip_address,**kwargs):
+        super().__init__(ip_address)
+        # if not config:
+        #     default_configs = {
+        #         'Spectrum': r"configs\default\default_config_spec.json",
+        #         'Real-Time Spectrum': r"configs\default\default_config_rts.json",
+        #         'Zero-Span': r"configs\default\default_config_zero_span.json",
+        #     }
+        #     with open(default_configs[mode], 'r') as file:
+        #         config = json.load(file)
+        
+        # self.settings = {name: Setting(**setting) for name, setting in config.items()}
+        
+        # self.instrument = instrument
     
     
-    def set_settings(self, settings:dict):
+    def set_all_settings(self, settings:dict):
         for setting_name, setting_value in settings.items():
             self.set_setting(setting_name, setting_value)
     
@@ -33,6 +47,10 @@ class SettingsManager:
         self.instrument.write_command(f"{command} {value}")
         setting.set_current_value(value)
         return True
+    
+    
+    def verify_all_settings(self) -> dict:
+        return {name: self.verify_setting(name) for name in self.settings if self.settings[name].is_applicable(self.instrument.mode)}
     
     
     def verify_setting(self, setting_name:str) -> str:
@@ -61,5 +79,4 @@ class SettingsManager:
             return 'Error'
     
     
-    def verify_all_settings(self) -> dict:
-        return {name: self.verify_setting(name) for name in self.settings if self.settings[name].is_applicable(self.instrument.mode)}
+    

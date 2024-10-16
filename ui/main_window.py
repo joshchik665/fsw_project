@@ -9,12 +9,14 @@ from ui.mode_spec import ModeSpec
 from ui.mode_rts import ModeRts
 from ui.mode_zero_span import ModeZs
 
-from fsw.device import RsFswInstrument
+from fsw.settings_manager import SettingsManager
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, config):
         super().__init__()
+        
+        self.instrument = SettingsManager(config['ip_address'],**config['data'])
         
         self.setWindowTitle('Rhode&Schwarz FSW-43 GUI')
         my_icon = QIcon()
@@ -23,24 +25,15 @@ class MainWindow(QMainWindow):
         
         self.tab_widget = QTabWidget()
         self.setCentralWidget(self.tab_widget)
-        
         self._previous_index = 0
-        
-        self.status_bar = self.statusBar()
-        
         self.add_modes()
-        
         self.tab_widget.currentChanged.connect(self.on_tab_changed)
         
-        instrument = RsFswInstrument.get_instance()
+        self.status_bar = self.statusBar()
+        self.status_bar.showMessage('Connected to Rhode&Schwarz FSW-43 @' + config['ip_address'], timeout=0)
         
-        self.status_bar.showMessage('Connected to Rhode&Schwarz FSW-43 @' + instrument.ip_address, timeout=0)
-        
-        self.tab_widget.setCurrentIndex(self.tab_index[instrument.mode])
-        
-        
-        
-        
+        if config['data']:
+            self.tab_widget.setCurrentIndex(self.tab_index[config['data']['mode']])
     
     
     def add_modes(self):
