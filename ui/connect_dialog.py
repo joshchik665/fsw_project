@@ -4,11 +4,9 @@ from PySide6.QtWidgets import (
     QLabel, 
     QLineEdit, 
     QPushButton,
-    QMessageBox,
-    QFileDialog,
     QHBoxLayout,
 ) 
-from fsw.device import RsFswInstrument
+
 import json
 import common.utilities as util
 
@@ -25,6 +23,7 @@ class IpEntryDialog(QDialog):
         self.layout.addWidget(self.label)
         
         self.ip_input = QLineEdit()
+        self.ip_input.returnPressed.connect(self.on_confirm)
         self.layout.addWidget(self.ip_input)
         
         self.confirm_button = QPushButton("Connect")

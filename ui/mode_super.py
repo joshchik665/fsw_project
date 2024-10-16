@@ -5,10 +5,8 @@ from PySide6.QtWidgets import (
     QLabel,
     QPushButton,
     QLineEdit,
-    QComboBox,
 )
 from PySide6.QtGui import (
-    QIcon,
     QPixmap,
     QImage,
 )
@@ -16,14 +14,21 @@ from PySide6.QtCore import (
     Qt,
     Slot,
 )
-from fsw.device import RsFswInstrument
-from fsw.settings_manager import SettingsManager
-from ui.common_widgets import SettingBox
+
 
 class ModeSuper(QWidget):
-    def __init__(self, mode):
+    def __init__(self, mode, device):
         super().__init__()
         
+        self.instrument = device
+        self.mode = mode
+        
+        self._set_layout()
+        self._set_title()
+        self._set_header()
+    
+    
+    def _set_layout(self):
         self.window_layout = QVBoxLayout()
         
         self.title_layout = QHBoxLayout()
@@ -34,29 +39,6 @@ class ModeSuper(QWidget):
         self.window_layout.addLayout(self.header_layout)
         self.window_layout.addStretch(1)
         self.window_layout.addLayout(self.content_layout)
-        
-        self.instrument = RsFswInstrument.get_instance()
-        self.settings_manager = SettingsManager(self.instrument,mode)
-        
-        self.mode_index = {
-            '0': 'Spectrum',
-            '1': 'Real-Time Spectrum',
-            '2': 'Zero-Span'
-        }
-        
-        self.mode_scpi_commands = {
-            'Spectrum': "SANALYZER",
-            'Real-Time Spectrum': "RTIM",
-            'Zero-Span': 'SANALYZER',
-        }
-        
-        self.mode = mode
-        
-        self._set_title()
-        
-        self._set_header()
-        
-        self._create_entry_widgets()
     
     
     def _set_title(self):
@@ -116,52 +98,60 @@ class ModeSuper(QWidget):
         self.header_layout.addLayout(layout)
     
     
-    def _create_entry_widgets(self):
-        self.setting_widgets = {}
-        for name, setting in self.settings_manager.settings.items():
-            if setting.is_applicable(self.mode):
-                widget = SettingBox(setting)
-                self.setting_widgets[name] = widget
-        self.apply_button = QPushButton('Apply & Verify Settings')
-        self.apply_button.pressed.connect(self._apply_entry_settings)
+    # def _create_entry_widgets(self):
+    #     self.setting_widgets = {}
+    #     for name, setting in self.instrument.settings.items():
+    #         if setting.is_applicable(self.mode):
+    #             widget = SettingBox(setting)
+    #             self.setting_widgets[name] = widget
+    #     self.apply_button = QPushButton('Apply & Verify Settings')
+    #     self.apply_button.pressed.connect(self._apply_entry_settings)
     
     
-    @Slot()
-    def _apply_entry_settings(self):
-        values = {key: setting.get_value() for key, setting in self.setting_widgets.items()}
+    # @Slot()
+    # def _apply_entry_settings(self):
+    #     values = {key: setting.get_value() for key, setting in self.setting_widgets.items()}
         
-        self.settings_manager.set_settings(values)
+    #     self.instrument.set_settings(values)
         
-        correct = self.settings_manager.verify_all_settings()
+    #     correct = self.instrument.verify_all_settings()
         
-        self._display_current_values()
+    #     self._display_current_values()
         
-        self._update_colors(correct)
+    #     self._update_colors(correct)
     
     
-    def _display_current_values(self):
+    # def _display_current_values(self):
         
-        values = {key: setting.current_value for key, setting in self.settings_manager.settings.items()}
+    #     values = {key: setting.current_value for key, setting in self.instrument.settings.items()}
         
-        for key, widget in self.setting_widgets.items():
-            widget.set_value(values[key])
-            widget.set_status('Unchecked')
+    #     for key, widget in self.setting_widgets.items():
+    #         widget.set_value(values[key])
+    #         widget.set_status('Unchecked')
     
     
-    def _update_colors(self, correct:dict):
-        for key, widget in self.setting_widgets.items():
-            widget.set_status(correct[key])
+    # def _update_colors(self, correct:dict):
+    #     for key, widget in self.setting_widgets.items():
+    #         widget.set_status(correct[key])
     
     
-    def activate(self,previous_index:int):
-        self.instrument.write_command(f"INST:CRE:REPL '{self.mode_index[str(previous_index)]}', {self.mode_scpi_commands[self.mode]}, '{self.mode}'")
-        self.instrument.mode = self.mode
+    def set_mode(self,previous_tab_index:int):
         
-        # print(f"I have been called: {self.mode}")
+        mode_index = {
+            '0': 'Spectrum',
+            '1': 'Real-Time Spectrum',
+            '2': 'Zero-Span'
+        }
         
-        self.settings_manager.verify_all_settings()
+        mode_scpi_commands = {
+            'Spectrum': "SANALYZER",
+            'Real-Time Spectrum': "RTIM",
+            'Zero-Span': 'SANALYZER',
+        }
         
-        self._display_current_values()
+        command = f"INST:CRE:REPL '{mode_index[str(previous_tab_index)]}', {mode_scpi_commands[self.mode]}, '{self.mode}'"
+        
+        self.instrument.write_command(command)
 
 
 

@@ -11,20 +11,8 @@ from ui.mode_super import ModeSuper
 
 
 class ModeSpec(ModeSuper):
-    def __init__(self):
-        super().__init__('Spectrum')
-        
-        self.window_layout.addWidget(self.setting_widgets['Center Frequency'])
-        # self.window_layout.addWidget(self.setting_widgets['Center Frequency'])
-        # self.window_layout.addWidget(self.setting_widgets['Center Frequency'])
-        # self.window_layout.addWidget(self.setting_widgets['Center Frequency'])
-        # self.window_layout.addWidget(self.setting_widgets['Center Frequency'])
-        # self.window_layout.addWidget(self.setting_widgets['Center Frequency'])
-        # self.window_layout.addWidget(self.setting_widgets['Center Frequency'])
-        # self.window_layout.addWidget(self.setting_widgets['Center Frequency'])
-        # self.window_layout.addWidget(self.setting_widgets['Center Frequency'])
-        
-        self.window_layout.addWidget(self.apply_button)
+    def __init__(self,device):
+        super().__init__('Spectrum',device)
         
         self.setLayout(self.window_layout)
 
