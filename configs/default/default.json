@@ -90,5 +90,24 @@
             "Zero Span"
         ],
         "default_value": "3000000"
+    },
+    "Detector": {
+        "name": "Detector",
+        "scpi_command": "SENS:WIND1:DET1:FUNC",
+        "measure": "mode",
+        "applicable_modes": [
+            "Spectrum",
+            "Real-Time Spectrum",
+            "Zero Span"
+        ],
+        "default_value": "auto_peak",
+        "options": {
+            "auto_peak":"SENS:WIND1:DET1:FUNC APE",
+            "positive_peak":"SENS:WIND1:DET1:FUNC POS",
+            "negative_peak":"SENS:WIND1:DET1:FUNC NEG",
+            "rms":"SENS:WIND1:DET1:FUNC RMS",
+            "average":"SENS:WIND1:DET1:FUNC AVER",
+            "sample":"SENS:WIND1:DET1:FUNC SAMP"
+        }
     }
 }

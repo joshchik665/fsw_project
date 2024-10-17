@@ -42,7 +42,12 @@ class SettingsManager(RsFswInstrument):
             print(f"Value: {value}, is not valid for this setting")
             return (False, 'value is not valid')
         
-        command = f"{setting.scpi_command} {value}"
+        scpi_command = setting.get_scpi_command()
+        
+        if scpi_command is dict:
+            command = scpi_command[value]
+        else:
+            command = f"{setting.get_scpi_command()} {value}"
         
         try:
             self.write_command(command)

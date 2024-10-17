@@ -121,6 +121,7 @@ class SweepBox(QWidget):
         
         self.cont_sweep_button = QPushButton('Continuous Sweep')
         self.cont_sweep_button.pressed.connect(self.cont_sweep)
+        self.cont_sweep_button.setDisabled(True)
         layout.addWidget(self.cont_sweep_button)
         
         self.abort_sweep_button = QPushButton('Stop Sweep')
@@ -132,11 +133,15 @@ class SweepBox(QWidget):
     
     def cont_sweep(self):
         self.instrument.write_command("INIT:CONT ON")
+        self.cont_sweep_button.setDisabled(True)
+        self.single_sweep_button.setDisabled(False)
     
     
     def single_sweep(self):
         self.instrument.write_command('INIT:CONT OFF')
         self.instrument.write_command('INIT:IMM;*WAI')
+        self.cont_sweep_button.setDisabled(False)
+        self.single_sweep_button.setDisabled(True)
     
     
     def abort(self):

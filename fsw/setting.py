@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, Any, List
+from typing import Optional, Any, List, Dict, Union
 import common.utilities as util
 
 @dataclass
@@ -10,7 +10,7 @@ class Setting:
     applicable_modes: List[str]
     default_value: Optional[Any] = None
     current_value: Optional[Any] = None
-    options: Optional[List[str]] = None
+    options: Optional[Dict[str]] = None
     
     
     def __post_init__(self):
@@ -26,6 +26,12 @@ class Setting:
         return instance
     
     
+    def get_scpi_command(self) -> Union[str, dict]:
+        if self.options is None:
+            return self.scpi_command
+        else:
+            return self.options
+    
     def is_applicable(self, mode: str) -> bool:
         return mode in self.applicable_modes
     
@@ -34,4 +40,4 @@ class Setting:
         if not self.options:
             return util.is_number(value)
         else:
-            return value in self.options
+            return value in self.options.keys()
