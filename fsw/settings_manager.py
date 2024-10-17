@@ -74,8 +74,8 @@ class SettingsManager(RsFswInstrument):
         try:
             response = self.query_command(command)
         except Exception as e:
-            print(f"Error querying {setting_name}: {str(e)}")
-            return (False, f'error querying setting: {str(e)}')
+            print(f"Error querying {setting_name}: {str(e).split(',')[1]}")
+            return (False, f'error querying setting: {str(e).split(',')[1]}')
         
         if util.compare_number_strings(setting.current_value, response):
             return (True, 'verified')

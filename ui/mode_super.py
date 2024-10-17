@@ -14,7 +14,7 @@ from PySide6.QtCore import (
     Qt,
     Slot,
 )
-from ui.common_widgets import SettingBox
+from ui.common_widgets import SettingBox, SweepBox
 
 
 class ModeSuper(QWidget):
@@ -106,18 +106,23 @@ class ModeSuper(QWidget):
         self.instrument.set_mode(self.mode)
     
     
+    def create_place_sweep_box_widget(self, layout):
+        self.sweep_box = SweepBox(self.instrument, self)
+        layout.addWidget(self.sweep_box)
+    
+    
     def create_setting_box_widget(self, setting_name:str) -> None:
         setting = self.instrument.get_setting_object(setting_name)
         
-        widget = SettingBox(setting)
+        widget = SettingBox(setting,self)
         widget.set_value(setting.current_value)
         
         self.settings_widgets[setting_name] = widget
     
     
-    def create_place_setting_box_widget(self, setting_name:str) -> None:
+    def create_place_setting_box_widget(self, setting_name:str, layout) -> None:
         self.create_setting_box_widget(setting_name)
-        self.content_layout.addWidget(self.settings_widgets[setting_name])
+        layout.addWidget(self.settings_widgets[setting_name])
     
     
     def verify_all_settings(self):
@@ -161,6 +166,9 @@ class ModeSuper(QWidget):
                 widget.set_status(False, f"Verify_status:{status}")
             
             widget.set_value(current_value)
+
+
+
 
 
 

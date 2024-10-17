@@ -58,9 +58,6 @@ class SettingBox(QWidget):
         
         self.unit_entry = QComboBox()
         self.unit_entry.addItems(list(self.units.keys()))
-        # index = self.unit_entry.findText(default_unit)
-        # if index != -1:  # Check if the item exists
-        #     self.unit_entry.setCurrentIndex(index)
         self.unit_entry.setFixedWidth(50)
         self.unit_entry.setFixedHeight(30)
         layout.addWidget(self.unit_entry)
@@ -110,3 +107,37 @@ class SettingBox(QWidget):
             self.value_entry.setToolTip(message)
 
 
+class SweepBox(QWidget):
+    def __init__(self,instrument,parent=None):
+        super().__init__(parent)
+        
+        self.instrument = instrument
+        
+        layout = QHBoxLayout()
+        
+        self.single_sweep_button = QPushButton('Single Sweep')
+        self.single_sweep_button.pressed.connect(self.single_sweep)
+        layout.addWidget(self.single_sweep_button)
+        
+        self.cont_sweep_button = QPushButton('Continuous Sweep')
+        self.cont_sweep_button.pressed.connect(self.cont_sweep)
+        layout.addWidget(self.cont_sweep_button)
+        
+        self.abort_sweep_button = QPushButton('Stop Sweep')
+        self.abort_sweep_button.pressed.connect(self.abort)
+        layout.addWidget(self.abort_sweep_button)
+        
+        self.setLayout(layout)
+    
+    
+    def cont_sweep(self):
+        self.instrument.write_command("INIT:CONT ON")
+    
+    
+    def single_sweep(self):
+        self.instrument.write_command('INIT:CONT OFF')
+        self.instrument.write_command('INIT:IMM;*WAI')
+    
+    
+    def abort(self):
+        self.instrument.write_command('ABOR')

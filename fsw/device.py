@@ -26,17 +26,7 @@ class RsFswInstrument(RsInstrument):
         return self.query_str_with_opc(command)
     
     
-    # def cont_sweep(self):
-    #     self.write_str_with_opc("INIT:CONT ON")
-    
-    
-    # def single_sweep(self):
-    #     self.write_str_with_opc('INIT:CONT OFF')
-    #     self.write_str_with_opc('INIT:IMM;*WAI')
-    
-    
-    # def abort(self):
-    #     self.write_str_with_opc('ABOR')
+
     
     
     
