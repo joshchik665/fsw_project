@@ -10,7 +10,7 @@ class Setting:
     applicable_modes: List[str]
     default_value: Optional[Any] = None
     current_value: Optional[Any] = None
-    options: Optional[Dict[str]] = None
+    options: Optional[Dict] = None
     
     
     def __post_init__(self):
