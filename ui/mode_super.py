@@ -15,6 +15,7 @@ from PySide6.QtCore import (
     Slot,
 )
 from ui.common_widgets import SettingBox, SweepBox
+import common.utilities as util
 
 
 class ModeSuper(QWidget):
@@ -71,12 +72,14 @@ class ModeSuper(QWidget):
         visa_label = QLabel('Visa Timeout(ms):')
         
         self.visa_entry = QLineEdit()
+        self.visa_entry.returnPressed.connect(self.set_visa_timeout)
         self.visa_entry.setPlaceholderText('3000')
         self.visa_entry.setFixedWidth(100)
         
         opc_label = QLabel('Opc Timeout(ms):')
         
         self.opc_entry = QLineEdit()
+        self.opc_entry.returnPressed.connect(self.set_opc_timeout)
         self.opc_entry.setPlaceholderText('3000')
         self.opc_entry.setFixedWidth(100)
         
@@ -166,6 +169,22 @@ class ModeSuper(QWidget):
                 widget.set_status(False, f"Verify_status:{status}")
             
             widget.set_value(current_value)
+    
+    
+    def set_visa_timeout(self):
+        time = self.visa_entry.text()
+        if util.is_number(time):
+            self.instrument.visa_timeout = time
+            self.visa_entry.setPlaceholderText(time)
+        self.visa_entry.clear()
+    
+    
+    def set_opc_timeout(self):
+        time = self.opc_entry.text()
+        if util.is_number(time):
+            self.instrument.opc_timeout = time
+            self.opc_entry.setPlaceholderText(time)
+        self.opc_entry.clear()
 
 
 
