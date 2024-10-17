@@ -48,8 +48,8 @@ class SettingsManager(RsFswInstrument):
             self.write_command(command)
             setting.current_value = value
         except Exception as e:
-            print(f"Error querying {setting_name}: {str(e)}")
-            return (False, 'error writing setting')
+            print(f"Error querying {setting_name}: {str(e).split(',')[1]}")
+            return (False, f'error writing setting: {str(e).split(',')[1]}')
         
         return (True, 'set')
     
@@ -75,7 +75,7 @@ class SettingsManager(RsFswInstrument):
             response = self.query_command(command)
         except Exception as e:
             print(f"Error querying {setting_name}: {str(e)}")
-            return (False, 'error querying setting')
+            return (False, f'error querying setting: {str(e)}')
         
         if util.compare_number_strings(setting.current_value, response):
             return (True, 'verified')
