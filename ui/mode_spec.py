@@ -13,8 +13,13 @@ class ModeSpec(ModeSuper):
     def __init__(self,device):
         super().__init__('Spectrum',device)
         
-        self.create_setting_widget("Center Frequency")
-        self.content_layout.addWidget(self.settings_widgets["Center Frequency"])
+        self.create_place_setting_box_widget("Center Frequency")
+        self.create_place_setting_box_widget("Reference Level")
+        self.create_place_setting_box_widget("Frequency Span")
+        self.create_place_setting_box_widget("Resolution Bandwidth")
+        self.create_place_setting_box_widget("Video Bandwidth")
+        self.create_place_setting_box_widget("Sweep Time")
+        self.create_place_setting_box_widget("Number of Points")
         
         self.apply_button = QPushButton("Apply All Settings")
         self.apply_button.pressed.connect(self.apply)

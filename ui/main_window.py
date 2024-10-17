@@ -63,5 +63,6 @@ class MainWindow(QMainWindow):
         current_tab_widget = self.tab_widget.widget(new_tab_index)
 
         current_tab_widget.set_mode()
+        current_tab_widget.verify()
         
         self.current_tab_index = new_tab_index

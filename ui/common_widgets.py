@@ -42,10 +42,10 @@ class SettingBox(QWidget):
         layout = QHBoxLayout()
         
         label = QLabel(setting.name)
+        label.setFixedWidth(150)
         layout.addWidget(label)
         
         self.value_entry = QLineEdit(setting.current_value)
-        
         validator = QDoubleValidator()
         validator.setNotation(QDoubleValidator.StandardNotation)
         # Set the range (optional, adjust as needed)
@@ -64,9 +64,6 @@ class SettingBox(QWidget):
         self.unit_entry.setFixedWidth(50)
         self.unit_entry.setFixedHeight(30)
         layout.addWidget(self.unit_entry)
-        
-        self.status_label = QLabel("?")
-        layout.addWidget(self.status_label)
         
         layout.addStretch(1)
         
@@ -87,7 +84,7 @@ class SettingBox(QWidget):
     def set_value(self,value:str):
         value = float(value)
         
-        eligible_items = {k: v for k, v in self.units.items() if v < value}
+        eligible_items = {k: v for k, v in self.units.items() if v <= value}
         
         if not eligible_items:
             unit = max(self.units, key=self.units.get)
@@ -104,8 +101,12 @@ class SettingBox(QWidget):
         self.unit_entry.setCurrentText(unit)
     
     
-    def set_status(self, message:str, color:str) -> None:
-        self.status_label.setToolTip(message)
-        self.status_label.setStyleSheet(f"color: {color}")
+    def set_status(self, state:bool, message:str) -> None:
+        if state:
+            self.value_entry.setStyleSheet(f"background-color: #9CEC7B")
+            self.value_entry.setToolTip("All good")
+        else:
+            self.value_entry.setStyleSheet(f"background-color: #F86A6B")
+            self.value_entry.setToolTip(message)
 
 

@@ -106,13 +106,18 @@ class ModeSuper(QWidget):
         self.instrument.set_mode(self.mode)
     
     
-    def create_setting_widget(self, setting_name:str) -> None:
+    def create_setting_box_widget(self, setting_name:str) -> None:
         setting = self.instrument.get_setting_object(setting_name)
         
         widget = SettingBox(setting)
         widget.set_value(setting.current_value)
         
         self.settings_widgets[setting_name] = widget
+    
+    
+    def create_place_setting_box_widget(self, setting_name:str) -> None:
+        self.create_setting_box_widget(setting_name)
+        self.content_layout.addWidget(self.settings_widgets[setting_name])
     
     
     def verify_all_settings(self):
@@ -136,50 +141,26 @@ class ModeSuper(QWidget):
             (verify_result, verify_status) = all_verify_results[name]
             
             if set_result and verify_result:
-                widget.set_status("Set Correctly & Verified!", "green")
-                widget.set_value(current_value)
-            elif not set_result and verify_result:
-                widget.set_status(f"Verified but error occured setting: {set_status}","orange")
-                widget.set_value(current_value)
+                widget.set_status(True, "Set Correctly & Verified!")
             else:
-                widget.set_status(f"Error occured while setting: {set_status} and while verifying {verify_status}","red")
+                widget.set_status(False, f"Verify_status:{verify_status}, Set_status:{set_status}")
+            
+            widget.set_value(current_value)
     
     
-    # def _create_entry_widgets(self):
-    #     self.setting_widgets = {}
-    #     for name, setting in self.instrument.settings.items():
-    #         if setting.is_applicable(self.mode):
-    #             widget = SettingBox(setting)
-    #             self.setting_widgets[name] = widget
-    #     self.apply_button = QPushButton('Apply & Verify Settings')
-    #     self.apply_button.pressed.connect(self._apply_entry_settings)
-    
-    
-    # @Slot()
-    # def _apply_entry_settings(self):
-    #     values = {key: setting.get_value() for key, setting in self.setting_widgets.items()}
+    def verify(self):
+        all_verify_results = self.verify_all_settings()
         
-    #     self.instrument.set_settings(values)
-        
-    #     correct = self.instrument.verify_all_settings()
-        
-    #     self._display_current_values()
-        
-    #     self._update_colors(correct)
-    
-    
-    # def _display_current_values(self):
-        
-    #     values = {key: setting.current_value for key, setting in self.instrument.settings.items()}
-        
-    #     for key, widget in self.setting_widgets.items():
-    #         widget.set_value(values[key])
-    #         widget.set_status('Unchecked')
-    
-    
-    # def _update_colors(self, correct:dict):
-    #     for key, widget in self.setting_widgets.items():
-    #         widget.set_status(correct[key])
+        for name, (result, status) in all_verify_results.items():
+            widget = self.settings_widgets[name]
+            current_value = self.instrument.settings[name].current_value
+            
+            if result:
+                widget.set_status(True, "Set Correctly & Verified!")
+            else:
+                widget.set_status(False, f"Verify_status:{status}")
+            
+            widget.set_value(current_value)
 
 
 

@@ -28,7 +28,7 @@
             "Real-Time Spectrum",
             "Zero Span"
         ],
-        "default_value": "1"
+        "default_value": "0"
     },
     "Frequency Span": {
         "name": "Frequency Span",
@@ -60,7 +60,7 @@
             "Real-Time Spectrum",
             "Zero Span"
         ],
-        "default_value": "0.1"
+        "default_value": "0.172"
     },
     "Memory Depth": {
         "name": "Memory Depth",

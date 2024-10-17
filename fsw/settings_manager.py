@@ -18,6 +18,7 @@ class SettingsManager(RsFswInstrument):
         
         self.settings = {name: Setting.from_dict(**setting) for name, setting in config.items()}
     
+    
     def get_setting_object(self, setting_name:str) -> Setting:
         return self.settings[setting_name]
     
@@ -45,11 +46,10 @@ class SettingsManager(RsFswInstrument):
         
         try:
             self.write_command(command)
+            setting.current_value = value
         except Exception as e:
             print(f"Error querying {setting_name}: {str(e)}")
             return (False, 'error writing setting')
-        
-        setting.current_value = value
         
         return (True, 'set')
     
