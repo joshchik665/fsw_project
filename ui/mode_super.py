@@ -14,6 +14,7 @@ from PySide6.QtCore import (
     Qt,
     Slot,
 )
+from ui.common_widgets import SettingBox
 
 
 class ModeSuper(QWidget):
@@ -22,13 +23,16 @@ class ModeSuper(QWidget):
         
         self.instrument = device
         self.mode = mode
+        self.settings_widgets = {}
         
         self._set_layout()
         self._set_title()
         self._set_header()
+        
+        self.setLayout(self.window_layout)
     
     
-    def _set_layout(self):
+    def _set_layout(self) -> None:
         self.window_layout = QVBoxLayout()
         
         self.title_layout = QHBoxLayout()
@@ -41,7 +45,7 @@ class ModeSuper(QWidget):
         self.window_layout.addLayout(self.content_layout)
     
     
-    def _set_title(self):
+    def _set_title(self) -> None:
         title = QLabel('Rhode & Schwarz FSW-43 GUI')
         title.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         title.setObjectName('title')
@@ -59,7 +63,7 @@ class ModeSuper(QWidget):
         self.title_layout.addLayout(layout)
     
     
-    def _set_header(self):
+    def _set_header(self) -> None:
         self.load_button = QPushButton('Load Config')
         
         self.save_button = QPushButton('Save Config')
@@ -98,6 +102,49 @@ class ModeSuper(QWidget):
         self.header_layout.addLayout(layout)
     
     
+    def set_mode(self) -> None:
+        self.instrument.set_mode(self.mode)
+    
+    
+    def create_setting_widget(self, setting_name:str) -> None:
+        setting = self.instrument.get_setting_object(setting_name)
+        
+        widget = SettingBox(setting)
+        widget.set_value(setting.current_value)
+        
+        self.settings_widgets[setting_name] = widget
+    
+    
+    def verify_all_settings(self):
+        setting_names = list(self.settings_widgets.keys())
+        return self.instrument.verify_all_settings(setting_names)
+    
+    
+    def apply_all_settings(self):
+        setting_names_values = {key: setting.get_value() for key, setting in self.settings_widgets.items()}
+        return self.instrument.set_all_settings(setting_names_values)
+    
+    
+    def apply(self):
+        all_set_results = self.apply_all_settings()
+        all_verify_results = self.verify_all_settings()
+        
+        for name, (set_result, set_status) in all_set_results.items():
+            widget = self.settings_widgets[name]
+            current_value = self.instrument.settings[name].current_value
+            
+            (verify_result, verify_status) = all_verify_results[name]
+            
+            if set_result and verify_result:
+                widget.set_status("Set Correctly & Verified!", "green")
+                widget.set_value(current_value)
+            elif not set_result and verify_result:
+                widget.set_status(f"Verified but error occured setting: {set_status}","orange")
+                widget.set_value(current_value)
+            else:
+                widget.set_status(f"Error occured while setting: {set_status} and while verifying {verify_status}","red")
+    
+    
     # def _create_entry_widgets(self):
     #     self.setting_widgets = {}
     #     for name, setting in self.instrument.settings.items():
@@ -133,25 +180,7 @@ class ModeSuper(QWidget):
     # def _update_colors(self, correct:dict):
     #     for key, widget in self.setting_widgets.items():
     #         widget.set_status(correct[key])
-    
-    
-    def set_mode(self,previous_tab_index:int):
-        
-        mode_index = {
-            '0': 'Spectrum',
-            '1': 'Real-Time Spectrum',
-            '2': 'Zero-Span'
-        }
-        
-        mode_scpi_commands = {
-            'Spectrum': "SANALYZER",
-            'Real-Time Spectrum': "RTIM",
-            'Zero-Span': 'SANALYZER',
-        }
-        
-        command = f"INST:CRE:REPL '{mode_index[str(previous_tab_index)]}', {mode_scpi_commands[self.mode]}, '{self.mode}'"
-        
-        self.instrument.write_command(command)
+
 
 
 

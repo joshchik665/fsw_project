@@ -16,7 +16,7 @@ class MainWindow(QMainWindow):
     def __init__(self, config):
         super().__init__()
         
-        self.instrument = SettingsManager(config['ip_address'],**config['data'])
+        self.instrument = SettingsManager(config['ip_address'])
         
         self._set_title_and_window()
         self._create_tabs()
@@ -62,6 +62,6 @@ class MainWindow(QMainWindow):
     def on_tab_changed(self, new_tab_index):
         current_tab_widget = self.tab_widget.widget(new_tab_index)
 
-        current_tab_widget.set_mode(self.current_tab_index)
+        current_tab_widget.set_mode()
         
         self.current_tab_index = new_tab_index

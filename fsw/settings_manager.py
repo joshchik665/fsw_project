@@ -6,77 +6,93 @@ from fsw.setting import Setting
 import json
 
 class SettingsManager(RsFswInstrument):
-    
-    def __init__(self, ip_address,**kwargs):
+    def __init__(self, ip_address):
         super().__init__(ip_address)
-        # if not config:
-        #     default_configs = {
-        #         'Spectrum': r"configs\default\default_config_spec.json",
-        #         'Real-Time Spectrum': r"configs\default\default_config_rts.json",
-        #         'Zero-Span': r"configs\default\default_config_zero_span.json",
-        #     }
-        #     with open(default_configs[mode], 'r') as file:
-        #         config = json.load(file)
         
-        # self.settings = {name: Setting(**setting) for name, setting in config.items()}
+        self.current_mode = 'Spectrum' # Default mode on startup
         
-        # self.instrument = instrument
+        default_config_filepath = r"configs\default\default.json"
+        
+        with open(default_config_filepath, 'r') as file:
+            config = json.load(file)
+        
+        self.settings = {name: Setting.from_dict(**setting) for name, setting in config.items()}
+    
+    def get_setting_object(self, setting_name:str) -> Setting:
+        return self.settings[setting_name]
     
     
     def set_all_settings(self, settings:dict):
-        for setting_name, setting_value in settings.items():
-            self.set_setting(setting_name, setting_value)
+        return {name: self.set_setting(name, value) for name, value in settings.items()}
     
     
-    def set_setting(self, setting_name:str, value:str) -> bool:
+    def set_setting(self, setting_name:str, value:str) -> tuple[bool, str]:
         try:
             setting = self.settings[setting_name]
         except KeyError:
             print(f"Setting: {setting_name}, is not known!")
-            return False
+            return (False, 'setting unknown')
         
-        if not setting.is_applicable(self.instrument.mode):
-            print(f"Setting: {setting_name} is not applicable in mode: {self.instrument.mode}")
-            return False
+        if not setting.is_applicable(self.current_mode):
+            print(f"Setting: {setting_name} is not applicable in mode: {self.current_mode}")
+            return (False, 'setting not applicable')
         
-        if not util.is_number(value):
-            print(f"Value: {value}, is not a numeric value!")
-            return False
+        if not setting.check_if_valid_value(value):
+            print(f"Value: {value}, is not valid for this setting")
+            return (False, 'value is not valid')
         
-        command = setting.get_set_command()
-        self.instrument.write_command(f"{command} {value}")
-        setting.set_current_value(value)
-        return True
-    
-    
-    def verify_all_settings(self) -> dict:
-        return {name: self.verify_setting(name) for name in self.settings if self.settings[name].is_applicable(self.instrument.mode)}
-    
-    
-    def verify_setting(self, setting_name:str) -> str:
-        try:
-            setting = self.settings[setting_name]
-        except KeyError:
-            print(f"Setting: {setting_name}, is not known!")
-            return 'Error'
-        
-        if not setting.is_applicable(self.instrument.mode):
-            print(f"Setting: {setting_name} is not applicable in mode: {self.instrument.mode}")
-            return 'Invalid'
-        
-        command = setting.get_query_command()
+        command = f"{setting.scpi_command} {value}"
         
         try:
-            response = self.instrument.query_command(command)
-            
-            if util.compare_number_strings(setting.current_value, response):
-                return 'Correct'
-            else:
-                setting.current_value = response
-                return 'Incorrect'
+            self.write_command(command)
         except Exception as e:
             print(f"Error querying {setting_name}: {str(e)}")
-            return 'Error'
+            return (False, 'error writing setting')
+        
+        setting.current_value = value
+        
+        return (True, 'set')
     
     
+    def verify_all_settings(self, settings:list) -> dict:
+        return {name: self.verify_setting(name) for name in settings}
     
+    
+    def verify_setting(self, setting_name:str) -> tuple[bool, str]:
+        try:
+            setting = self.settings[setting_name]
+        except KeyError:
+            print(f"Setting: {setting_name}, is not known!")
+            return (False, 'setting unknown')
+        
+        if not setting.is_applicable(self.current_mode):
+            print(f"Setting: {setting_name} is not applicable in mode: {self.current_mode}")
+            return (False, 'setting not applicable')
+        
+        command = f"{setting.scpi_command}?"
+        
+        try:
+            response = self.query_command(command)
+        except Exception as e:
+            print(f"Error querying {setting_name}: {str(e)}")
+            return (False, 'error querying setting')
+        
+        if util.compare_number_strings(setting.current_value, response):
+            return (True, 'verified')
+        else:
+            setting.current_value = response
+            return (False, 'incorrect')
+    
+    
+    def set_mode(self, mode:str) -> None:
+        mode_scpi = {
+            'Spectrum': "SANALYZER",
+            'Real-Time Spectrum': "RTIM",
+            'Zero-Span': 'SANALYZER',
+        }
+        
+        command = f"INST:CRE:REPL '{self.current_mode}', {mode_scpi[mode]}, '{mode}'"
+        
+        self.write_command(command)
+        
+        self.current_mode = mode

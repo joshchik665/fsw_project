@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import Optional, Any, List
+import common.utilities as util
 
 @dataclass
 class Setting:
@@ -9,23 +10,32 @@ class Setting:
     applicable_modes: List[str]
     default_value: Optional[Any] = None
     current_value: Optional[Any] = None
+    options: Optional[List[str]] = None
     
     
     def __post_init__(self):
-        if self.current_value:
+        if self.current_value is None:
             self.current_value = self.default_value
+    
+    
+    # here because __post_init__ is not called when init from dict
+    @classmethod
+    def from_dict(cls, **data):
+        instance = cls(**data)
+        instance.__post_init__()
+        return instance
     
     
     def is_applicable(self, mode: str) -> bool:
         return mode in self.applicable_modes
     
     
-    def get_query_command(self) -> str:
-        return f"{self.scpi_command}?"
-    
-    
-    def get_set_command(self) -> str:
-        return self.scpi_command
+    def check_if_valid_value(self, value:str) -> bool:
+        if not self.options:
+            return util.is_number(value)
+        else:
+            return value in self.options
+
 
 
 

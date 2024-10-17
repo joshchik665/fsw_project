@@ -9,6 +9,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtGui import QDoubleValidator
 from fsw.setting import Setting
+import common.utilities as util
 
 
 class SettingBox(QWidget):
@@ -38,11 +39,10 @@ class SettingBox(QWidget):
         
         self.units = self.all_units[setting.measure]
         
-        layout1 = QVBoxLayout()
-        layout2 = QHBoxLayout()
+        layout = QHBoxLayout()
         
         label = QLabel(setting.name)
-        layout1.addWidget(label)
+        layout.addWidget(label)
         
         self.value_entry = QLineEdit(setting.current_value)
         
@@ -54,7 +54,7 @@ class SettingBox(QWidget):
         
         self.value_entry.setFixedWidth(60)
         self.value_entry.setFixedHeight(30)
-        layout2.addWidget(self.value_entry)
+        layout.addWidget(self.value_entry)
         
         self.unit_entry = QComboBox()
         self.unit_entry.addItems(list(self.units.keys()))
@@ -63,13 +63,14 @@ class SettingBox(QWidget):
         #     self.unit_entry.setCurrentIndex(index)
         self.unit_entry.setFixedWidth(50)
         self.unit_entry.setFixedHeight(30)
-        layout2.addWidget(self.unit_entry)
+        layout.addWidget(self.unit_entry)
         
-        layout2.addStretch(1)
+        self.status_label = QLabel("?")
+        layout.addWidget(self.status_label)
         
-        layout1.addLayout(layout2)
+        layout.addStretch(1)
         
-        self.setLayout(layout1)
+        self.setLayout(layout)
     
     
     def get_value(self) -> str:
@@ -96,31 +97,15 @@ class SettingBox(QWidget):
         value = value / self.units[unit]
         
         text = f"{value:.4f}"
-        
-        text = self.remove_trailing_zeros(text)
+        text = util.remove_trailing_zeros(text)
         
         self.value_entry.setText(text)
         
         self.unit_entry.setCurrentText(unit)
     
     
-    def remove_trailing_zeros(self, string):
-        while string.endswith('0'):
-            string = string[:-1]
-        if string.endswith('.'):
-            string = string[:-1]
-        return string
-    
-    
-    def set_status(self, correct:str):
-        if correct == 'Correct':
-            self.value_entry.setStyleSheet("color: green;")
-        elif correct == 'Error':
-            self.value_entry.setStyleSheet("color: red;")
-        elif correct == 'Invalid':
-            self.value_entry.setStyleSheet("color: blue;")
-        elif correct == 'Incorrect':
-            self.value_entry.setStyleSheet("color: orange;")
-        else:
-            self.value_entry.setStyleSheet("color: black;")
+    def set_status(self, message:str, color:str) -> None:
+        self.status_label.setToolTip(message)
+        self.status_label.setStyleSheet(f"color: {color}")
+
 

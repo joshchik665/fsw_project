@@ -53,3 +53,11 @@ def compare_number_strings(str1:str, str2:str) -> bool:
     except ValueError:
         # conversion failed
         return False
+
+
+def remove_trailing_zeros(string:str) -> str:
+    while string.endswith('0'):
+        string = string[:-1]
+    if string.endswith('.'):
+        string = string[:-1]
+    return string
