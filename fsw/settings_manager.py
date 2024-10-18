@@ -25,19 +25,16 @@ class SettingsManager(RsFswInstrument):
         return {name: self.set_setting(name, value) for name, value in settings.items()}
     
     
-    def set_setting(self, setting_name:str, value:str) -> tuple[bool, str]:
+    def set_setting(self, setting_name:str, value:str) -> str:
         try:
             setting = self.settings[setting_name]
         except KeyError:
-            print(f"Setting: {setting_name}, is not known!")
             return 'Setting unknown'
         
         if not setting.is_applicable(self.current_mode):
-            print(f"Setting: {setting_name} is not applicable in mode: {self.current_mode}")
             return 'Setting is not applicable'
         
         if not setting.check_if_valid_value(value):
-            print(f"Value: {value}, is not valid for this setting")
             return 'Value is not valid for this setting'
         
         command_list = setting.get_scpi_command(value)
@@ -47,40 +44,36 @@ class SettingsManager(RsFswInstrument):
                 self.write_command(command)
             setting.current_value = value
         except Exception as e:
-            print(f"Error querying {setting_name}: {str(e)}")
             return f'Error writing setting: {str(e).split(',')[1]}'
         
-        return 'Set Command Sucess'
+        return 'Set sucessful'
     
     
     def verify_all_settings(self, settings:list) -> dict:
         return {name: self.verify_setting(name) for name in settings}
     
     
-    def verify_setting(self, setting_name:str) -> tuple[bool, str]:
+    def verify_setting(self, setting_name:str) -> str:
         try:
             setting = self.settings[setting_name]
         except KeyError:
-            print(f"Setting: {setting_name}, is not known!")
-            return (False, 'setting unknown')
+            return 'Setting unknown'
         
         if not setting.is_applicable(self.current_mode):
-            print(f"Setting: {setting_name} is not applicable in mode: {self.current_mode}")
-            return (False, 'setting not applicable')
+            return 'Setting is not applicable'
         
         command = f"{setting.scpi_command}?"
         
         try:
             response = self.query_command(command)
         except Exception as e:
-            print(f"Error querying {setting_name}: {str(e).split(',')[1]}")
-            return (False, f'error querying setting: {str(e).split(',')[1]}')
+            return f'Error querying setting: {str(e).split(',')[1]}'
         
         if util.compare_number_strings(setting.current_value, response):
-            return (True, 'verified')
+            return 'Setting verified'
         else:
             setting.current_value = response
-            return (False, 'incorrect')
+            return f'Setting set incorrect:{response}'
     
     
     def set_mode(self, mode:str) -> None:
