@@ -12,7 +12,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         
-        self.instrument = SettingsManager("192.168.2.226")
+        self.instrument = SettingsManager("192.168.2.226",r"configs\default\default.json")
         
         self.setWindowTitle('Rhode&Schwarz FSW-43 GUI')
         my_icon = QIcon()

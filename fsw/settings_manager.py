@@ -6,12 +6,10 @@ from fsw.setting import Setting
 import json
 
 class SettingsManager(RsFswInstrument):
-    def __init__(self, ip_address):
+    def __init__(self, ip_address,default_config_filepath):
         super().__init__(ip_address)
         
         self.current_mode = 'Spectrum' # Default mode on startup
-        
-        default_config_filepath = r"configs\default\default.json"
         
         with open(default_config_filepath, 'r') as file:
             config = json.load(file)
@@ -32,15 +30,15 @@ class SettingsManager(RsFswInstrument):
             setting = self.settings[setting_name]
         except KeyError:
             print(f"Setting: {setting_name}, is not known!")
-            return (False, 'setting unknown')
+            return 'Setting unknown'
         
         if not setting.is_applicable(self.current_mode):
             print(f"Setting: {setting_name} is not applicable in mode: {self.current_mode}")
-            return (False, 'setting not applicable')
+            return 'Setting is not applicable'
         
         if not setting.check_if_valid_value(value):
             print(f"Value: {value}, is not valid for this setting")
-            return (False, 'value is not valid')
+            return 'Value is not valid for this setting'
         
         command_list = setting.get_scpi_command(value)
         
@@ -50,9 +48,9 @@ class SettingsManager(RsFswInstrument):
             setting.current_value = value
         except Exception as e:
             print(f"Error querying {setting_name}: {str(e)}")
-            return (False, f'error writing setting: {str(e).split(',')[1]}')
+            return f'Error writing setting: {str(e).split(',')[1]}'
         
-        return (True, 'set')
+        return 'Set Command Sucess'
     
     
     def verify_all_settings(self, settings:list) -> dict:

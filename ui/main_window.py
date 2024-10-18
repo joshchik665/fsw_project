@@ -16,7 +16,7 @@ class MainWindow(QMainWindow):
     def __init__(self, config):
         super().__init__()
         
-        self.instrument = SettingsManager(config['ip_address'])
+        self.instrument = SettingsManager(config['ip_address'],r"configs\default\default.json")
         
         self._set_title_and_window()
         self._create_tabs()
