@@ -8,6 +8,7 @@
             "Real-Time Spectrum",
             "Zero Span"
         ],
+        "setting_type": "value_only",
         "default_value": "21500000000"
     },
     "Dwell Time": {
@@ -17,6 +18,7 @@
         "applicable_modes": [
             "Real-Time Spectrum"
         ],
+        "setting_type": "value_only",
         "default_value": "1"
     },
     "Reference Level": {
@@ -28,6 +30,7 @@
             "Real-Time Spectrum",
             "Zero Span"
         ],
+        "setting_type": "value_only",
         "default_value": "0"
     },
     "Frequency Span": {
@@ -38,6 +41,7 @@
             "Spectrum",
             "Real-Time Spectrum"
         ],
+        "setting_type": "value_only",
         "default_value": "43000000000"
     },
     "Resolution Bandwidth": {
@@ -49,6 +53,7 @@
             "Real-Time Spectrum",
             "Zero Span"
         ],
+        "setting_type": "value_only",
         "default_value": "3000000"
     },
     "Sweep Time": {
@@ -60,7 +65,11 @@
             "Real-Time Spectrum",
             "Zero Span"
         ],
-        "default_value": "0.172"
+        "setting_type": "both",
+        "default_value": "0.172",
+        "options": {
+            "auto": "SENS:SWE:TIME:AUTO ON"
+        }
     },
     "Memory Depth": {
         "name": "Memory Depth",
@@ -69,6 +78,7 @@
         "applicable_modes": [
             "Real-Time Spectrum"
         ],
+        "setting_type": "value_only",
         "default_value": "3000"
     },
     "Number of Points": {
@@ -79,6 +89,7 @@
             "Spectrum",
             "Zero Span"
         ],
+        "setting_type": "value_only",
         "default_value": "1001"
     },
     "Video Bandwidth": {
@@ -89,6 +100,7 @@
             "Spectrum",
             "Zero Span"
         ],
+        "setting_type": "value_only",
         "default_value": "3000000"
     },
     "Detector": {
@@ -100,6 +112,7 @@
             "Real-Time Spectrum",
             "Zero Span"
         ],
+        "setting_type": "mode_only",
         "default_value": "auto_peak",
         "options": {
             "auto_peak":"SENS:WIND1:DET1:FUNC APE",
@@ -108,6 +121,38 @@
             "rms":"SENS:WIND1:DET1:FUNC RMS",
             "average":"SENS:WIND1:DET1:FUNC AVER",
             "sample":"SENS:WIND1:DET1:FUNC SAMP"
+        }
+    },
+    "Attenuation": {
+        "name": "Attenuation",
+        "scpi_command": "INP:ATT",
+        "measure": "mode",
+        "applicable_modes": [
+            "Spectrum",
+            "Real-Time Spectrum",
+            "Zero Span"
+        ],
+        "setting_type": "both",
+        "default_value": "0",
+        "options": {
+            "auto":"INP:ATT:AUTO ON"
+        }
+    },
+    "Pre-Amp": {
+        "name": "Pre-Amp",
+        "scpi_command": "",
+        "measure": "mode",
+        "applicable_modes": [
+            "Spectrum",
+            "Real-Time Spectrum",
+            "Zero Span"
+        ],
+        "setting_type": "mode_only",
+        "default_value": "0",
+        "options": {
+            "0":"INP:GAIN:STAT OFF",
+            "15": "INP:GAIN:STAT ON;INP:GAIN:VAL 15",
+            "30": "INP:GAIN:STAT ON;INP:GAIN:VAL 30"
         }
     }
 }

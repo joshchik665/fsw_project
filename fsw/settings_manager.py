@@ -42,10 +42,11 @@ class SettingsManager(RsFswInstrument):
             print(f"Value: {value}, is not valid for this setting")
             return (False, 'value is not valid')
         
-        command = setting.get_scpi_command(value)
+        command_list = setting.get_scpi_command(value)
         
         try:
-            self.write_command(command)
+            for command in command_list:
+                self.write_command(command)
             setting.current_value = value
         except Exception as e:
             print(f"Error querying {setting_name}: {str(e)}")
@@ -96,3 +97,4 @@ class SettingsManager(RsFswInstrument):
         self.write_command(command)
         
         self.current_mode = mode
+

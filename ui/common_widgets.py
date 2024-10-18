@@ -36,6 +36,9 @@ class SettingBox(QWidget):
             },
             'number': {
                 'Units': 1
+            },
+            'mode': {
+                '': ''
             }
         }
         
@@ -48,11 +51,12 @@ class SettingBox(QWidget):
         layout.addWidget(label)
         
         self.value_entry = QLineEdit(setting.current_value)
-        validator = QDoubleValidator()
-        validator.setNotation(QDoubleValidator.StandardNotation)
+        
+        # validator = QDoubleValidator()
+        # validator.setNotation(QDoubleValidator.StandardNotation)
         # Set the range (optional, adjust as needed)
         #validator.setRange(-999999.99, 999999.99, 2)  # 2 decimal places
-        self.value_entry.setValidator(validator)
+        # self.value_entry.setValidator(validator)
         
         self.value_entry.setFixedWidth(60)
         self.value_entry.setFixedHeight(30)
