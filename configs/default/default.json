@@ -154,5 +154,22 @@
             "15": "INP:GAIN:STAT ON;INP:GAIN:VAL 15",
             "30": "INP:GAIN:STAT ON;INP:GAIN:VAL 30"
         }
+    },
+    "Sweep": {
+        "name": "Sweep",
+        "scpi_command": "",
+        "measure": "mode",
+        "applicable_modes": [
+            "Spectrum",
+            "Real-Time Spectrum",
+            "Zero Span"
+        ],
+        "setting_type": "mode_only",
+        "default_value": "Continuous",
+        "options": {
+            "Continuous":"INIT:CONT ON",
+            "Single": "INIT:CONT OFF;INIT:IMM;*WAI",
+            "Abort": "ABOR"
+        }
     }
 }

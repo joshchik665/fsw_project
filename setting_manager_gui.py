@@ -39,10 +39,41 @@ class MainWindow(QMainWindow):
         self.apply_button.pressed.connect(self.apply_setting)
         set_setting_layout.addWidget(self.apply_button)
         
-        self.status_label = QLabel("-> ")
-        set_setting_layout.addWidget(self.status_label)
+        self.set_status_label = QLabel("-> ")
+        set_setting_layout.addWidget(self.set_status_label)
         
         layout.addLayout(set_setting_layout)
+        
+        verify_setting_layout = QHBoxLayout()
+        
+        verify_setting_label = QLabel("Verify Setting: ")
+        verify_setting_layout.addWidget(verify_setting_label)
+        
+        self.verify_setting_entry = QLineEdit()
+        verify_setting_layout.addWidget(self.verify_setting_entry)
+        
+        self.verify_setting_button = QPushButton("Verify")
+        self.verify_setting_button.pressed.connect(self.verify_setting)
+        verify_setting_layout.addWidget(self.verify_setting_button)
+        
+        self.verify_status_label = QLabel("-> ")
+        verify_setting_layout.addWidget(self.verify_status_label)
+        
+        layout.addLayout(verify_setting_layout)
+        
+        set_mode_layout = QHBoxLayout()
+        
+        set_mode_label = QLabel("Set Mode: ")
+        set_mode_layout.addWidget(set_mode_label)
+        
+        self.set_mode_entry = QLineEdit()
+        set_mode_layout.addWidget(self.set_mode_entry)
+        
+        self.set_mode_button = QPushButton("Set Mode")
+        self.set_mode_button.pressed.connect(self.set_mode)
+        set_mode_layout.addWidget(self.set_mode_button)
+        
+        layout.addLayout(set_mode_layout)
         
         container = QWidget()
         container.setLayout(layout)
@@ -51,7 +82,16 @@ class MainWindow(QMainWindow):
     
     def apply_setting(self):
         response = self.instrument.set_setting(self.setting_name.text(), self.setting_value.text())
-        self.status_label.setText(f"-> {response}")
+        self.set_status_label.setText(f"-> {response}")
+    
+    
+    def verify_setting(self):
+        response = self.instrument.verify_setting(self.verify_setting_entry.text())
+        self.verify_status_label.setText(f"-> {response}")
+    
+    
+    def set_mode(self):
+        self.instrument.set_mode(self.set_mode_entry.text())
 
 
 app = QApplication(sys.argv)
