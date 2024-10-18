@@ -6,6 +6,8 @@ from PySide6.QtWidgets import (
     QLabel,
     QComboBox,
     QPushButton,
+    QButtonGroup,
+    QRadioButton,
 )
 from PySide6.QtGui import QDoubleValidator
 from fsw.setting import Setting
@@ -146,3 +148,85 @@ class SweepBox(QWidget):
     
     def abort(self):
         self.instrument.write_command('ABOR')
+
+
+class DetectorBox(QWidget):
+    def __init__(self, instrument, mode, parent=None):
+        super().__init__(parent)
+        
+        self.instrument = instrument
+        self.mode = mode
+        
+        self.all_detectors = {
+            'Spectrum': (
+                'auto_peak',
+                'positive_peak',
+                'negative_peak',
+                'rms',
+                'average',
+                'sample',
+            ),
+            'Real-Time Spectrum': (
+                'positive_peak',
+                'negative_peak',
+                'average',
+                'sample',
+            ),
+            'Zero-Span': (
+                'auto_peak',
+                'positive_peak',
+                'negative_peak',
+                'rms',
+                'average',
+                'sample',
+            ),
+        }
+        
+        self.applicable_detectors = self.all_detectors[self.mode]
+        self.current_detector = self.applicable_detectors[0] # The first element is the default one
+        
+        self.layout = QVBoxLayout()
+        
+        self.title = QLabel('Detectors:')
+        self.layout.addWidget(self.title)
+        
+        self.button_group = QButtonGroup()
+        
+        for option in self.applicable_detectors:
+            radio_button = QRadioButton(option)
+            self.layout.addWidget(radio_button)
+            self.button_group.addButton(radio_button)
+            
+            if option == self.current_detector:
+                radio_button.setChecked(True)
+        
+        self.set_detector_button = QPushButton('Set Detector')
+        self.set_detector_button.pressed.connect(self.set_detector)
+        self.layout.addWidget(self.set_detector_button)
+        
+        self.status_label = QLabel(f"Current Detector: {self.current_detector}")
+        self.layout.addWidget(self.status_label)
+        
+        self.setLayout(self.layout)
+    
+    
+    def set_detector(self):
+        selected_button = self.button_group.checkedButton().text()
+        
+        if selected_button:
+            self.instrument.set_setting('Detector',selected_button)
+            self.current_detector = selected_button
+            self.status_label.setText(f"Current Detector: {self.current_detector}")
+        
+
+
+
+
+
+
+
+
+
+
+
+

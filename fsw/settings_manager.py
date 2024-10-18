@@ -42,18 +42,13 @@ class SettingsManager(RsFswInstrument):
             print(f"Value: {value}, is not valid for this setting")
             return (False, 'value is not valid')
         
-        scpi_command = setting.get_scpi_command()
-        
-        if scpi_command is dict:
-            command = scpi_command[value]
-        else:
-            command = f"{setting.get_scpi_command()} {value}"
+        command = setting.get_scpi_command(value)
         
         try:
             self.write_command(command)
             setting.current_value = value
         except Exception as e:
-            print(f"Error querying {setting_name}: {str(e).split(',')[1]}")
+            print(f"Error querying {setting_name}: {str(e)}")
             return (False, f'error writing setting: {str(e).split(',')[1]}')
         
         return (True, 'set')

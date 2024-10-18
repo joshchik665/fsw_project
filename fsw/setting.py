@@ -26,11 +26,12 @@ class Setting:
         return instance
     
     
-    def get_scpi_command(self) -> Union[str, dict]:
+    def get_scpi_command(self, option=None) -> Union[str, dict]:
         if self.options is None:
-            return self.scpi_command
+            return f"{self.scpi_command} {option}"
         else:
-            return self.options
+            return self.options[option]
+    
     
     def is_applicable(self, mode: str) -> bool:
         return mode in self.applicable_modes

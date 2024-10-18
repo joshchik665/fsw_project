@@ -14,7 +14,7 @@ from PySide6.QtCore import (
     Qt,
     Slot,
 )
-from ui.common_widgets import SettingBox, SweepBox
+from ui.common_widgets import SettingBox, SweepBox, DetectorBox
 import common.utilities as util
 
 
@@ -112,6 +112,11 @@ class ModeSuper(QWidget):
     def create_place_sweep_box_widget(self, layout):
         self.sweep_box = SweepBox(self.instrument, self)
         layout.addWidget(self.sweep_box)
+    
+    
+    def create_place_detector_box_widget(self, layout):
+        self.detector_box = DetectorBox(self.instrument, self.mode, self)
+        layout.addWidget(self.detector_box)
     
     
     def create_setting_box_widget(self, setting_name:str) -> None:

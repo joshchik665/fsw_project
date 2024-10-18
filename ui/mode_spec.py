@@ -15,6 +15,8 @@ class ModeSpec(ModeSuper):
         
         self.create_place_sweep_box_widget(self.content_layout)
         
+        self.create_place_detector_box_widget(self.content_layout)
+        
         self.create_place_setting_box_widget("Center Frequency",self.content_layout)
         self.create_place_setting_box_widget("Reference Level",self.content_layout)
         self.create_place_setting_box_widget("Frequency Span",self.content_layout)
