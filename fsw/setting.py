@@ -1,24 +1,21 @@
 from dataclasses import dataclass
-from typing import Optional, Any, List, Dict, Union
+from typing import Optional, Any, Dict
 import common.utilities as util
-from enum import Enum
 
 
 @dataclass
 class Setting:
     name: str
     measure: str
-    applicable_modes: List[str]
-    default_value: Optional[Any] = None
-    options: Optional[Dict[str, str]] = None
+    default_value: str
+    applicable_modes: set[str]
+    options: Dict[str, str]
     current_value: Optional[Any] = None
     
     
     def __post_init__(self):
         if self.current_value is None:
             self.current_value = self.default_value
-        if self.options is None:
-            self.options = {}
     
     
     @classmethod
@@ -33,6 +30,10 @@ class Setting:
             return self.options[value].split(";")
         else:
             return [f"{self.options["numerical"]} {value}"]
+    
+    
+    def get_query_scpi_command(self) -> list:
+        pass
     
     
     def is_applicable(self, mode: str) -> bool:

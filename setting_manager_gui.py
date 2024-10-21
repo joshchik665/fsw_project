@@ -24,6 +24,7 @@ class MainWindow(QMainWindow):
         title = QLabel("SettingsManager testing GUI")
         layout.addWidget(title)
         
+        
         set_setting_layout = QHBoxLayout()
         
         set_setting_label = QLabel("Set Setting: ")
@@ -44,6 +45,7 @@ class MainWindow(QMainWindow):
         
         layout.addLayout(set_setting_layout)
         
+        
         verify_setting_layout = QHBoxLayout()
         
         verify_setting_label = QLabel("Verify Setting: ")
@@ -51,6 +53,9 @@ class MainWindow(QMainWindow):
         
         self.verify_setting_entry = QLineEdit()
         verify_setting_layout.addWidget(self.verify_setting_entry)
+        
+        self.verify_setting_value = QLineEdit()
+        verify_setting_layout.addWidget(self.verify_setting_value)
         
         self.verify_setting_button = QPushButton("Verify")
         self.verify_setting_button.pressed.connect(self.verify_setting)
@@ -60,6 +65,7 @@ class MainWindow(QMainWindow):
         verify_setting_layout.addWidget(self.verify_status_label)
         
         layout.addLayout(verify_setting_layout)
+        
         
         set_mode_layout = QHBoxLayout()
         
@@ -75,6 +81,40 @@ class MainWindow(QMainWindow):
         
         layout.addLayout(set_mode_layout)
         
+        
+        write_layout = QHBoxLayout()
+        
+        write_label = QLabel("Write: ")
+        write_layout.addWidget(write_label)
+        
+        self.write_entry = QLineEdit()
+        write_layout.addWidget(self.write_entry)
+        
+        self.write_button = QPushButton("Write")
+        self.write_button.pressed.connect(self.write)
+        write_layout.addWidget(self.write_button)
+        
+        layout.addLayout(write_layout)
+        
+        
+        query_layout = QHBoxLayout()
+        
+        query_label = QLabel("Query: ")
+        query_layout.addWidget(query_label)
+        
+        self.query_entry = QLineEdit()
+        query_layout.addWidget(self.query_entry)
+        
+        self.query_button = QPushButton("Query")
+        self.query_button.pressed.connect(self.query)
+        query_layout.addWidget(self.query_button)
+        
+        self.query_response = QLabel("-> ")
+        query_layout.addWidget(self.query_response)
+        
+        layout.addLayout(query_layout)
+        
+        
         container = QWidget()
         container.setLayout(layout)
         self.setCentralWidget(container)
@@ -86,8 +126,17 @@ class MainWindow(QMainWindow):
     
     
     def verify_setting(self):
-        response = self.instrument.verify_setting(self.verify_setting_entry.text())
+        response = self.instrument.verify_setting(self.verify_setting_entry.text(),self.verify_setting_value.text())
         self.verify_status_label.setText(f"-> {response}")
+    
+    
+    def write(self):
+        self.instrument.write_command(self.write_entry.text())
+    
+    
+    def query(self):
+        response = self.instrument.query_command(self.query_entry.text())
+        self.query_response.setText(f"-> {response}")
     
     
     def set_mode(self):

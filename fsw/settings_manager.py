@@ -17,6 +17,10 @@ class SettingsManager(RsFswInstrument):
         self.settings = {name: Setting.from_dict(name,**setting) for name, setting in config.items()}
     
     
+    def setting_known(self, setting_name:str):
+        return setting_name in self.settings.keys()
+    
+    
     def get_setting_object(self, setting_name:str) -> Setting:
         return self.settings[setting_name]
     
@@ -26,10 +30,10 @@ class SettingsManager(RsFswInstrument):
     
     
     def set_setting(self, setting_name:str, value:str) -> str:
-        try:
-            setting = self.settings[setting_name]
-        except KeyError:
-            return 'Setting unknown'
+        if not self.setting_known(setting_name):
+            return 'Setting Unknown'
+        
+        setting = self.settings[setting_name]
         
         if not setting.is_applicable(self.current_mode):
             return 'Setting is not applicable'
@@ -53,16 +57,16 @@ class SettingsManager(RsFswInstrument):
         return {name: self.verify_setting(name) for name in settings}
     
     
-    def verify_setting(self, setting_name:str) -> str:
-        try:
-            setting = self.settings[setting_name]
-        except KeyError:
-            return 'Setting unknown'
+    def verify_setting(self, setting_name:str,value) -> str:
+        if not self.setting_known(setting_name):
+            return 'Setting Unknown'
+        
+        setting = self.settings[setting_name]
         
         if not setting.is_applicable(self.current_mode):
             return 'Setting is not applicable'
         
-        command = f"{setting.scpi_command}?"
+        command = f"{setting.options[value]}?"
         
         try:
             response = self.query_command(command)
