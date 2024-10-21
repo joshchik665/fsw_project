@@ -14,7 +14,7 @@ class SettingsManager(RsFswInstrument):
         with open(default_config_filepath, 'r') as file:
             config = json.load(file)
         
-        self.settings = {name: Setting.from_dict(**setting) for name, setting in config.items()}
+        self.settings = {name: Setting.from_dict(name,**setting) for name, setting in config.items()}
     
     
     def get_setting_object(self, setting_name:str) -> Setting:
@@ -37,7 +37,7 @@ class SettingsManager(RsFswInstrument):
         if not setting.check_if_valid_value(value):
             return 'Value is not valid for this setting'
         
-        command_list = setting.get_scpi_command(value)
+        command_list = setting.get_write_scpi_command(value)
         
         try:
             for command in command_list:

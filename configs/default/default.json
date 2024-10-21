@@ -1,118 +1,113 @@
 {
     "Center Frequency": {
-        "name": "Center Frequency",
-        "scpi_command": "FREQ:CENT",
         "measure": "frequency",
         "applicable_modes": [
             "Spectrum",
             "Real-Time Spectrum",
             "Zero Span"
         ],
-        "setting_type": "value_only",
-        "default_value": "21500000000"
+        "default_value": "21500000000",
+        "options": {
+            "numerical": "FREQ:CENT"
+        }
     },
     "Dwell Time": {
-        "name": "Dwell Time",
-        "scpi_command": "SENS:SWE:DTIM",
         "measure": "time",
         "applicable_modes": [
             "Real-Time Spectrum"
         ],
-        "setting_type": "value_only",
-        "default_value": "1"
+        "default_value": "1",
+        "options": {
+            "numerical": "SENS:SWE:DTIM"
+        }
     },
     "Reference Level": {
-        "name": "Reference Level",
-        "scpi_command": "DISP:WIND:TRAC:Y:SCAL:RLEV",
         "measure": "power",
         "applicable_modes": [
             "Spectrum",
             "Real-Time Spectrum",
             "Zero Span"
         ],
-        "setting_type": "value_only",
-        "default_value": "0"
+        "default_value": "0",
+        "options": {
+            "numerical": "DISP:WIND:TRAC:Y:SCAL:RLEV"
+        }
     },
     "Frequency Span": {
-        "name": "Frequency Span",
-        "scpi_command": "FREQ:SPAN",
         "measure": "frequency",
         "applicable_modes": [
             "Spectrum",
             "Real-Time Spectrum"
         ],
-        "setting_type": "value_only",
-        "default_value": "43000000000"
+        "default_value": "43000000000",
+        "options": {
+            "numerical": "FREQ:SPAN"
+        }
     },
     "Resolution Bandwidth": {
-        "name": "Resolution Bandwidth",
-        "scpi_command": "BAND",
         "measure": "frequency",
         "applicable_modes": [
             "Spectrum",
             "Real-Time Spectrum",
             "Zero Span"
         ],
-        "setting_type": "value_only",
-        "default_value": "3000000"
+        "default_value": "3000000",
+        "options": {
+            "numerical": "BAND"
+        }
     },
     "Sweep Time": {
-        "name": "Sweep Time",
-        "scpi_command": "SENS:SWE:TIME",
         "measure": "time",
         "applicable_modes": [
             "Spectrum",
             "Real-Time Spectrum",
             "Zero Span"
         ],
-        "setting_type": "both",
         "default_value": "0.172",
         "options": {
+            "numerical": "SENS:SWE:TIME",
             "auto": "SENS:SWE:TIME:AUTO ON"
         }
     },
     "Memory Depth": {
-        "name": "Memory Depth",
-        "scpi_command": "CALC2:SGR:HDEP",
         "measure": "number",
         "applicable_modes": [
             "Real-Time Spectrum"
         ],
-        "setting_type": "value_only",
-        "default_value": "3000"
+        "default_value": "3000",
+        "options": {
+            "numerical": "CALC2:SGR:HDEP"
+        }
     },
     "Number of Points": {
-        "name": "Number of Points",
-        "scpi_command": "SENS:SWE:WIND1:POIN",
         "measure": "number",
         "applicable_modes": [
             "Spectrum",
             "Zero Span"
         ],
-        "setting_type": "value_only",
-        "default_value": "1001"
+        "default_value": "1001",
+        "options": {
+            "numerical": "SENS:SWE:WIND1:POIN"
+        }
     },
     "Video Bandwidth": {
-        "name": "Video Bandwidth",
-        "scpi_command": "BAND:VID",
         "measure": "frequency",
         "applicable_modes": [
             "Spectrum",
             "Zero Span"
         ],
-        "setting_type": "value_only",
-        "default_value": "3000000"
+        "default_value": "3000000",
+        "options": {
+            "numerical": "BAND:VID"
+        }
     },
     "Detector": {
-        "name": "Detector",
-        "scpi_command": "SENS:WIND1:DET1:FUNC",
         "measure": "mode",
         "applicable_modes": [
             "Spectrum",
             "Real-Time Spectrum",
             "Zero Span"
         ],
-        "setting_type": "mode_only",
         "default_value": "auto_peak",
         "options": {
             "auto_peak":"SENS:WIND1:DET1:FUNC APE",
@@ -124,30 +119,25 @@
         }
     },
     "Attenuation": {
-        "name": "Attenuation",
-        "scpi_command": "INP:ATT",
         "measure": "mode",
         "applicable_modes": [
             "Spectrum",
             "Real-Time Spectrum",
             "Zero Span"
         ],
-        "setting_type": "both",
         "default_value": "0",
         "options": {
+            "numerical": "INP:ATT",
             "auto":"INP:ATT:AUTO ON"
         }
     },
     "Pre-Amp": {
-        "name": "Pre-Amp",
-        "scpi_command": "",
         "measure": "mode",
         "applicable_modes": [
             "Spectrum",
             "Real-Time Spectrum",
             "Zero Span"
         ],
-        "setting_type": "mode_only",
         "default_value": "0",
         "options": {
             "0":"INP:GAIN:STAT OFF",
@@ -156,15 +146,12 @@
         }
     },
     "Sweep": {
-        "name": "Sweep",
-        "scpi_command": "",
         "measure": "mode",
         "applicable_modes": [
             "Spectrum",
             "Real-Time Spectrum",
             "Zero Span"
         ],
-        "setting_type": "mode_only",
         "default_value": "Continuous",
         "options": {
             "Continuous":"INIT:CONT ON",
