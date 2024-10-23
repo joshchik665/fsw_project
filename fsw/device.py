@@ -1,7 +1,7 @@
 from RsInstrument import RsInstrument
 
 class RsFswInstrument(RsInstrument):
-    def __init__(self, ip_address, visa_timeout, opc_timeout):
+    def __init__(self, ip_address:str, visa_timeout:int, opc_timeout:int):
         try:
             # Adjust the VISA Resource string to fit your instrument
             super().__init__('TCPIP::' + ip_address + '::INSTR', True, False)
@@ -18,7 +18,7 @@ class RsFswInstrument(RsInstrument):
         self.ip_address = ip_address
     
     
-    def write_command(self, command:str):
+    def write_command(self, command:str) -> None:
         self.write_str_with_opc(command)
     
     
@@ -26,9 +26,13 @@ class RsFswInstrument(RsInstrument):
         return self.query_str_with_opc(command)
     
     
-    def abort(self):
+    def abort(self) -> None:
         self.write_command("ABOR")
     
     
-    def sweep(self):
+    def sweep(self) -> None:
         self.write_command("INIT:IMM;*WAI")
+    
+    
+    def get_trace(self) -> list:
+        return self.query_bin_or_ascii_float_list('FORM ASC;:TRAC:DATA? TRACE1')

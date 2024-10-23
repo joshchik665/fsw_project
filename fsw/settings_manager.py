@@ -8,7 +8,7 @@ from fsw.mode_setting import ModeSetting
 import json
 
 class SettingsManager(RsFswInstrument):
-    def __init__(self, ip_address, default_config_filepath, visa_timeout, opc_timeout):
+    def __init__(self, ip_address:str, default_config_filepath:str, visa_timeout:int, opc_timeout:int):
         super().__init__(ip_address, visa_timeout, opc_timeout)
         
         self.current_mode = 'Spectrum' # Default mode on startup
@@ -30,7 +30,7 @@ class SettingsManager(RsFswInstrument):
         return self.settings[setting_name]
     
     
-    def set_all_settings(self, settings:dict):
+    def set_all_settings(self, settings:dict) -> dict:
         return {name: self.set_setting(name, value) for name, value in settings.items()}
     
     
@@ -51,6 +51,7 @@ class SettingsManager(RsFswInstrument):
         try:
             for command in command_list:
                 self.write_command(command)
+            
             setting.current_value = value
         except Exception as e:
             return False, f'Error writing setting: {str(e).split(',')[1]}'
@@ -65,7 +66,7 @@ class SettingsManager(RsFswInstrument):
     def verify_setting(self, setting_name:str) -> tuple[bool, str]:
         if not self.setting_known(setting_name):
             return False, 'Setting Unknown'
-
+        
         setting = self.settings[setting_name]
         
         if not setting.is_applicable(self.current_mode):
@@ -78,9 +79,8 @@ class SettingsManager(RsFswInstrument):
         except Exception as e:
             return False, f'Error querying setting: {str(e).split(',')[1]}'
         
-        if util.is_number(response):
-            if util.compare_number_strings(setting.current_value, response):
-                return True, 'Setting verified'
+        if util.is_number(response) and util.compare_number_strings(setting.current_value, response):
+            return True, 'Setting verified'
         elif setting.current_value == response:
             return True, 'Setting verified'
         else:

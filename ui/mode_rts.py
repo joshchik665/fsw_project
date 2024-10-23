@@ -8,5 +8,7 @@ from PySide6.QtWidgets import (
 from ui.mode_super import ModeSuper
 
 class ModeRts(ModeSuper):
-    def __init__(self,device,tab_widget):
-        super().__init__('Real-Time Spectrum',device,tab_widget)
+    def __init__(self,device, parent=None):
+        super().__init__('Real-Time Spectrum',device, parent)
+        
+        self.create_place_setting_box_widget("Center Frequency",self.content_layout)

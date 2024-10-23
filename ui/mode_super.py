@@ -20,11 +20,18 @@ import json
 
 
 class ModeSuper(QWidget):
-    def __init__(self, mode, device, tab_widget):
-        super().__init__()
+    def __init__(self, mode, device, parent):
+        super().__init__(parent)
+        
+        self.tab_indicies = {
+            "Spectrum": 0,
+            "Real-Time Spectrum": 1,
+            "Zero-Span": 2,
+        }
         
         self.instrument = device
-        self.tab_widget = tab_widget
+        self.tab_widget = self.parent()
+        self.main_window = self.tab_widget.parent()
         self.mode = mode
         self.settings_widgets = {}
         
@@ -95,13 +102,7 @@ class ModeSuper(QWidget):
     
     
     def set_tab(self, mode:str) -> None:
-        tab_index = {
-            "Spectrum": 0,
-            "Real-Time Spectrum": 1,
-            "Zero-Span": 2,
-        }
-        
-        self.tab_widget.setCurrentIndex(tab_index[mode])
+        self.tab_widget.setCurrentIndex(self.tab_indicies[mode])
     
     
     def create_place_sweep_box_widget(self, layout):
@@ -158,7 +159,6 @@ class ModeSuper(QWidget):
     
     def verify(self):
         all_verify_results = self.verify_all_settings()
-        print(all_verify_results)
         
         for name, (result, status) in all_verify_results.items():
             widget = self.settings_widgets[name]
@@ -177,13 +177,17 @@ class ModeSuper(QWidget):
         
         if filepath:
             with open(filepath, 'r') as file:
-                self.config = json.load(file)
+                config = json.load(file)
             
-            self.instrument.set_mode(self.config['mode'])
+            self.load_settings(self, config)
+    
+    
+    def load_settings(self, config):
+            self.main_window.change_tab_programmatically(self.tab_indicies[config['mode']])
             
-            self.instrument.set_all_settings(self.config['data'])
+            self.instrument.set_all_settings(config['data'])
             
-            self.set_tab(self.config['mode'])
+            self.tab_widget.widget(self.tab_indicies[config['mode']]).verify()
     
     
     def save(self):

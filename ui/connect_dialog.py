@@ -14,12 +14,16 @@ import common.utilities as util
 class IpEntryDialog(QDialog):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Enter Device IP")
+        
+        self._set_title_and_window()
+        self._set_widgets()
+    
+    
+    def _set_title_and_window(self) -> None:
+        self.setWindowTitle('Rhode&Schwarz FSW-43 GUI')
         my_icon = QIcon()
         my_icon.addFile('images\\crc_icon.ico')
         self.setWindowIcon(my_icon)
-        
-        self._set_widgets()
     
     
     def _set_widgets(self) -> None:
@@ -42,7 +46,7 @@ class IpEntryDialog(QDialog):
         validator.setNotation(QDoubleValidator.StandardNotation)
         # Set the range (optional, adjust as needed)
         #validator.setRange(-999999.99, 999999.99, 2)  # 2 decimal places
-        self.value_entry.setValidator(validator)
+        self.visa_entry.setValidator(validator)
         self.visa_entry.setPlaceholderText('3000')
         self.visa_entry.setFixedSize(100, 25)
         self.layout.addWidget(self.visa_entry)
@@ -55,7 +59,7 @@ class IpEntryDialog(QDialog):
         validator.setNotation(QDoubleValidator.StandardNotation)
         # Set the range (optional, adjust as needed)
         #validator.setRange(-999999.99, 999999.99, 2)  # 2 decimal places
-        self.value_entry.setValidator(validator)
+        self.opc_entry.setValidator(validator)
         self.opc_entry.setPlaceholderText('3000')
         self.opc_entry.setFixedSize(100, 25)
         self.layout.addWidget(self.opc_entry)
@@ -78,8 +82,11 @@ class IpEntryDialog(QDialog):
         if not self.visa_timeout:
             self.visa_timeout = 3000
         
-        if not self.opc_entry:
+        if not self.opc_timeout:
             self.opc_timeout = 3000
+        
+        self.visa_timeout = int(self.visa_timeout)
+        self.opc_timeout = int(self.opc_timeout)
     
     
     def load_settings(self) -> None:

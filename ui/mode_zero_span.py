@@ -8,5 +8,7 @@ from PySide6.QtWidgets import (
 from ui.mode_super import ModeSuper
 
 class ModeZs(ModeSuper):
-    def __init__(self,device,tab_widget):
-        super().__init__('Zero-Span',device,tab_widget)
+    def __init__(self, device, parent=None):
+        super().__init__('Zero-Span',device, parent)
+        
+        self.create_place_setting_box_widget("Center Frequency",self.content_layout)

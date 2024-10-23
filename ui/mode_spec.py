@@ -10,9 +10,8 @@ from ui.mode_super import ModeSuper
 from ui.common_widgets import SettingBox
 
 class ModeSpec(ModeSuper):
-    def __init__(self,device, tab_widget):
-        super().__init__('Spectrum',device, tab_widget)
-        
+    def __init__(self, device, parent=None):
+        super().__init__('Spectrum', device, parent)
         
         self.create_place_setting_box_widget("Center Frequency",self.content_layout)
         self.create_place_setting_box_widget("Reference Level",self.content_layout)

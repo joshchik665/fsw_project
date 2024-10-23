@@ -3,6 +3,7 @@ from PySide6.QtWidgets import (
     QMainWindow,
     QTabWidget,
 )
+from PySide6.QtCore import Signal
 from ui.mode_spec import ModeSpec
 from ui.mode_rts import ModeRts
 from ui.mode_zero_span import ModeZs
@@ -13,16 +14,33 @@ class MainWindow(QMainWindow):
     def __init__(self, config, visa_timeout, opc_timeout):
         super().__init__()
         
-        self.instrument = SettingsManager(config['ip_address'],r"configs\default\default.json", visa_timeout, opc_timeout)
+        self.tab_indicies = {
+            "Spectrum": 0,
+            "Real-Time Spectrum": 1,
+            "Zero-Span": 2,
+        }
+        self._programmatic_change = False
         
         self._set_title_and_window()
+        
+        self.instrument = SettingsManager(
+            config['ip_address'],
+            r"configs\default\default.json", 
+            visa_timeout, 
+            opc_timeout
+            )
+        
+        self._set_status_bar(config['ip_address'])
+        
         self._create_tabs()
         
-        self.status_bar = self.statusBar()
-        self.status_bar.showMessage('Connected to Rhode&Schwarz FSW-43 @' + config['ip_address'], timeout=0)
-        
+        current_tab_widget = self.tab_widget.widget(self.current_tab_index)
         if config['data']:
-            self.tab_widget.setCurrentIndex(self.tab_index[config['mode']])
+            current_tab_widget.load_settings(config)
+        else:
+            current_tab_widget.verify()
+            
+            
     
     
     def _set_title_and_window(self):
@@ -32,34 +50,39 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(my_icon)
     
     
+    def _set_status_bar(self, ip_address):
+        status_bar = self.statusBar()
+        status_bar.showMessage(
+            f'Connected to Rhode&Schwarz FSW-43 @ {ip_address}', 
+            timeout=0
+            )
+    
+    
     def _create_tabs(self):
         self.tab_widget = QTabWidget()
-        
         self.setCentralWidget(self.tab_widget)
-        
-        self.tab_widget.currentChanged.connect(self.on_tab_changed)
         
         self.current_tab_index = 0
         
-        self.tab_index = {
-            "Spectrum": 0,
-            "Real-Time Spectrum": 1,
-            "Zero-Span": 2,
-        }
+        self.tab_widget.addTab(ModeSpec(self.instrument, self.tab_widget), "Spectrum Mode")
+        self.tab_widget.addTab(ModeRts(self.instrument, self.tab_widget), "Real-Time Spectrume Mode")
+        self.tab_widget.addTab(ModeZs(self.instrument, self.tab_widget), "Zero Span Mode")
         
-        mode_spec = ModeSpec(self.instrument,self.tab_widget)
-        mode_rts = ModeRts(self.instrument,self.tab_widget)
-        mode_zero_span = ModeZs(self.instrument,self.tab_widget)
-        
-        self.tab_widget.addTab(mode_spec, "Spectrum Mode")
-        self.tab_widget.addTab(mode_rts, "Real-Time Spectrume Mode")
-        self.tab_widget.addTab(mode_zero_span, "Zero Span Mode")
+        self.tab_widget.currentChanged.connect(self.on_tab_changed)
     
     
     def on_tab_changed(self, new_tab_index):
-        current_tab_widget = self.tab_widget.widget(new_tab_index)
-
-        current_tab_widget.set_mode()
-        current_tab_widget.verify()
+        new_tab_widget = self.tab_widget.widget(new_tab_index)
+        
+        new_tab_widget.set_mode()
+        
+        if not self._programmatic_change:
+            new_tab_widget.verify()
         
         self.current_tab_index = new_tab_index
+    
+    
+    def change_tab_programmatically(self, index):
+        self._programmatic_change = True
+        self.tab_widget.setCurrentIndex(index)
+        self._programmatic_change = False
