@@ -1,4 +1,33 @@
 {
+"set_options": {
+    "auto_peak":"SENS:WIND1:DET1:FUNC APE",
+    "positive_peak":"SENS:WIND1:DET1:FUNC POS",
+    "negative_peak":"SENS:WIND1:DET1:FUNC NEG",
+    "rms":"SENS:WIND1:DET1:FUNC RMS",
+    "average":"SENS:WIND1:DET1:FUNC AVER",
+    "sample":"SENS:WIND1:DET1:FUNC SAMP"
+},
+"get_value": "SENS:WIND1:DET1:FUNC?"
+},
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{
     "Center Frequency": {
         "name": "Center Frequency",
         "scpi_command": "FREQ:CENT",

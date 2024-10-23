@@ -10,14 +10,48 @@ from PySide6.QtWidgets import (
     QRadioButton,
 )
 from PySide6.QtGui import QDoubleValidator
-from fsw.setting import Setting
+from fsw.numerical_setting import NumericalSetting
+from fsw.mode_setting import ModeSetting
 import common.utilities as util
+from typing import Union
 
 
 class SettingBox(QWidget):
-    def __init__(self, setting:Setting, parent=None):
+    def __init__(self, instrument, setting:Union[NumericalSetting,ModeSetting], parent=None):
         super().__init__(parent)
         
+        self.setting = setting
+        
+        self.layout = QHBoxLayout()
+        
+        label = QLabel(self.setting.name)
+        label.setFixedWidth(150)
+        self.layout.addWidget(label)
+        
+        self.setLayout(self.layout)
+        
+        self.instrument = instrument
+        
+        if isinstance(self.setting, NumericalSetting):
+            self.setting_type = 'numerical'
+            self._make_numerical_setting_widget()
+        elif isinstance(self.setting, ModeSetting):
+            self.setting_type = 'mode'
+            self._make_mode_setting_widget()
+        else:
+            TypeError("Unsupported object type")
+    
+    
+    def _make_mode_setting_widget(self):
+        self.option_box = QComboBox()
+        self.option_box.addItems(self.setting.write_commands.keys())
+        self.option_box.setFixedSize(110, 30)
+        self.layout.addWidget(self.option_box)
+        
+        self.layout.addStretch(1)
+    
+    
+    def _make_numerical_setting_widget(self):
         self.all_units = {
             'frequency': {
                 'mHz': 1e-3,
@@ -37,80 +71,75 @@ class SettingBox(QWidget):
             'number': {
                 'Units': 1
             },
-            'mode': {
-                '': ''
-            }
         }
+        self.units = self.all_units[self.setting.measure]
         
-        self.units = self.all_units[setting.measure]
-        
-        layout = QHBoxLayout()
-        
-        label = QLabel(setting.name)
-        label.setFixedWidth(150)
-        layout.addWidget(label)
-        
-        self.value_entry = QLineEdit(setting.current_value)
-        
-        # validator = QDoubleValidator()
-        # validator.setNotation(QDoubleValidator.StandardNotation)
+        self.value_entry = QLineEdit(self.setting.current_value)
+        validator = QDoubleValidator()
+        validator.setNotation(QDoubleValidator.StandardNotation)
         # Set the range (optional, adjust as needed)
         #validator.setRange(-999999.99, 999999.99, 2)  # 2 decimal places
-        # self.value_entry.setValidator(validator)
-        
-        self.value_entry.setFixedWidth(60)
-        self.value_entry.setFixedHeight(30)
-        layout.addWidget(self.value_entry)
+        self.value_entry.setValidator(validator)
+        self.value_entry.setFixedSize(60, 30)
+        self.layout.addWidget(self.value_entry)
         
         self.unit_entry = QComboBox()
         self.unit_entry.addItems(list(self.units.keys()))
-        self.unit_entry.setFixedWidth(50)
-        self.unit_entry.setFixedHeight(30)
-        layout.addWidget(self.unit_entry)
+        self.unit_entry.setFixedSize(50, 30)
+        self.layout.addWidget(self.unit_entry)
         
-        layout.addStretch(1)
-        
-        self.setLayout(layout)
+        self.layout.addStretch(1)
     
     
     def get_value(self) -> str:
-        value = self.value_entry.text()
-        unit = self.unit_entry.currentText()
-        
-        value = float(value)
-        
-        widget_value = value * self.units[unit]
-        
-        return str(widget_value)
+        if self.setting_type == 'numerical':
+            value = self.value_entry.text()
+            unit = self.unit_entry.currentText()
+            
+            value = float(value)
+            
+            widget_value = value * self.units[unit]
+            
+            return str(widget_value)
+        elif self.setting_type == 'mode':
+            return self.option_box.currentText()
     
     
     def set_value(self,value:str):
-        value = float(value)
-        
-        eligible_items = {k: v for k, v in self.units.items() if v <= value}
-        
-        if not eligible_items:
-            unit = max(self.units, key=self.units.get)
-        else:
-            unit = max(eligible_items, key=eligible_items.get)
-        
-        value = value / self.units[unit]
-        
-        text = f"{value:.4f}"
-        text = util.remove_trailing_zeros(text)
-        
-        self.value_entry.setText(text)
-        
-        self.unit_entry.setCurrentText(unit)
+        if self.setting_type == 'numerical':
+            value = float(value)
+            
+            eligible_items = {k: v for k, v in self.units.items() if v <= value}
+            
+            if not eligible_items:
+                unit = max(self.units, key=self.units.get)
+            else:
+                unit = max(eligible_items, key=eligible_items.get)
+            
+            value = value / self.units[unit]
+            
+            text = f"{value:.4f}"
+            text = util.remove_trailing_zeros(text)
+            
+            self.value_entry.setText(text)
+            
+            self.unit_entry.setCurrentText(unit)
+        elif self.setting_type == 'mode':
+            self.option_box.setCurrentText(value)
     
     
     def set_status(self, state:bool, message:str) -> None:
+        if self.setting_type == 'numerical':
+            widget = self.value_entry
+        elif self.setting_type == 'mode':
+            widget = self.option_box
+        
         if state:
-            self.value_entry.setStyleSheet(f"background-color: #9CEC7B")
-            self.value_entry.setToolTip("All good")
+            widget.setStyleSheet("background-color: #9CEC7B")
+            widget.setToolTip("All good")
         else:
-            self.value_entry.setStyleSheet(f"background-color: #F86A6B")
-            self.value_entry.setToolTip(message)
+            widget.setStyleSheet("background-color: #F86A6B")
+            widget.setToolTip(message)
 
 
 class SweepBox(QWidget):
@@ -138,20 +167,19 @@ class SweepBox(QWidget):
     
     
     def cont_sweep(self):
-        self.instrument.write_command("INIT:CONT ON")
+        self.instrument.set_setting("Sweep", "Continuous")
         self.cont_sweep_button.setDisabled(True)
         self.single_sweep_button.setDisabled(False)
     
     
     def single_sweep(self):
-        self.instrument.write_command('INIT:CONT OFF')
-        self.instrument.write_command('INIT:IMM;*WAI')
+        self.instrument.set_setting("Sweep", "Single")
         self.cont_sweep_button.setDisabled(False)
         self.single_sweep_button.setDisabled(True)
     
     
     def abort(self):
-        self.instrument.write_command('ABOR')
+        self.instrument.set_setting("Sweep", 'Abort')
 
 
 class DetectorBox(QWidget):

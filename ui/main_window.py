@@ -1,22 +1,19 @@
 from PySide6.QtGui import QIcon
-
 from PySide6.QtWidgets import (
     QMainWindow,
     QTabWidget,
 )
-
 from ui.mode_spec import ModeSpec
 from ui.mode_rts import ModeRts
 from ui.mode_zero_span import ModeZs
-
 from fsw.settings_manager import SettingsManager
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, config):
+    def __init__(self, config, visa_timeout, opc_timeout):
         super().__init__()
         
-        self.instrument = SettingsManager(config['ip_address'],r"configs\default\default.json")
+        self.instrument = SettingsManager(config['ip_address'],r"configs\default\default.json", visa_timeout, opc_timeout)
         
         self._set_title_and_window()
         self._create_tabs()
@@ -25,7 +22,7 @@ class MainWindow(QMainWindow):
         self.status_bar.showMessage('Connected to Rhode&Schwarz FSW-43 @' + config['ip_address'], timeout=0)
         
         if config['data']:
-            self.tab_widget.setCurrentIndex(self.tab_index[config['data']['mode']])
+            self.tab_widget.setCurrentIndex(self.tab_index[config['mode']])
     
     
     def _set_title_and_window(self):
@@ -50,9 +47,9 @@ class MainWindow(QMainWindow):
             "Zero-Span": 2,
         }
         
-        mode_spec = ModeSpec(self.instrument)
-        mode_rts = ModeRts(self.instrument)
-        mode_zero_span = ModeZs(self.instrument)
+        mode_spec = ModeSpec(self.instrument,self.tab_widget)
+        mode_rts = ModeRts(self.instrument,self.tab_widget)
+        mode_zero_span = ModeZs(self.instrument,self.tab_widget)
         
         self.tab_widget.addTab(mode_spec, "Spectrum Mode")
         self.tab_widget.addTab(mode_rts, "Real-Time Spectrume Mode")

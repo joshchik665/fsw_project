@@ -17,7 +17,9 @@ def main():
     ip_dialog = IpEntryDialog()
     if ip_dialog.exec() == QDialog.Accepted:
         config = ip_dialog.config
-        window = MainWindow(config)
+        visa_timeout = ip_dialog.visa_timeout
+        opc_timeout = ip_dialog.opc_timeout
+        window = MainWindow(config, visa_timeout, opc_timeout)
         window.show()
         sys.exit(app.exec())
     else:

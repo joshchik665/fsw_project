@@ -1,15 +1,16 @@
 from dataclasses import dataclass
-from typing import Optional, Any, Dict
+from typing import Optional, Any
 import common.utilities as util
 
 
 @dataclass
-class Setting:
+class NumericalSetting:
     name: str
     measure: str
     default_value: str
+    write_command: str
+    query_command: str
     applicable_modes: set[str]
-    options: Dict[str, str]
     current_value: Optional[Any] = None
     
     
@@ -25,15 +26,12 @@ class Setting:
         return instance
     
     
-    def get_write_scpi_command(self, value=None) -> list:
-        if value in self.options:
-            return self.options[value].split(";")
-        else:
-            return [f"{self.options["numerical"]} {value}"]
+    def get_write_scpi_command(self, value:str) -> str:
+        return f"{self.write_command} {value}"
     
     
-    def get_query_scpi_command(self) -> list:
-        pass
+    def get_query_scpi_command(self) -> str:
+        return self.query_command
     
     
     def is_applicable(self, mode: str) -> bool:
@@ -41,16 +39,4 @@ class Setting:
     
     
     def check_if_valid_value(self, value: Any) -> bool:
-        if value == "numerical": 
-            return False
-        
-        if value in self.options:
-            return True
-        
-        if util.is_number(value):
-            return True
-        
-        return False
-
-
-
+        return util.is_number(value)

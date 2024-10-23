@@ -16,13 +16,15 @@ from PySide6.QtCore import (
 )
 from ui.common_widgets import SettingBox, SweepBox, DetectorBox
 import common.utilities as util
+import json
 
 
 class ModeSuper(QWidget):
-    def __init__(self, mode, device):
+    def __init__(self, mode, device, tab_widget):
         super().__init__()
         
         self.instrument = device
+        self.tab_widget = tab_widget
         self.mode = mode
         self.settings_widgets = {}
         
@@ -66,22 +68,10 @@ class ModeSuper(QWidget):
     
     def _set_header(self) -> None:
         self.load_button = QPushButton('Load Config')
+        self.load_button.pressed.connect(self.load)
         
         self.save_button = QPushButton('Save Config')
-        
-        visa_label = QLabel('Visa Timeout(ms):')
-        
-        self.visa_entry = QLineEdit()
-        self.visa_entry.returnPressed.connect(self.set_visa_timeout)
-        self.visa_entry.setPlaceholderText('3000')
-        self.visa_entry.setFixedWidth(100)
-        
-        opc_label = QLabel('Opc Timeout(ms):')
-        
-        self.opc_entry = QLineEdit()
-        self.opc_entry.returnPressed.connect(self.set_opc_timeout)
-        self.opc_entry.setPlaceholderText('3000')
-        self.opc_entry.setFixedWidth(100)
+        self.save_button.pressed.connect(self.save)
         
         layout1 = QHBoxLayout()
         layout2 = QHBoxLayout()
@@ -97,16 +87,21 @@ class ModeSuper(QWidget):
         layout1.addWidget(self.load_button)
         layout1.addWidget(self.save_button)
         
-        layout2.addWidget(visa_label)
-        layout2.addWidget(self.visa_entry)
-        layout2.addWidget(opc_label)
-        layout2.addWidget(self.opc_entry)
-        
         self.header_layout.addLayout(layout)
     
     
     def set_mode(self) -> None:
         self.instrument.set_mode(self.mode)
+    
+    
+    def set_tab(self, mode:str) -> None:
+        tab_index = {
+            "Spectrum": 0,
+            "Real-Time Spectrum": 1,
+            "Zero-Span": 2,
+        }
+        
+        self.tab_widget.setCurrentIndex(tab_index[mode])
     
     
     def create_place_sweep_box_widget(self, layout):
@@ -122,7 +117,7 @@ class ModeSuper(QWidget):
     def create_setting_box_widget(self, setting_name:str) -> None:
         setting = self.instrument.get_setting_object(setting_name)
         
-        widget = SettingBox(setting,self)
+        widget = SettingBox(self.instrument,setting,self)
         widget.set_value(setting.current_value)
         
         self.settings_widgets[setting_name] = widget
@@ -163,6 +158,7 @@ class ModeSuper(QWidget):
     
     def verify(self):
         all_verify_results = self.verify_all_settings()
+        print(all_verify_results)
         
         for name, (result, status) in all_verify_results.items():
             widget = self.settings_widgets[name]
@@ -176,20 +172,33 @@ class ModeSuper(QWidget):
             widget.set_value(current_value)
     
     
-    def set_visa_timeout(self):
-        time = self.visa_entry.text()
-        if util.is_number(time):
-            self.instrument.visa_timeout = time
-            self.visa_entry.setPlaceholderText(time)
-        self.visa_entry.clear()
+    def load(self):
+        filepath = util.open_file_dialog('Open JSON file', '.json', self)
+        
+        if filepath:
+            with open(filepath, 'r') as file:
+                self.config = json.load(file)
+            
+            self.instrument.set_mode(self.config['mode'])
+            
+            self.instrument.set_all_settings(self.config['data'])
+            
+            self.set_tab(self.config['mode'])
     
     
-    def set_opc_timeout(self):
-        time = self.opc_entry.text()
-        if util.is_number(time):
-            self.instrument.opc_timeout = time
-            self.opc_entry.setPlaceholderText(time)
-        self.opc_entry.clear()
+    def save(self):
+        filepath = util.save_file_dialog('Save JSON file', '.json', self)
+        
+        if filepath:
+            with open(filepath, 'w') as file:
+                config = {
+                    'ip_address': self.instrument.ip_address,
+                    'mode': self.instrument.current_mode,
+                }
+                current_settings = {name: setting.get_value() for name, setting in self.settings_widgets.items()}
+                config['data'] = current_settings
+                
+                json.dump(config, file, indent=4)
 
 
 

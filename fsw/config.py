@@ -1,6 +1,6 @@
 # config.py
 
-from fsw.setting import Setting
+from fsw.numerical_setting import Setting
 
 MODES = ['Spectrum','Real-Time Spectrum','Zero Span']
 

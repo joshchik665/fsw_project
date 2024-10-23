@@ -25,6 +25,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(title)
         
         
+        
         set_setting_layout = QHBoxLayout()
         
         set_setting_label = QLabel("Set Setting: ")
@@ -44,6 +45,7 @@ class MainWindow(QMainWindow):
         set_setting_layout.addWidget(self.set_status_label)
         
         layout.addLayout(set_setting_layout)
+        
         
         
         verify_setting_layout = QHBoxLayout()
@@ -67,6 +69,7 @@ class MainWindow(QMainWindow):
         layout.addLayout(verify_setting_layout)
         
         
+        
         set_mode_layout = QHBoxLayout()
         
         set_mode_label = QLabel("Set Mode: ")
@@ -82,6 +85,7 @@ class MainWindow(QMainWindow):
         layout.addLayout(set_mode_layout)
         
         
+        
         write_layout = QHBoxLayout()
         
         write_label = QLabel("Write: ")
@@ -95,6 +99,7 @@ class MainWindow(QMainWindow):
         write_layout.addWidget(self.write_button)
         
         layout.addLayout(write_layout)
+        
         
         
         query_layout = QHBoxLayout()
@@ -113,6 +118,7 @@ class MainWindow(QMainWindow):
         query_layout.addWidget(self.query_response)
         
         layout.addLayout(query_layout)
+        
         
         
         container = QWidget()

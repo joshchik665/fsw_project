@@ -2,26 +2,31 @@
 
 from fsw.device import RsFswInstrument
 import common.utilities as util
-from fsw.setting import Setting
+from typing import Union
+from fsw.numerical_setting import NumericalSetting
+from fsw.mode_setting import ModeSetting
 import json
 
 class SettingsManager(RsFswInstrument):
-    def __init__(self, ip_address,default_config_filepath):
-        super().__init__(ip_address)
+    def __init__(self, ip_address, default_config_filepath, visa_timeout, opc_timeout):
+        super().__init__(ip_address, visa_timeout, opc_timeout)
         
         self.current_mode = 'Spectrum' # Default mode on startup
         
         with open(default_config_filepath, 'r') as file:
             config = json.load(file)
         
-        self.settings = {name: Setting.from_dict(name,**setting) for name, setting in config.items()}
+        self.numerical_settings = {name: NumericalSetting.from_dict(name,**setting) for name, setting in config["Numerical Settings"].items()}
+        self.mode_settings = {name: ModeSetting.from_dict(name,**setting) for name, setting in config["Mode Settings"].items()}
+        
+        self.settings = self.mode_settings | self.numerical_settings
     
     
     def setting_known(self, setting_name:str):
         return setting_name in self.settings.keys()
     
     
-    def get_setting_object(self, setting_name:str) -> Setting:
+    def get_setting_object(self, setting_name:str) -> Union[NumericalSetting, ModeSetting]:
         return self.settings[setting_name]
     
     
@@ -29,55 +34,58 @@ class SettingsManager(RsFswInstrument):
         return {name: self.set_setting(name, value) for name, value in settings.items()}
     
     
-    def set_setting(self, setting_name:str, value:str) -> str:
+    def set_setting(self, setting_name:str, value:str) -> tuple[bool, str]:
         if not self.setting_known(setting_name):
-            return 'Setting Unknown'
+            return False, 'Setting Unknown'
         
         setting = self.settings[setting_name]
         
         if not setting.is_applicable(self.current_mode):
-            return 'Setting is not applicable'
+            return False, 'Setting is not applicable'
         
         if not setting.check_if_valid_value(value):
-            return 'Value is not valid for this setting'
+            return False, 'Value is not valid for this setting'
         
-        command_list = setting.get_write_scpi_command(value)
+        command_list = setting.get_write_scpi_command(value).split(";")
         
         try:
             for command in command_list:
                 self.write_command(command)
             setting.current_value = value
         except Exception as e:
-            return f'Error writing setting: {str(e).split(',')[1]}'
+            return False, f'Error writing setting: {str(e).split(',')[1]}'
         
-        return 'Set sucessful'
+        return True, 'Set sucessful'
     
     
     def verify_all_settings(self, settings:list) -> dict:
         return {name: self.verify_setting(name) for name in settings}
     
     
-    def verify_setting(self, setting_name:str,value) -> str:
+    def verify_setting(self, setting_name:str) -> tuple[bool, str]:
         if not self.setting_known(setting_name):
-            return 'Setting Unknown'
-        
+            return False, 'Setting Unknown'
+
         setting = self.settings[setting_name]
         
         if not setting.is_applicable(self.current_mode):
-            return 'Setting is not applicable'
+            return False, 'Setting is not applicable'
         
-        command = f"{setting.options[value]}?"
+        command = setting.get_query_scpi_command()
         
         try:
             response = self.query_command(command)
         except Exception as e:
-            return f'Error querying setting: {str(e).split(',')[1]}'
+            return False, f'Error querying setting: {str(e).split(',')[1]}'
         
-        if util.compare_number_strings(setting.current_value, response):
-            return 'Setting verified'
+        if util.is_number(response):
+            if util.compare_number_strings(setting.current_value, response):
+                return True, 'Setting verified'
+        elif setting.current_value == response:
+            return True, 'Setting verified'
         else:
             setting.current_value = response
-            return f'Setting set incorrect:{response}'
+            return False, f'Setting set incorrect:{response}'
     
     
     def set_mode(self, mode:str) -> None:
