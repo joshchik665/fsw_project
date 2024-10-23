@@ -19,10 +19,10 @@ class IpEntryDialog(QDialog):
         my_icon.addFile('images\\crc_icon.ico')
         self.setWindowIcon(my_icon)
         
-        self.set_widgets()
+        self._set_widgets()
     
     
-    def set_widgets(self) -> None:
+    def _set_widgets(self) -> None:
         self.layout = QVBoxLayout()
         layout1 = QHBoxLayout()
         self.setLayout(self.layout)
