@@ -101,20 +101,6 @@ class ModeSuper(QWidget):
         self.instrument.set_mode(self.mode)
     
     
-    def set_tab(self, mode:str) -> None:
-        self.tab_widget.setCurrentIndex(self.tab_indicies[mode])
-    
-    
-    def create_place_sweep_box_widget(self, layout):
-        self.sweep_box = SweepBox(self.instrument, self)
-        layout.addWidget(self.sweep_box)
-    
-    
-    def create_place_detector_box_widget(self, layout):
-        self.detector_box = DetectorBox(self.instrument, self.mode, self)
-        layout.addWidget(self.detector_box)
-    
-    
     def create_setting_box_widget(self, setting_name:str) -> None:
         setting = self.instrument.get_setting_object(setting_name)
         
