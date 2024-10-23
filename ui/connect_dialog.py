@@ -10,6 +10,7 @@ from PySide6.QtGui import QIcon, QDoubleValidator
 import json
 import common.utilities as util
 
+
 class IpEntryDialog(QDialog):
     def __init__(self):
         super().__init__()
@@ -18,6 +19,10 @@ class IpEntryDialog(QDialog):
         my_icon.addFile('images\\crc_icon.ico')
         self.setWindowIcon(my_icon)
         
+        self.set_widgets()
+    
+    
+    def set_widgets(self) -> None:
         self.layout = QVBoxLayout()
         layout1 = QHBoxLayout()
         self.setLayout(self.layout)
@@ -66,7 +71,7 @@ class IpEntryDialog(QDialog):
         self.layout.addLayout(layout1)
     
     
-    def get_timeouts(self):
+    def get_timeouts(self) -> None:
         self.visa_timeout = self.visa_entry.text()
         self.opc_timeout = self.opc_entry.text()
         
@@ -77,7 +82,7 @@ class IpEntryDialog(QDialog):
             self.opc_timeout = 3000
     
     
-    def load_settings(self):
+    def load_settings(self) -> None:
         filepath = util.open_file_dialog('Open JSON file', '.json', self)
         
         self.get_timeouts()
@@ -89,7 +94,7 @@ class IpEntryDialog(QDialog):
             self.accept()
     
     
-    def on_confirm(self):
+    def on_confirm(self) -> None:
         ip_address = self.ip_input.text()
         
         self.get_timeouts()
