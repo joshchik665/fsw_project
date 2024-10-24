@@ -4,10 +4,10 @@ from PySide6.QtWidgets import (
     QTabWidget,
 )
 from PySide6.QtCore import Signal
-from ui.mode_spec import ModeSpec
-from ui.mode_rts import ModeRts
-from ui.mode_zero_span import ModeZs
-from fsw.settings_manager import SettingsManager
+from ui.fsw_gui.mode_spec import ModeSpec
+from ui.fsw_gui.mode_rts import ModeRts
+from ui.fsw_gui.mode_zero_span import ModeZs
+from fsw.device.settings_manager import SettingsManager
 
 
 class MainWindow(QMainWindow):

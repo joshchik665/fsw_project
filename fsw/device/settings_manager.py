@@ -1,10 +1,10 @@
 # settings_manager.py
 
-from fsw.device import RsFswInstrument
+from fsw.device.device import RsFswInstrument
 import common.utilities as util
 from typing import Union
-from fsw.numerical_setting import NumericalSetting
-from fsw.mode_setting import ModeSetting
+from fsw.setting_objects.numerical_setting import NumericalSetting
+from fsw.setting_objects.mode_setting import ModeSetting
 import json
 
 class SettingsManager(RsFswInstrument):

@@ -6,26 +6,27 @@ from PySide6.QtWidgets import (
     QPushButton,
     QLineEdit,
 )
-from ui.mode_super import ModeSuper
-from ui.common_widgets import SettingBox, SpectralWidget
+from ui.common_gui.mode_super import ModeSuper
+from ui.common_gui.common_widgets import SettingBox, SpectralWidget
 
-class ModeZs(ModeSuper):
+class ModeSpec(ModeSuper):
     def __init__(self, device, parent=None):
-        super().__init__('Zero-Span',device, parent)
-        
-        
+        super().__init__('Spectrum', device, parent)
         
         self.setting_layout = QVBoxLayout()
         
         self.create_place_setting_box_widget("Center Frequency", self.setting_layout)
         self.create_place_setting_box_widget("Reference Level", self.setting_layout)
+        self.create_place_setting_box_widget("Frequency Span", self.setting_layout)
         self.create_place_setting_box_widget("Resolution Bandwidth", self.setting_layout)
         self.create_place_setting_box_widget("Video Bandwidth", self.setting_layout)
-        self.create_place_setting_box_widget("Attenuation", self.setting_layout)
         self.create_place_setting_box_widget("Sweep Time", self.setting_layout)
+        self.create_place_setting_box_widget("Number of Points", self.setting_layout)
+        self.create_place_setting_box_widget("Attenuation", self.setting_layout)
         
         self.create_place_setting_box_widget("Detector", self.setting_layout)
         self.create_place_setting_box_widget("Sweep", self.setting_layout)
+        self.create_place_setting_box_widget("Sweep Time Auto", self.setting_layout)
         self.create_place_setting_box_widget("Attenuation Auto", self.setting_layout)
         self.create_place_setting_box_widget("Pre-Amp Value", self.setting_layout)
         self.create_place_setting_box_widget("Pre-Amp Mode", self.setting_layout)
@@ -55,9 +56,8 @@ class ModeZs(ModeSuper):
         self.graph_layout.addWidget(self.sweep_button)
         
         self.content_layout.addLayout(self.graph_layout, 0 ,1)
-    
-    
-    def set_mode(self):
-        super().set_mode()
-        self.instrument.set_setting('Frequency Span', '0')
-        
+
+
+
+
+

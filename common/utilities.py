@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QFileDialog
-import ui.message_boxes as mb
+import ui.common_gui.message_boxes as mb
 import math
 
 def open_file_dialog(prompt:str, filetype:str, parent = None) -> str:

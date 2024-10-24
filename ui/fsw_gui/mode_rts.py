@@ -6,22 +6,23 @@ from PySide6.QtWidgets import (
     QPushButton,
     QLineEdit,
 )
-from ui.mode_super import ModeSuper
-from ui.common_widgets import SettingBox, SpectralWidget
+from ui.common_gui.mode_super import ModeSuper
+from ui.common_gui.common_widgets import SettingBox, SpectralWidget
 
-class ModeSpec(ModeSuper):
-    def __init__(self, device, parent=None):
-        super().__init__('Spectrum', device, parent)
+class ModeRts(ModeSuper):
+    def __init__(self,device, parent=None):
+        super().__init__('Real-Time Spectrum',device, parent)
+        
         
         self.setting_layout = QVBoxLayout()
         
         self.create_place_setting_box_widget("Center Frequency", self.setting_layout)
+        self.create_place_setting_box_widget("Dwell Time", self.setting_layout)
+        self.create_place_setting_box_widget("Memory Depth", self.setting_layout)
         self.create_place_setting_box_widget("Reference Level", self.setting_layout)
         self.create_place_setting_box_widget("Frequency Span", self.setting_layout)
         self.create_place_setting_box_widget("Resolution Bandwidth", self.setting_layout)
-        self.create_place_setting_box_widget("Video Bandwidth", self.setting_layout)
         self.create_place_setting_box_widget("Sweep Time", self.setting_layout)
-        self.create_place_setting_box_widget("Number of Points", self.setting_layout)
         self.create_place_setting_box_widget("Attenuation", self.setting_layout)
         
         self.create_place_setting_box_widget("Detector", self.setting_layout)
@@ -56,8 +57,3 @@ class ModeSpec(ModeSuper):
         self.graph_layout.addWidget(self.sweep_button)
         
         self.content_layout.addLayout(self.graph_layout, 0 ,1)
-
-
-
-
-

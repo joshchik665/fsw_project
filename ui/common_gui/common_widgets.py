@@ -11,13 +11,13 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import QTimer
 from PySide6.QtGui import QDoubleValidator
-from fsw.numerical_setting import NumericalSetting
-from fsw.mode_setting import ModeSetting
+from fsw.setting_objects.numerical_setting import NumericalSetting
+from fsw.setting_objects.mode_setting import ModeSetting
 import common.utilities as util
 from typing import Union
 import pyqtgraph as pg
 import numpy as np
-from fsw.settings_manager import SettingsManager
+from fsw.device.settings_manager import SettingsManager
 
 
 class SettingBox(QWidget):

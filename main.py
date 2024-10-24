@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QApplication, QDialog
-from ui.main_window import MainWindow
-from ui.connect_dialog import IpEntryDialog
+from ui.common_gui.main_window import MainWindow
+from ui.common_gui.connect_dialog import IpEntryDialog
 import sys
 
 def load_stylesheet(filename):
