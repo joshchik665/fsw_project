@@ -2,6 +2,7 @@ from PySide6.QtWidgets import (
     QWidget, 
     QVBoxLayout, 
     QHBoxLayout,
+    QGridLayout,
     QLabel,
     QPushButton,
     QLineEdit,
@@ -47,7 +48,7 @@ class ModeSuper(QWidget):
         
         self.title_layout = QHBoxLayout()
         self.header_layout = QHBoxLayout()
-        self.content_layout = QVBoxLayout()
+        self.content_layout = QGridLayout()
         
         self.window_layout.addLayout(self.title_layout)
         self.window_layout.addLayout(self.header_layout)

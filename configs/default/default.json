@@ -5,7 +5,7 @@
             "applicable_modes": [
                 "Spectrum",
                 "Real-Time Spectrum",
-                "Zero Span"
+                "Zero-Span"
             ],
             "default_value": "21500000000",
             "write_command": "FREQ:CENT",
@@ -25,7 +25,7 @@
             "applicable_modes": [
                 "Spectrum",
                 "Real-Time Spectrum",
-                "Zero Span"
+                "Zero-Span"
             ],
             "default_value": "0",
             "write_command": "DISP:WIND:TRAC:Y:SCAL:RLEV",
@@ -35,7 +35,8 @@
             "measure": "frequency",
             "applicable_modes": [
                 "Spectrum",
-                "Real-Time Spectrum"
+                "Real-Time Spectrum",
+                "Zero-Span"
             ],
             "default_value": "43000000000",
             "write_command": "FREQ:SPAN",
@@ -46,7 +47,7 @@
             "applicable_modes": [
                 "Spectrum",
                 "Real-Time Spectrum",
-                "Zero Span"
+                "Zero-Span"
             ],
             "default_value": "3000000",
             "write_command": "BAND",
@@ -57,7 +58,7 @@
             "applicable_modes": [
                 "Spectrum",
                 "Real-Time Spectrum",
-                "Zero Span"
+                "Zero-Span"
             ],
             "default_value": "0.172",
             "write_command": "SENS:SWE:TIME",
@@ -76,7 +77,7 @@
             "measure": "number",
             "applicable_modes": [
                 "Spectrum",
-                "Zero Span"
+                "Zero-Span"
             ],
             "default_value": "1001",
             "write_command": "SENS:SWE:WIND1:POIN",
@@ -86,7 +87,7 @@
             "measure": "frequency",
             "applicable_modes": [
                 "Spectrum",
-                "Zero Span"
+                "Zero-Span"
             ],
             "default_value": "3000000",
             "write_command": "BAND:VID",
@@ -97,9 +98,9 @@
         "applicable_modes": [
             "Spectrum",
             "Real-Time Spectrum",
-            "Zero Span"
+            "Zero-Span"
         ],
-        "default_value": "0",
+        "default_value": "10",
         "write_command": "INP:ATT",
         "query_command": "INP:ATT?"
         }
@@ -109,7 +110,7 @@
             "applicable_modes": [
                 "Spectrum",
                 "Real-Time Spectrum",
-                "Zero Span"
+                "Zero-Span"
             ],
             "default_value": "0",
             "write_commands": {
@@ -122,7 +123,7 @@
             "applicable_modes": [
                 "Spectrum",
                 "Real-Time Spectrum",
-                "Zero Span"
+                "Zero-Span"
             ],
             "default_value": "APE",
             "write_commands": {
@@ -139,7 +140,7 @@
             "applicable_modes": [
                 "Spectrum",
                 "Real-Time Spectrum",
-                "Zero Span"
+                "Zero-Span"
             ],
             "default_value": "0",
             "write_commands": {
@@ -148,25 +149,37 @@
             },
             "query_command": "INP:ATT:AUTO?"
         },
-        "Pre-Amp": {
+        "Pre-Amp Value": {
             "applicable_modes": [
                 "Spectrum",
                 "Real-Time Spectrum",
-                "Zero Span"
+                "Zero-Span"
+            ],
+            "default_value": "30",
+            "write_commands": {
+                "15": "INP:GAIN:VAL 15",
+                "30": "INP:GAIN:VAL 30"
+            },
+            "query_command": "INP:GAIN:VAL?"
+        },
+        "Pre-Amp Mode": {
+            "applicable_modes": [
+                "Spectrum",
+                "Real-Time Spectrum",
+                "Zero-Span"
             ],
             "default_value": "0",
             "write_commands": {
-                "0": "INP:GAIN:STAT OFF;INP:GAIN:VAL 0",
-                "15": "INP:GAIN:STAT ON;INP:GAIN:VAL 15",
-                "30": "INP:GAIN:STAT ON;INP:GAIN:VAL 30"
+                "0": "INP:GAIN:STAT OFF",
+                "1": "INP:GAIN:STAT ON"
             },
-            "query_command": "INP:GAIN:VAL?"
+            "query_command": "INP:GAIN:STAT?"
         },
         "Sweep": {
             "applicable_modes": [
                 "Spectrum",
                 "Real-Time Spectrum",
-                "Zero Span"
+                "Zero-Span"
             ],
             "default_value": "1",
             "write_commands": {

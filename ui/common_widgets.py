@@ -150,6 +150,7 @@ class SpectralWidget(QWidget):
         super().__init__()
         
         self.device = device
+        self.mode = self.device.current_mode
         
         layout = QVBoxLayout()
         self.setLayout(layout)
@@ -160,9 +161,6 @@ class SpectralWidget(QWidget):
         layout.addWidget(self.plot_widget)
         
         self.plot_widget.setBackground('w')
-        self.plot_widget.setTitle("Trace")
-        self.plot_widget.setLabel('left', 'Power (dBm)')
-        self.plot_widget.setLabel('bottom', 'Frequency (Hz)')
         
         self.plot_line = self.plot_widget.plot(pen='b')
         
@@ -173,15 +171,31 @@ class SpectralWidget(QWidget):
     def update_plot(self):
         num_points = int(util.remove_trailing_zeros(self.device.settings['Number of Points'].current_value))
         
-        center_freq = float(self.device.settings['Center Frequency'].current_value)
-        freq_span = float(self.device.settings['Frequency Span'].current_value)
+        self.mode = self.device.current_mode
         
-        start_freq = center_freq - (freq_span / 2)
-        end_freq = center_freq + (freq_span / 2)
-        
-        self.plot_widget.setXRange(start_freq,end_freq)
-        
-        x = [start_freq + (i * (freq_span / (num_points - 1))) for i in range(num_points)]
+        if self.mode == "Zero-Span":
+            sweep_time = float(self.device.settings['Sweep Time'].current_value)
+            x = [i * (sweep_time / (num_points - 1)) for i in range(num_points)]
+            
+            self.plot_widget.setXRange(0,sweep_time)
+            
+            self.plot_widget.setTitle("Zero-Span Trace (Power vs. Time)")
+            self.plot_widget.setLabel('left', 'Power (dBm)')
+            self.plot_widget.setLabel('bottom', 'Time (s)')
+        else:
+            center_freq = float(self.device.settings['Center Frequency'].current_value)
+            freq_span = float(self.device.settings['Frequency Span'].current_value)
+            
+            start_freq = center_freq - (freq_span / 2)
+            end_freq = center_freq + (freq_span / 2)
+            
+            self.plot_widget.setXRange(start_freq,end_freq)
+            
+            x = [start_freq + (i * (freq_span / (num_points - 1))) for i in range(num_points)]
+            
+            self.plot_widget.setTitle("Spectral Trace (Power vs. Frequency)")
+            self.plot_widget.setLabel('left', 'Power (dBm)')
+            self.plot_widget.setLabel('bottom', 'Frequency (Hz)')
         
         y = self.device.get_trace()
         
