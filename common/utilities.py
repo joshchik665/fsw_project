@@ -7,7 +7,7 @@ def open_file_dialog(prompt:str, filetype:str, parent = None) -> str:
         '.json': 'JSON Files (*.json)',
     }
     
-    file_path, __ = QFileDialog.getOpenFileName(parent,prompt,'',filetypes[filetype])
+    file_path, __ = QFileDialog.getOpenFileName(parent,prompt,'configs',filetypes[filetype])
     
     if not file_path:
         return ''
@@ -23,7 +23,7 @@ def save_file_dialog(prompt:str, filetype:str, parent = None) -> str:
         '.json': 'JSON Files (*.json)',
     }
     
-    file_path, __ = QFileDialog.getSaveFileName(parent,prompt,'',filetypes[filetype])
+    file_path, __ = QFileDialog.getSaveFileName(parent,prompt,'configs',filetypes[filetype])
     
     return file_path
     

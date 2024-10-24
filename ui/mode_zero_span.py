@@ -30,6 +30,8 @@ class ModeZs(ModeSuper):
         self.create_place_setting_box_widget("Pre-Amp Value", self.setting_layout)
         self.create_place_setting_box_widget("Pre-Amp Mode", self.setting_layout)
         
+        self.setting_layout.addStretch(1)
+        
         self.apply_button = QPushButton("Apply All Settings")
         self.apply_button.pressed.connect(self.apply)
         self.setting_layout.addWidget(self.apply_button)
@@ -41,6 +43,8 @@ class ModeZs(ModeSuper):
         
         self.graph = SpectralWidget(self.instrument)
         self.graph_layout.addWidget(self.graph)
+        
+        self.graph_layout.addStretch(1)
         
         self.abort_button = QPushButton("Abort")
         self.abort_button.pressed.connect(self.instrument.abort)

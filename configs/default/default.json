@@ -142,7 +142,7 @@
                 "Real-Time Spectrum",
                 "Zero-Span"
             ],
-            "default_value": "0",
+            "default_value": "1",
             "write_commands": {
                 "1": "INP:ATT:AUTO ON",
                 "0": "INP:ATT:AUTO OFF"
