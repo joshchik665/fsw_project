@@ -8,7 +8,7 @@ from PySide6.QtWidgets import (
 ) 
 from PySide6.QtGui import QIcon, QDoubleValidator
 import json
-import common.utilities as util
+from ui.common.utilities import open_file_dialog
 
 
 class IpEntryDialog(QDialog):
@@ -90,7 +90,7 @@ class IpEntryDialog(QDialog):
     
     
     def load_settings(self) -> None:
-        filepath = util.open_file_dialog('Open JSON file', '.json', self)
+        filepath = open_file_dialog('Open JSON file', '.json', self)
         
         self.get_timeouts()
         

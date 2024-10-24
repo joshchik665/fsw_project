@@ -16,7 +16,7 @@ from PySide6.QtCore import (
     Slot,
 )
 from ui.common_gui.common_widgets import SettingBox
-import common.utilities as util
+from ui.common.utilities import save_file_dialog, open_file_dialog
 import json
 import sys
 
@@ -159,7 +159,7 @@ class ModeSuper(QWidget):
     
     
     def load(self) -> None:
-        filepath = util.open_file_dialog('Open JSON file', '.json', self)
+        filepath = open_file_dialog('Open JSON file', '.json', self)
         
         if filepath:
             with open(filepath, 'r') as file:
@@ -177,7 +177,7 @@ class ModeSuper(QWidget):
     
     
     def save(self) -> None:
-        filepath = util.save_file_dialog('Save JSON file', '.json', self)
+        filepath = save_file_dialog('Save JSON file', '.json', self)
         
         if filepath:
             with open(filepath, 'w') as file:

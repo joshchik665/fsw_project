@@ -24,7 +24,7 @@ class MainWindow(QMainWindow):
         
         self.instrument = SettingsManager(
             config['ip_address'],
-            r"configs\default\default.json", 
+            r"configs\fsw_settings\default.json", 
             visa_timeout, 
             opc_timeout
             )
@@ -83,3 +83,10 @@ class MainWindow(QMainWindow):
         self._programmatic_change = True
         self.tab_widget.setCurrentIndex(index)
         self._programmatic_change = False
+    
+    
+    def close(self, *args):
+        self.instrument.set_setting('Sweep', '0')
+        self.instrument.close()
+        print("Closed Session")
+        return args

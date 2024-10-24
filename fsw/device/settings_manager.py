@@ -1,7 +1,7 @@
 # settings_manager.py
 
 from fsw.device.device import RsFswInstrument
-import common.utilities as util
+from fsw.common.common_functions import is_number, compare_number_strings
 from typing import Union
 from fsw.setting_objects.numerical_setting import NumericalSetting
 from fsw.setting_objects.mode_setting import ModeSetting
@@ -79,7 +79,7 @@ class SettingsManager(RsFswInstrument):
         except Exception as e:
             return False, f'Error querying setting: {str(e).split(',')[1]}'
         
-        if util.is_number(response) and util.compare_number_strings(setting.current_value, response):
+        if is_number(response) and compare_number_strings(setting.current_value, response):
             return True, 'Setting verified'
         elif setting.current_value == response:
             return True, 'Setting verified'

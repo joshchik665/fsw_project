@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import Optional, Any
-import common.utilities as util
+from fsw.common.common_functions import is_number
 
 
 @dataclass
@@ -39,4 +39,4 @@ class NumericalSetting:
     
     
     def check_if_valid_value(self, value: Any) -> bool:
-        return util.is_number(value)
+        return is_number(value)

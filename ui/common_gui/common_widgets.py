@@ -13,7 +13,7 @@ from PySide6.QtCore import QTimer
 from PySide6.QtGui import QDoubleValidator
 from fsw.setting_objects.numerical_setting import NumericalSetting
 from fsw.setting_objects.mode_setting import ModeSetting
-import common.utilities as util
+from ui.common.utilities import remove_trailing_zeros
 from typing import Union
 import pyqtgraph as pg
 from fsw.device.settings_manager import SettingsManager
@@ -122,7 +122,7 @@ class SettingBox(QWidget):
             value = value / self.units[unit]
             
             text = f"{value:.4f}"
-            text = util.remove_trailing_zeros(text)
+            text = remove_trailing_zeros(text)
             
             self.value_entry.setText(text)
             
@@ -168,7 +168,7 @@ class SpectralWidget(QWidget):
         self.timer.start(1000)
         
     def update_plot(self):
-        num_points = int(util.remove_trailing_zeros(self.device.settings['Number of Points'].current_value))
+        num_points = int(remove_trailing_zeros(self.device.settings['Number of Points'].current_value))
         
         self.mode = self.device.current_mode
         

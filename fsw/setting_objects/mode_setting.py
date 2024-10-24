@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from typing import Optional, Any, Dict
-import common.utilities as util
 
 
 @dataclass

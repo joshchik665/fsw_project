@@ -11,7 +11,7 @@ def main():
     app = QApplication(sys.argv)
     
     # Load and set stylesheet
-    stylesheet = load_stylesheet("styles/style.qss")
+    stylesheet = load_stylesheet(r"styles\style.qss")
     app.setStyleSheet(stylesheet)
     
     ip_dialog = IpEntryDialog()
@@ -21,7 +21,7 @@ def main():
         opc_timeout = ip_dialog.opc_timeout
         window = MainWindow(config, visa_timeout, opc_timeout)
         window.show()
-        sys.exit(app.exec())
+        sys.exit(window.close(app.exec()))
     else:
         sys.exit()
 
