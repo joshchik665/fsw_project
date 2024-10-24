@@ -3,7 +3,6 @@ from PySide6.QtWidgets import (
     QMainWindow,
     QTabWidget,
 )
-from PySide6.QtCore import Signal
 from ui.fsw_gui.mode_spec import ModeSpec
 from ui.fsw_gui.mode_rts import ModeRts
 from ui.fsw_gui.mode_zero_span import ModeZs

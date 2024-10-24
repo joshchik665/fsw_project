@@ -1,13 +1,9 @@
 from PySide6.QtWidgets import (
-    QWidget,
     QVBoxLayout,
-    QHBoxLayout,
-    QLabel,
     QPushButton,
-    QLineEdit,
 )
 from ui.common_gui.mode_super import ModeSuper
-from ui.common_gui.common_widgets import SettingBox, SpectralWidget
+from ui.common_gui.common_widgets import SpectralWidget
 
 class ModeRts(ModeSuper):
     def __init__(self,device, parent=None):

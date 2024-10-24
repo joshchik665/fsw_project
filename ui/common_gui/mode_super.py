@@ -15,7 +15,7 @@ from PySide6.QtCore import (
     Qt,
     Slot,
 )
-from ui.common_gui.common_widgets import SettingBox, SweepBox, DetectorBox
+from ui.common_gui.common_widgets import SettingBox
 import common.utilities as util
 import json
 import sys
