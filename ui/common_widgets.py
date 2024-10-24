@@ -9,11 +9,15 @@ from PySide6.QtWidgets import (
     QButtonGroup,
     QRadioButton,
 )
+from PySide6.QtCore import QTimer
 from PySide6.QtGui import QDoubleValidator
 from fsw.numerical_setting import NumericalSetting
 from fsw.mode_setting import ModeSetting
 import common.utilities as util
 from typing import Union
+import pyqtgraph as pg
+import numpy as np
+from fsw.settings_manager import SettingsManager
 
 
 class SettingBox(QWidget):
@@ -140,6 +144,48 @@ class SettingBox(QWidget):
         else:
             widget.setStyleSheet("background-color: #F86A6B")
             widget.setToolTip(message)
+
+class SpectralWidget(QWidget):
+    def __init__(self, device: SettingsManager):
+        super().__init__()
+        
+        self.device = device
+        
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+        
+        self.plot_widget = pg.PlotWidget()
+        self.plot_widget.setFixedSize(500,400)
+        self.plot_widget.setYRange(-100, 10)
+        layout.addWidget(self.plot_widget)
+        
+        self.plot_widget.setBackground('w')
+        self.plot_widget.setTitle("Trace")
+        self.plot_widget.setLabel('left', 'Power (dBm)')
+        self.plot_widget.setLabel('bottom', 'Frequency (Hz)')
+        
+        self.plot_line = self.plot_widget.plot(pen='b')
+        
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_plot)
+        self.timer.start(1000)
+        
+    def update_plot(self):
+        num_points = int(util.remove_trailing_zeros(self.device.settings['Number of Points'].current_value))
+        
+        center_freq = float(self.device.settings['Center Frequency'].current_value)
+        freq_span = float(self.device.settings['Frequency Span'].current_value)
+        
+        start_freq = center_freq - (freq_span / 2)
+        end_freq = center_freq + (freq_span / 2)
+        
+        self.plot_widget.setXRange(start_freq,end_freq)
+        
+        x = [start_freq + (i * (freq_span / (num_points - 1))) for i in range(num_points)]
+        
+        y = self.device.get_trace()
+        
+        self.plot_line.setData(x, y)
 
 
 class SweepBox(QWidget):

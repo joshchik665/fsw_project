@@ -7,7 +7,7 @@ from PySide6.QtWidgets import (
     QLineEdit,
 )
 from ui.mode_super import ModeSuper
-from ui.common_widgets import SettingBox
+from ui.common_widgets import SettingBox, SpectralWidget
 
 class ModeSpec(ModeSuper):
     def __init__(self, device, parent=None):
@@ -27,6 +27,9 @@ class ModeSpec(ModeSuper):
         self.apply_button = QPushButton("Apply All Settings")
         self.apply_button.pressed.connect(self.apply)
         self.content_layout.addWidget(self.apply_button)
+        
+        self.graph = SpectralWidget(self.instrument)
+        self.content_layout.addWidget(self.graph)
 
 
 

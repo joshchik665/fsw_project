@@ -39,8 +39,6 @@ class MainWindow(QMainWindow):
             current_tab_widget.load_settings(config)
         else:
             current_tab_widget.verify()
-            
-            
     
     
     def _set_title_and_window(self):

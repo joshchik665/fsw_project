@@ -17,7 +17,7 @@ from PySide6.QtCore import (
 from ui.common_widgets import SettingBox, SweepBox, DetectorBox
 import common.utilities as util
 import json
-
+import sys
 
 class ModeSuper(QWidget):
     def __init__(self, mode, device, parent):
@@ -115,17 +115,17 @@ class ModeSuper(QWidget):
         layout.addWidget(self.settings_widgets[setting_name])
     
     
-    def verify_all_settings(self):
+    def verify_all_settings(self) -> dict:
         setting_names = list(self.settings_widgets.keys())
         return self.instrument.verify_all_settings(setting_names)
     
     
-    def apply_all_settings(self):
+    def apply_all_settings(self) -> dict:
         setting_names_values = {key: setting.get_value() for key, setting in self.settings_widgets.items()}
         return self.instrument.set_all_settings(setting_names_values)
     
     
-    def apply(self):
+    def apply(self) -> None:
         all_set_results = self.apply_all_settings()
         all_verify_results = self.verify_all_settings()
         
@@ -143,7 +143,7 @@ class ModeSuper(QWidget):
             widget.set_value(current_value)
     
     
-    def verify(self):
+    def verify(self) -> None:
         all_verify_results = self.verify_all_settings()
         
         for name, (result, status) in all_verify_results.items():
@@ -158,17 +158,17 @@ class ModeSuper(QWidget):
             widget.set_value(current_value)
     
     
-    def load(self):
+    def load(self) -> None:
         filepath = util.open_file_dialog('Open JSON file', '.json', self)
         
         if filepath:
             with open(filepath, 'r') as file:
                 config = json.load(file)
             
-            self.load_settings(self, config)
+            self.load_settings(config)
     
     
-    def load_settings(self, config):
+    def load_settings(self, config) -> None:
             self.main_window.change_tab_programmatically(self.tab_indicies[config['mode']])
             
             self.instrument.set_all_settings(config['data'])
@@ -176,7 +176,7 @@ class ModeSuper(QWidget):
             self.tab_widget.widget(self.tab_indicies[config['mode']]).verify()
     
     
-    def save(self):
+    def save(self) -> None:
         filepath = util.save_file_dialog('Save JSON file', '.json', self)
         
         if filepath:
@@ -189,10 +189,5 @@ class ModeSuper(QWidget):
                 config['data'] = current_settings
                 
                 json.dump(config, file, indent=4)
-
-
-
-
-
 
 
