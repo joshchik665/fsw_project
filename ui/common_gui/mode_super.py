@@ -52,7 +52,6 @@ class ModeSuper(QWidget):
         
         self.window_layout.addLayout(self.title_layout)
         self.window_layout.addLayout(self.header_layout)
-        self.window_layout.addStretch(1)
         self.window_layout.addLayout(self.content_layout)
     
     

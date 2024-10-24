@@ -112,7 +112,7 @@
                 "Real-Time Spectrum",
                 "Zero-Span"
             ],
-            "default_value": "0",
+            "default_value": "1",
             "write_commands": {
                 "1": "SENS:SWE:TIME:AUTO ON",
                 "0": "SENS:SWE:TIME:AUTO OFF"
