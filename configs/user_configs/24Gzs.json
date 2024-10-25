@@ -2,7 +2,7 @@
     "ip_address": "192.168.2.226",
     "mode": "Zero-Span",
     "data": {
-        "Center Frequency": "2420000000.0",
+        "Center Frequency": "2440000000.0",
         "Reference Level": "0.0",
         "Resolution Bandwidth": "3000000.0",
         "Video Bandwidth": "3000000.0",

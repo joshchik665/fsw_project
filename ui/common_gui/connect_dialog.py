@@ -11,6 +11,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QIcon, QDoubleValidator
 import json
 from ui.common.utilities import open_file_dialog
+from pathlib import Path
 
 
 class IpEntryDialog(QDialog):
@@ -112,12 +113,12 @@ class IpEntryDialog(QDialog):
     def load_settings(self) -> None:
         """Prompts the user to select a file to load from, stores the config of the file, and closes the window
         """
-        filepath = open_file_dialog('Open JSON file', '.json', self)
+        filepath = Path(open_file_dialog('Open JSON file', '.json', self))
         
         self.get_timeouts()
         
-        if filepath:
-            with open(filepath, 'r') as file:
+        if filepath.exists():
+            with filepath.open('r') as file:
                 self.config = json.load(file)
             
             self.accept()
