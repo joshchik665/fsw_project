@@ -42,7 +42,7 @@ class ModeZs(ModeSuper):
         
         self.graph_layout = QVBoxLayout()
         
-        self.graph = SpectralWidget(self.instrument)
+        self.graph = SpectralWidget(self.instrument, self.mode)
         self.graph_layout.addWidget(self.graph)
         
         self.graph_layout.addStretch(1)

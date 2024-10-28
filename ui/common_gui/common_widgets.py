@@ -185,11 +185,11 @@ class SettingBox(QWidget):
 
 
 class SpectralWidget(QWidget):
-    def __init__(self, device: SettingsManager):
+    def __init__(self, device: SettingsManager, mode: str):
         super().__init__()
         
         self.device = device
-        self.mode = self.device.current_mode
+        self.mode = mode
         
         layout = QVBoxLayout()
         self.setLayout(layout)
