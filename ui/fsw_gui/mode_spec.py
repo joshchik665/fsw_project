@@ -10,18 +10,6 @@ class ModeSpec(ModeSuper):
     def __init__(self, device, parent=None):
         super().__init__('Spectrum', device, parent)
         
-        apply_button_layout = QVBoxLayout()
-        
-        heading = QLabel(f"Settings for mode: {self.mode}")
-        heading.setObjectName("heading")
-        apply_button_layout.addWidget(heading)
-        
-        self.apply_button = QPushButton("Apply All Settings")
-        self.apply_button.pressed.connect(self.apply)
-        apply_button_layout.addWidget(self.apply_button)
-        
-        self.content_layout.addLayout(apply_button_layout, 0, 0, 1, 2)
-        
         self.setting_layout1 = QVBoxLayout()
         self.setting_layout2 = QVBoxLayout()
         

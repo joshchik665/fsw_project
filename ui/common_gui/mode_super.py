@@ -51,7 +51,7 @@ class ModeSuper(QWidget):
         # Functions that set the layout, title and header
         self._set_layout()
         self._set_title()
-        self._set_header()
+        self._set_common_widgets()
         
         self.setLayout(self.window_layout)
     
@@ -88,29 +88,35 @@ class ModeSuper(QWidget):
         self.title_layout.addLayout(layout)
     
     
-    def _set_header(self) -> None:
+    def _set_common_widgets(self) -> None:
         """Create the layouts for this widget to use"""
+        layout1 = QVBoxLayout()
+        layout2 = QHBoxLayout()
+        
+        heading = QLabel("Settings ")
+        heading.setObjectName("heading")
+        layout2.addWidget(heading)
+        
+        mode_label = QLabel(f"Mode: {self.mode}")
+        layout2.addWidget(mode_label)
+        
+        layout2.addStretch(1)
+        
         self.load_button = QPushButton('Load Config')
         self.load_button.pressed.connect(self.load)
+        layout2.addWidget(self.load_button)
         
         self.save_button = QPushButton('Save Config')
         self.save_button.pressed.connect(self.save)
+        layout2.addWidget(self.save_button)
         
-        layout1 = QHBoxLayout()
-        layout2 = QHBoxLayout()
+        layout1.addLayout(layout2)
         
-        layout = QHBoxLayout()
-        layout.addLayout(layout1)
-        layout.addStretch(1)
-        layout.addLayout(layout2)
+        self.apply_button = QPushButton("Apply All Settings")
+        self.apply_button.pressed.connect(self.apply)
+        layout1.addWidget(self.apply_button)
         
-        layout1.setAlignment(Qt.AlignLeft)
-        layout2.setAlignment(Qt.AlignRight)
-        
-        layout1.addWidget(self.load_button)
-        layout1.addWidget(self.save_button)
-        
-        self.header_layout.addLayout(layout)
+        self.content_layout.addLayout(layout1, 0, 0, 1, 2)
     
     
     def set_mode(self) -> None:
