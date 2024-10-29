@@ -259,20 +259,23 @@ class SpectralWidget(QWidget):
         layout2 = QHBoxLayout()
         layout.addLayout(layout2)
         
-        self.start_button = QPushButton("Start Recording")
+        self.start_button = QPushButton("Start Logging")
         self.start_button.pressed.connect(self.start_logging_action)
         layout2.addWidget(self.start_button)
         
-        self.stop_button = QPushButton("Stop Recording")
+        self.stop_button = QPushButton("Stop Logging")
         self.stop_button.pressed.connect(self.stop_logging_action)
         self.stop_button.setDisabled(True)
         layout2.addWidget(self.stop_button)
         
-        self.status_label = QLabel("Logging inactive")
-        layout.addWidget(self.status_label)
+        layout3 = QHBoxLayout()
+        layout.addLayout(layout3)
+        
+        self.status_label = QLabel("Logging Stopped")
+        layout3.addWidget(self.status_label)
         
         self.trace_count_label = QLabel()
-        layout.addWidget(self.trace_count_label)
+        layout3.addWidget(self.trace_count_label)
         
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_plot)
