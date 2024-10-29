@@ -4,6 +4,8 @@ from pathlib import Path
 import csv
 from datetime import datetime
 import numpy as np
+from ui.common.utilities import save_file_dialog
+
 
 class TraceLogger(QObject):
     """
@@ -15,6 +17,7 @@ class TraceLogger(QObject):
     trace_logged = Signal(int)
     error_occurred = Signal(str)  # For error handling
 
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.csv_file = None
@@ -22,6 +25,7 @@ class TraceLogger(QObject):
         self.trace_count = 0
         self.is_logging = False
         self.current_filepath = None
+
 
     def prompt_for_file(self) -> Path | None:
         """
@@ -32,17 +36,13 @@ class TraceLogger(QObject):
             Path object if file was selected, None if cancelled
         """
         # Generate default filename with timestamp
-        default_filename = f"trace_log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+        default_filename = Path("traces") / f"trace_log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
         
         # Open file dialog
-        filepath, _ = QFileDialog.getSaveFileName(
-            parent=self.parent(),
-            caption="Select Save Location",
-            dir=str(Path.home() / 'fsw_project' / 'traces' / default_filename),
-            filter="CSV Files (*.csv);;All Files (*.*)"
-        )
-
+        filepath = save_file_dialog("Save to CSV file: ", str(default_filename), '.csv', self.parent())
+        
         return Path(filepath) if filepath else None
+
 
     def start_logging(self, filepath: Path | None = None) -> bool:
         """
@@ -86,6 +86,7 @@ class TraceLogger(QObject):
             self.cleanup()
             return False
 
+
     def stop_logging(self):
         """Stop the current logging session."""
         if not self.is_logging:
@@ -93,6 +94,7 @@ class TraceLogger(QObject):
 
         self.cleanup()
         self.logging_stopped.emit()
+
 
     def cleanup(self):
         """Clean up file handles and reset state."""
@@ -105,6 +107,7 @@ class TraceLogger(QObject):
             self.current_filepath = None
         except IOError as e:
             self.error_occurred.emit(f"Error during cleanup: {str(e)}")
+
 
     @Slot(np.ndarray, np.ndarray)
     def log_trace(self, frequencies: np.ndarray, amplitudes: np.ndarray):
@@ -126,47 +129,4 @@ class TraceLogger(QObject):
             self.error_occurred.emit(f"Error logging trace: {str(e)}")
             self.stop_logging()
 
-# # Example usage in your main GUI class:
-# class SpectrumAnalyzerGUI:
-#     def __init__(self):
-#         # ... other initialization code ...
-        
-#         self.trace_logger = TraceLogger(self)  # Pass self as parent
-        
-#         # Connect signals
-#         self.trace_logger.logging_started.connect(self.on_logging_started)
-#         self.trace_logger.logging_stopped.connect(self.on_logging_stopped)
-#         self.trace_logger.trace_logged.connect(self.on_trace_logged)
-#         self.trace_logger.error_occurred.connect(self.on_logging_error)
 
-#     def start_logging_action(self):
-#         """Called when user wants to start logging (e.g., from a button)"""
-#         if self.trace_logger.start_logging():
-#             # Logging started successfully
-#             # Start your acquisition process here
-#             pass
-#         else:
-#             # User cancelled or error occurred
-#             pass
-
-#     def on_logging_started(self, filepath: str):
-#         print(f"Started logging to: {filepath}")
-#         # Update GUI to show logging status
-#         # For example, update a status label
-#         self.status_label.setText(f"Logging to: {Path(filepath).name}")
-
-#     def on_logging_stopped(self):
-#         print("Logging stopped")
-#         # Update GUI
-#         self.status_label.setText("Logging stopped")
-
-#     def on_trace_logged(self, count: int):
-#         print(f"Logged trace #{count}")
-#         # Update GUI with trace count if desired
-#         self.trace_count_label.setText(f"Traces: {count}")
-
-#     def on_logging_error(self, error_message: str):
-#         print(f"Logging error: {error_message}")
-#         # Show error in GUI
-#         # You might want to use QMessageBox for this
-#         QMessageBox.warning(self, "Logging Error", error_message)

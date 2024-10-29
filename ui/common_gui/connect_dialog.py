@@ -113,7 +113,7 @@ class IpEntryDialog(QDialog):
     def load_settings(self) -> None:
         """Prompts the user to select a file to load from, stores the config of the file, and closes the window
         """
-        filepath = Path(open_file_dialog('Open JSON file', '.json', self))
+        filepath = Path(open_file_dialog('Open JSON file', r'configs\user_configs', '.json', self))
         
         self.get_timeouts()
         

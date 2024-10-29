@@ -2,9 +2,10 @@
 
 from PySide6.QtWidgets import QFileDialog
 from ui.common_gui.message_boxes import invalid_filetype
+from pathlib import Path
 
 
-def open_file_dialog(prompt:str, filetype:str, parent = None) -> str:
+def open_file_dialog(prompt: str, default_file_path: str, filetype: str, parent = None) -> str:
     """Opens a file dialog to open a file and returns the filepath for that file
 
     Args:
@@ -16,12 +17,19 @@ def open_file_dialog(prompt:str, filetype:str, parent = None) -> str:
         str: Filepath
     """
     filetypes = {
-        '.json': 'JSON Files (*.json)',
+        '.json': 'JSON Files (*.json);;All Files (*.*)',
+        '.csv': "CSV Files (*.csv);;All Files (*.*)"
     }
     
     # Opens the filedialog, if the filetype desired is unknown, returns
     try:
-        file_path, __ = QFileDialog.getOpenFileName(parent,prompt,r'configs\user_configs',filetypes[filetype])
+        file_path, __ = QFileDialog.getOpenFileName(
+            parent,
+            prompt,
+            str(Path.home() / 'fsw_project' / default_file_path),
+            filetypes[filetype]
+            )
+        
     except KeyError:
         invalid_filetype()
         return ''
@@ -36,7 +44,7 @@ def open_file_dialog(prompt:str, filetype:str, parent = None) -> str:
         return file_path
 
 
-def save_file_dialog(prompt:str, filetype:str, parent = None) -> str:
+def save_file_dialog(prompt:str, default_file_path: str, filetype:str, parent = None) -> str:
     """Opens a file dialog to save a file
 
     Args:
@@ -48,12 +56,18 @@ def save_file_dialog(prompt:str, filetype:str, parent = None) -> str:
         str: The filepath to the file to be saved
     """
     filetypes = {
-        '.json': 'JSON Files (*.json)',
+        '.json': 'JSON Files (*.json);;All Files (*.*)',
+        '.csv': "CSV Files (*.csv);;All Files (*.*)"
     }
     
     # if the file type to be selected is not supported, let the user know and return nothing
     try:
-        file_path, __ = QFileDialog.getSaveFileName(parent,prompt,r'configs\user_configs',filetypes[filetype])
+        file_path, __ = QFileDialog.getSaveFileName(
+            parent,
+            prompt,
+            str(Path.home() / 'fsw_project' / default_file_path),
+            filetypes[filetype]
+            )
     except KeyError:
         invalid_filetype()
         return ''

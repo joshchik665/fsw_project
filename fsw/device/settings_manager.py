@@ -2,7 +2,6 @@
 
 from fsw.device.device import RsFswInstrument
 from fsw.common.common_functions import is_number, compare_number_strings
-from typing import Union
 from fsw.setting_objects.numerical_setting import NumericalSetting
 from fsw.setting_objects.mode_setting import ModeSetting
 import json
@@ -42,7 +41,7 @@ class SettingsManager(RsFswInstrument):
         return setting_name in self.settings.keys()
     
     
-    def get_setting_object(self, setting_name:str) -> Union[NumericalSetting, ModeSetting]:
+    def get_setting_object(self, setting_name:str) -> NumericalSetting | ModeSetting:
         """Returns the setting object from the settings dictionary
 
         Args:

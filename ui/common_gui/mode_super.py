@@ -202,7 +202,7 @@ class ModeSuper(QWidget):
     
     def load(self) -> None:
         """File dialog to select preset to load"""
-        filepath = Path(open_file_dialog('Open JSON file', '.json', self))
+        filepath = Path(open_file_dialog('Open JSON file', r'configs\user_configs', '.json', self))
         
         if filepath.exists():
             with filepath.open('r') as file:
@@ -225,9 +225,8 @@ class ModeSuper(QWidget):
     
     
     def save(self) -> None:
-        """Save the current config as a JSON file
-        """
-        filepath = save_file_dialog('Save JSON file', '.json', self)
+        """Save the current config as a JSON file"""
+        filepath = save_file_dialog('Save JSON file', r'configs\user_configs', '.json', self)
         
         if filepath:
             with open(filepath, 'w') as file:
