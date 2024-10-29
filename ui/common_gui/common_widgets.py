@@ -9,8 +9,6 @@ from PySide6.QtWidgets import (
     QComboBox,
     QPushButton,
     QMessageBox,
-    QButtonGroup,
-    QRadioButton,
 )
 from PySide6.QtCore import QTimer
 from PySide6.QtGui import QDoubleValidator, QIntValidator
@@ -271,7 +269,7 @@ class SpectralWidget(QWidget):
         layout3 = QHBoxLayout()
         layout.addLayout(layout3)
         
-        self.status_label = QLabel("Logging Stopped")
+        self.status_label = QLabel("Status: Logging Stopped ")
         layout3.addWidget(self.status_label)
         
         self.trace_count_label = QLabel()
@@ -343,19 +341,20 @@ class SpectralWidget(QWidget):
         self.trace_logger.stop_logging()
         self.start_button.setDisabled(False)
         self.stop_button.setDisabled(True)
+        self.trace_count_label.clear()
 
 
     def on_logging_started(self, filepath: str):
         print(f"Started logging to: {filepath}")
         # Update GUI to show logging status
         # For example, update a status label
-        self.status_label.setText(f"Logging to: {Path(filepath).name}")
+        self.status_label.setText(f"Status: Logging to: {Path(filepath).name} ")
 
 
     def on_logging_stopped(self):
         print("Logging stopped")
         # Update GUI
-        self.status_label.setText("Logging stopped")
+        self.status_label.setText("Status: Logging stopped ")
 
 
     def on_trace_logged(self, count: int):

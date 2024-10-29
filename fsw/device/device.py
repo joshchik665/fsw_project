@@ -68,3 +68,20 @@ class RsFswInstrument(RsInstrument):
             list: list of floats of the trace values
         """
         return self.query_bin_or_ascii_float_list('FORM ASC;:TRAC:DATA? TRACE1')
+    
+    
+    def save_spectrogram(self, file_path: str):
+        """ Saves the spectrogram to a file in the specified directory
+
+        Args:
+            file_path (str): file with path where spectrogram data is to be saved on the device
+        """
+        self.write_str('DISP:WIND2:SUBW:SEL')
+        self.write_str('FORM:DEXP:DSEP POIN')
+        self.write_str('FORM:DEXP:FORM CSV')
+        self.write_str('FORM:DEXP:HEAD ON')
+        self.write_str_with_opc('MMEM:STOR2:SGR \'' + file_path + '\'')
+    
+    
+    def clear_spectrogram(self) -> None:
+        self.write_str_with_opc('CALC2:SGR:CLE:IMM')
