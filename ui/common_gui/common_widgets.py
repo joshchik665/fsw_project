@@ -234,6 +234,10 @@ class SpectralWidget(QWidget):
         self.update_period_entry.returnPressed.connect(self.set_update_timing)
         layout1.addWidget(self.update_period_entry)
         
+        self.change_period_button = QPushButton("Apply")
+        self.change_period_button.pressed.connect(self.set_update_timing)
+        layout1.addWidget(self.change_period_button)
+        
         self.plot_widget = pg.PlotWidget()
         self.plot_widget.setFixedSize(500,400)
         self.plot_widget.setYRange(-100, 10)
