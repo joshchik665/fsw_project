@@ -8,6 +8,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QComboBox,
     QPushButton,
+    QMessageBox,
     QButtonGroup,
     QRadioButton,
 )
@@ -16,9 +17,12 @@ from PySide6.QtGui import QDoubleValidator
 from fsw.setting_objects.numerical_setting import NumericalSetting
 from fsw.setting_objects.mode_setting import ModeSetting
 from ui.common.utilities import remove_trailing_zeros
+from ui.common_gui.csv_logger import TraceLogger
 from typing import Union
 import pyqtgraph as pg
 from fsw.device.settings_manager import SettingsManager
+from pathlib import Path
+import numpy as np
 
 
 class SettingBox(QWidget):
@@ -191,6 +195,14 @@ class SpectralWidget(QWidget):
         self.device = device
         self.mode = mode
         
+        self.trace_logger = TraceLogger(self)  # Pass self as parent
+        
+        # Connect signals
+        self.trace_logger.logging_started.connect(self.on_logging_started)
+        self.trace_logger.logging_stopped.connect(self.on_logging_stopped)
+        self.trace_logger.trace_logged.connect(self.on_trace_logged)
+        self.trace_logger.error_occurred.connect(self.on_logging_error)
+        
         layout = QVBoxLayout()
         self.setLayout(layout)
         
@@ -202,6 +214,21 @@ class SpectralWidget(QWidget):
         self.plot_widget.setBackground('w')
         
         self.plot_line = self.plot_widget.plot(pen='b')
+        
+        
+        self.start_button = QPushButton("Start Recording")
+        self.start_button.pressed.connect(self.start_logging_action)
+        layout.addWidget(self.start_button)
+        
+        self.stop_button = QPushButton("Stop Recording")
+        self.stop_button.pressed.connect(self.trace_logger.stop_logging)
+        layout.addWidget(self.stop_button)
+        
+        self.status_label = QLabel("Logging inactive")
+        layout.addWidget(self.status_label)
+        
+        self.trace_count_label = QLabel()
+        layout.addWidget(self.trace_count_label)
         
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_plot)
@@ -240,6 +267,45 @@ class SpectralWidget(QWidget):
         y = self.device.get_trace()
         
         self.plot_line.setData(x, y)
+        
+        self.trace_logger.log_trace(np.array(x), np.array(y))
+    
+    
+    def start_logging_action(self):
+        """Called when user wants to start logging (e.g., from a button)"""
+        if self.trace_logger.start_logging():
+            # Logging started successfully
+            # Start your acquisition process here
+            pass
+        else:
+            # User cancelled or error occurred
+            pass
+    
+
+    def on_logging_started(self, filepath: str):
+        print(f"Started logging to: {filepath}")
+        # Update GUI to show logging status
+        # For example, update a status label
+        self.status_label.setText(f"Logging to: {Path(filepath).name}")
+
+
+    def on_logging_stopped(self):
+        print("Logging stopped")
+        # Update GUI
+        self.status_label.setText("Logging stopped")
+
+
+    def on_trace_logged(self, count: int):
+        print(f"Logged trace #{count}")
+        # Update GUI with trace count if desired
+        self.trace_count_label.setText(f"Traces: {count}")
+
+
+    def on_logging_error(self, error_message: str):
+        print(f"Logging error: {error_message}")
+        # Show error in GUI
+        # You might want to use QMessageBox for this
+        QMessageBox.warning(self, "Logging Error", error_message)
 
 
 # class SweepBox(QWidget):

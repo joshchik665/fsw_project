@@ -13,3 +13,15 @@ class invalid_filetype(QMessageBox):
         self.setStandardButtons(QMessageBox.Ok)
         self.exec()
 
+
+class logging_error(QMessageBox):
+    def __init__(self):
+        """Message box to tell the user that the filetype is invalid
+        """
+        super().__init__()
+        self.setIcon(QMessageBox.Information)
+        self.setText("Logging Error!")
+        self.setWindowTitle("Message")
+        self.setStandardButtons(QMessageBox.Ok)
+        self.exec()
+
