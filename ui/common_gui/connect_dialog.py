@@ -16,8 +16,7 @@ from pathlib import Path
 
 class IpEntryDialog(QDialog):
     def __init__(self):
-        """Custom Dialog that appears to the user when the first start the program. Gets the IP address of the instrument or a config file
-        """
+        """Custom Dialog that appears to the user when the first start the program. Gets the IP address of the instrument or a config file"""
         super().__init__()
         
         self._set_title_and_window()
@@ -25,8 +24,7 @@ class IpEntryDialog(QDialog):
     
     
     def _set_title_and_window(self) -> None:
-        """Set the title of the widget an icon
-        """
+        """Set the title of the widget an icon"""
         self.setWindowTitle('Rhode&Schwarz FSW-43 GUI')
         my_icon = QIcon()
         my_icon.addFile('images\\crc_icon.ico')
@@ -34,8 +32,7 @@ class IpEntryDialog(QDialog):
     
     
     def _set_widgets(self) -> None:
-        """Creates the widgets on this window
-        """
+        """Creates the widgets on this window"""
         # Layouts
         self.layout = QVBoxLayout()
         layout1 = QHBoxLayout()
@@ -93,8 +90,7 @@ class IpEntryDialog(QDialog):
     
     
     def get_timeouts(self) -> None:
-        """Gets the value in the timeout entry and saves them
-        """
+        """Gets the value in the timeout entry and saves them"""
         # Get current text
         self.visa_timeout = self.visa_entry.text()
         self.opc_timeout = self.opc_entry.text()
@@ -111,8 +107,7 @@ class IpEntryDialog(QDialog):
     
     
     def load_settings(self) -> None:
-        """Prompts the user to select a file to load from, stores the config of the file, and closes the window
-        """
+        """Prompts the user to select a file to load from, stores the config of the file, and closes the window"""
         filepath = Path(open_file_dialog('Open JSON file', r'configs\user_configs', '.json', self))
         
         self.get_timeouts()
@@ -125,8 +120,7 @@ class IpEntryDialog(QDialog):
     
     
     def on_confirm(self) -> None:
-        """Closes this window and saves the ip address
-        """
+        """Closes this window and saves the ip address"""
         ip_address = self.ip_input.text()
         
         self.get_timeouts()

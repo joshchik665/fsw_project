@@ -13,7 +13,7 @@ from PySide6.QtWidgets import (
     QRadioButton,
 )
 from PySide6.QtCore import QTimer
-from PySide6.QtGui import QDoubleValidator
+from PySide6.QtGui import QDoubleValidator, QIntValidator
 from fsw.setting_objects.numerical_setting import NumericalSetting
 from fsw.setting_objects.mode_setting import ModeSetting
 from ui.common.utilities import remove_trailing_zeros
@@ -197,6 +197,9 @@ class SpectralWidget(QWidget):
         
         self.trace_logger = TraceLogger(self)  # Pass self as parent
         
+        self.do_updates = True
+        default_update_period = 1000
+        
         # Connect signals
         self.trace_logger.logging_started.connect(self.on_logging_started)
         self.trace_logger.logging_stopped.connect(self.on_logging_stopped)
@@ -205,6 +208,31 @@ class SpectralWidget(QWidget):
         
         layout = QVBoxLayout()
         self.setLayout(layout)
+        
+        layout1 = QHBoxLayout()
+        layout.addLayout(layout1)
+        
+        self.update_label = QLabel("Display Updates: ")
+        layout1.addWidget(self.update_label)
+        
+        self.update_on_button = QPushButton("On")
+        self.update_on_button.setDisabled(True)
+        self.update_on_button.pressed.connect(self.start_update)
+        layout1.addWidget(self.update_on_button)
+        
+        self.update_off_button = QPushButton("Off")
+        self.update_off_button.pressed.connect(self.stop_update)
+        layout1.addWidget(self.update_off_button)
+        
+        self.update_period_label = QLabel("Update Period (ms): ")
+        layout1.addWidget(self.update_period_label)
+        
+        self.update_period_entry = QLineEdit()
+        int_validator = QIntValidator()
+        self.update_period_entry.setValidator(int_validator)
+        self.update_period_entry.setPlaceholderText(str(default_update_period))
+        self.update_period_entry.returnPressed.connect(self.set_update_timing)
+        layout1.addWidget(self.update_period_entry)
         
         self.plot_widget = pg.PlotWidget()
         self.plot_widget.setFixedSize(500,400)
@@ -224,13 +252,17 @@ class SpectralWidget(QWidget):
             self.plot_widget.setLabel('left', 'Power (dBm)')
             self.plot_widget.setLabel('bottom', 'Frequency (Hz)')
         
+        layout2 = QHBoxLayout()
+        layout.addLayout(layout2)
+        
         self.start_button = QPushButton("Start Recording")
         self.start_button.pressed.connect(self.start_logging_action)
-        layout.addWidget(self.start_button)
+        layout2.addWidget(self.start_button)
         
         self.stop_button = QPushButton("Stop Recording")
-        self.stop_button.pressed.connect(self.trace_logger.stop_logging)
-        layout.addWidget(self.stop_button)
+        self.stop_button.pressed.connect(self.stop_logging_action)
+        self.stop_button.setDisabled(True)
+        layout2.addWidget(self.stop_button)
         
         self.status_label = QLabel("Logging inactive")
         layout.addWidget(self.status_label)
@@ -240,46 +272,71 @@ class SpectralWidget(QWidget):
         
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_plot)
-        self.timer.start(500)
+        self.timer.start(default_update_period)
     
     
     def update_plot(self):
-        num_points = int(remove_trailing_zeros(self.device.settings['Number of Points'].current_value))
-        
-        if self.mode == "Zero-Span":
-            sweep_time = float(self.device.settings['Sweep Time'].current_value)
+        if self.do_updates:
+            num_points = int(remove_trailing_zeros(self.device.settings['Number of Points'].current_value))
             
-            x = [i * (sweep_time / (num_points - 1)) for i in range(num_points)]
+            if self.mode == "Zero-Span":
+                sweep_time = float(self.device.settings['Sweep Time'].current_value)
+                
+                x = [i * (sweep_time / (num_points - 1)) for i in range(num_points)]
+                
+                self.plot_widget.setXRange(0,sweep_time)
+            else:
+                center_freq = float(self.device.settings['Center Frequency'].current_value)
+                freq_span = float(self.device.settings['Frequency Span'].current_value)
+                
+                start_freq = center_freq - (freq_span / 2)
+                end_freq = center_freq + (freq_span / 2)
+                
+                x = [start_freq + (i * (freq_span / (num_points - 1))) for i in range(num_points)]
+                
+                self.plot_widget.setXRange(start_freq,end_freq)
             
-            self.plot_widget.setXRange(0,sweep_time)
-        else:
-            center_freq = float(self.device.settings['Center Frequency'].current_value)
-            freq_span = float(self.device.settings['Frequency Span'].current_value)
+            y = self.device.get_trace()
             
-            start_freq = center_freq - (freq_span / 2)
-            end_freq = center_freq + (freq_span / 2)
+            self.plot_line.setData(x, y)
             
-            x = [start_freq + (i * (freq_span / (num_points - 1))) for i in range(num_points)]
-            
-            self.plot_widget.setXRange(start_freq,end_freq)
-        
-        y = self.device.get_trace()
-        
-        self.plot_line.setData(x, y)
-        
-        self.trace_logger.log_trace(np.array(x), np.array(y))
+            self.trace_logger.log_trace(np.array(x), np.array(y))
+    
+    
+    def start_update(self) -> None:
+        self.do_updates = True
+        self.update_off_button.setDisabled(False)
+        self.update_on_button.setDisabled(True)
+    
+    
+    def stop_update(self) -> None:
+        self.do_updates = False
+        self.update_off_button.setDisabled(True)
+        self.update_on_button.setDisabled(False)
+    
+    
+    def set_update_timing(self) -> None:
+        period = self.update_period_entry.text()
+        self.update_period_entry.clear()
+        self.update_period_entry.setPlaceholderText(period)
+        self.timer.setInterval(int(period))
     
     
     def start_logging_action(self):
         """Called when user wants to start logging (e.g., from a button)"""
         if self.trace_logger.start_logging():
-            # Logging started successfully
-            # Start your acquisition process here
-            pass
+            self.start_button.setDisabled(True)
+            self.stop_button.setDisabled(False)
         else:
             # User cancelled or error occurred
             pass
     
+    
+    def stop_logging_action(self):
+        self.trace_logger.stop_logging()
+        self.start_button.setDisabled(False)
+        self.stop_button.setDisabled(True)
+
 
     def on_logging_started(self, filepath: str):
         print(f"Started logging to: {filepath}")
