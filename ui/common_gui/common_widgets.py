@@ -332,9 +332,6 @@ class SpectralWidget(QWidget):
         if self.trace_logger.start_logging():
             self.start_button.setDisabled(True)
             self.stop_button.setDisabled(False)
-        else:
-            # User cancelled or error occurred
-            pass
     
     
     def stop_logging_action(self):
@@ -346,27 +343,21 @@ class SpectralWidget(QWidget):
 
     def on_logging_started(self, filepath: str):
         print(f"Started logging to: {filepath}")
-        # Update GUI to show logging status
-        # For example, update a status label
         self.status_label.setText(f"Status: Logging to: {Path(filepath).name} ")
 
 
     def on_logging_stopped(self):
         print("Logging stopped")
-        # Update GUI
         self.status_label.setText("Status: Logging stopped ")
 
 
     def on_trace_logged(self, count: int):
         print(f"Logged trace #{count}")
-        # Update GUI with trace count if desired
         self.trace_count_label.setText(f"Traces: {count}")
 
 
     def on_logging_error(self, error_message: str):
         print(f"Logging error: {error_message}")
-        # Show error in GUI
-        # You might want to use QMessageBox for this
         QMessageBox.warning(self, "Logging Error", error_message)
 
 

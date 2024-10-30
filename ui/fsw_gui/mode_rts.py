@@ -5,13 +5,12 @@ from PySide6.QtWidgets import (
 from ui.common_gui.mode_super import ModeSuper
 from ui.common_gui.common_widgets import SpectralWidget
 from ui.common.utilities import save_file_dialog, open_file_dialog
+from ui.common_gui.message_boxes import copy_error, copy_sucess
+from ui.common_gui.spectrogram_window import SpectrogramWindow
 from datetime import datetime
 from pathlib import Path
-from ui.common_gui.message_boxes import copy_error, copy_sucess
 import numpy as np
-import matplotlib.pyplot as plt
-import csv
-from ui.common_gui.spectrogram_window import SpectrogramWindow
+
 
 class ModeRts(ModeSuper):
     def __init__(self,device, parent=None):
