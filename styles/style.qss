@@ -28,6 +28,9 @@ QPushButton:pressed {
 QPushButton:disabled {
     background-color: darkgray;
 }
+QPushButton:hover {
+    background-color: #1181A9;
+}
 QComboxBox {
     background-color: white;
     border-radius: 5px;
