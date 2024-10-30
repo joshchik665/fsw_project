@@ -125,7 +125,6 @@ class ModeRts(ModeSuper):
                     # New frame/time step
                     current_time = -int(parts[1])
                 elif line.startswith('Timestamp'):
-                    # This is probably the timestamp
                     continue
                 else:
                     # This is frequency-amplitude pair
