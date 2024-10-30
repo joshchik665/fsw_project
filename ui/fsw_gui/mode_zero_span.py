@@ -32,6 +32,16 @@ class ModeZs(ModeSuper):
         self.content_layout.addLayout(self.setting_layout2, 1, 1)
         
         
+        self.graph_layout = QVBoxLayout()
+        
+        self.graph = SpectralWidget(self.instrument, self.mode)
+        self.graph_layout.addWidget(self.graph)
+        
+        self.graph_layout.addStretch(1)
+        
+        self.content_layout.addLayout(self.graph_layout, 0, 2, 2, 1)
+        
+        
         self.func_layout = QVBoxLayout()
         
         self.abort_button = QPushButton("Abort")
@@ -47,15 +57,6 @@ class ModeZs(ModeSuper):
         self.func_layout.addStretch(1)
         
         self.content_layout.addLayout(self.func_layout, 0, 3, 2, 1)
-        
-        self.graph_layout = QVBoxLayout()
-        
-        self.graph = SpectralWidget(self.instrument, self.mode)
-        self.graph_layout.addWidget(self.graph)
-        
-        self.graph_layout.addStretch(1)
-        
-        self.content_layout.addLayout(self.graph_layout, 0, 2, 2, 1)
     
     
     def set_mode(self):
