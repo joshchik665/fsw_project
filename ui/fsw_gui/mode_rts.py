@@ -123,7 +123,7 @@ class ModeRts(ModeSuper):
                 
                 if line.startswith('Frame'):
                     # New frame/time step
-                    current_time = int(parts[1])
+                    current_time = -int(parts[1])
                 elif line.startswith('Timestamp'):
                     # This is probably the timestamp
                     continue

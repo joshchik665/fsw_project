@@ -29,7 +29,7 @@ class SpectrogramWindow(QWidget):
         im = ax.pcolormesh(times, frequencies, spec_data, shading='auto')
         fig.colorbar(im, ax=ax, label='Amplitude')
         ax.set_ylabel('Frequency [Hz]')
-        ax.set_xlabel('Time [s]')
+        ax.set_xlabel('Frame')
         ax.set_title('Spectrogram')
         
         # Add to layout
