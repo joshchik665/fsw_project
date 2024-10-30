@@ -71,7 +71,7 @@ class IpEntryDialog(QDialog):
         validator = QDoubleValidator()
         validator.setNotation(QDoubleValidator.StandardNotation)
         self.opc_entry.setValidator(validator)
-        self.opc_entry.setPlaceholderText('3000')
+        self.opc_entry.setPlaceholderText('10000')
         self.opc_entry.setFixedSize(100, 25)
         layout2.addWidget(self.opc_entry)
         
@@ -99,7 +99,7 @@ class IpEntryDialog(QDialog):
         if not self.visa_timeout:
             self.visa_timeout = 3000
         if not self.opc_timeout:
-            self.opc_timeout = 3000
+            self.opc_timeout = 10000
         
         # save them as int
         self.visa_timeout = int(self.visa_timeout)

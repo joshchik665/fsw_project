@@ -1,6 +1,7 @@
 # device.py
 
 from RsInstrument import RsInstrument
+import os
 
 class RsFswInstrument(RsInstrument):
     def __init__(self, ip_address:str, visa_timeout:int, opc_timeout:int):
@@ -70,7 +71,7 @@ class RsFswInstrument(RsInstrument):
         return self.query_bin_or_ascii_float_list('FORM ASC;:TRAC:DATA? TRACE1')
     
     
-    def save_spectrogram(self, file_path: str):
+    def save_spectrogram(self) -> None:
         """ Saves the spectrogram to a file in the specified directory
 
         Args:
@@ -80,8 +81,19 @@ class RsFswInstrument(RsInstrument):
         self.write_str('FORM:DEXP:DSEP POIN')
         self.write_str('FORM:DEXP:FORM CSV')
         self.write_str('FORM:DEXP:HEAD ON')
-        self.write_str_with_opc('MMEM:STOR2:SGR \'' + file_path + '\'')
+        self.write_str_with_opc(r"MMEM:STOR2:SGR 'C:\Users\Instrument\Documents\lab_automation\test.CSV'")
     
     
     def clear_spectrogram(self) -> None:
         self.write_str_with_opc('CALC2:SGR:CLE:IMM')
+    
+    
+    def copy_spectrogram(self, filename:str) -> bool:
+        with self.visa_tout_suppressor() as supp:
+            self.clear_status()
+            self.read_file_from_instrument_to_pc(r"C:\Users\Instrument\Documents\lab_automation\test.CSV", filename)
+        if supp.get_timeout_occurred():
+            return False
+        else:
+            return True
+

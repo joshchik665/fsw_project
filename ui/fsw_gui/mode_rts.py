@@ -4,6 +4,10 @@ from PySide6.QtWidgets import (
 )
 from ui.common_gui.mode_super import ModeSuper
 from ui.common_gui.common_widgets import SpectralWidget
+from ui.common.utilities import save_file_dialog
+from datetime import datetime
+from pathlib import Path
+from ui.common_gui.message_boxes import copy_error, copy_sucess
 
 class ModeRts(ModeSuper):
     def __init__(self,device, parent=None):
@@ -57,6 +61,29 @@ class ModeRts(ModeSuper):
         self.sweep_button.pressed.connect(self.instrument.sweep)
         self.func_layout.addWidget(self.sweep_button)
         
+        self.clear_spec_button = QPushButton("Clear Spectrogram")
+        self.clear_spec_button.setFixedSize(150, 30)
+        self.clear_spec_button.pressed.connect(self.instrument.clear_spectrogram)
+        self.func_layout.addWidget(self.clear_spec_button)
+        
+        self.save_spec_button = QPushButton("Save Spectrogram")
+        self.save_spec_button.setFixedSize(150, 30)
+        self.save_spec_button.pressed.connect(self.get_save_spectrogram)
+        self.func_layout.addWidget(self.save_spec_button)
+        
         self.func_layout.addStretch(1)
         
         self.content_layout.addLayout(self.func_layout, 0, 3, 2, 1)
+    
+    
+    def get_save_spectrogram(self):
+        self.instrument.save_spectrogram()
+        
+        default_filename = Path("spectrograms") / f"trace_log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+        filename = save_file_dialog("Select location to save csv file", str(default_filename), ".csv", self)
+        
+        if self.instrument.copy_spectrogram(filename):
+            copy_sucess()
+        else:
+            copy_error()
+        
