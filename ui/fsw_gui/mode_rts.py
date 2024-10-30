@@ -1,6 +1,8 @@
 from PySide6.QtWidgets import (
     QVBoxLayout,
     QPushButton,
+    QLineEdit,
+    QLabel
 )
 from ui.common_gui.mode_super import ModeSuper
 from ui.common_gui.common_widgets import SpectralWidget
