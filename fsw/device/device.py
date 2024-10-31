@@ -15,9 +15,9 @@ class RsFswInstrument(RsInstrument):
         # Initializes the RsInstrument object
         try:
             # Adjust the VISA Resource string to fit your instrument
-            super().__init__('TCPIP::' + ip_address + '::INSTR', True, False)
-            self.visa_timeout = visa_timeout  # Timeout for VISA Read Operations, default is 3s
-            self.opc_timeout = opc_timeout  # Timeout for opc-synchronised operations, default is 3s
+            super().__init__(f"TCPIP::{ip_address}::INSTR", True, False, "SelectVisa = 'rs'")
+            self.visa_timeout = visa_timeout  # Timeout for VISA Read Operations
+            self.opc_timeout = opc_timeout  # Timeout for opc-synchronised operations
             self.instrument_status_checking = True  # Error check after each command
             print('Hello I am: ' + self.query('*IDN?')) # Asks the FSW it's ID
         except Exception as ex:
@@ -92,8 +92,6 @@ class RsFswInstrument(RsInstrument):
         with self.visa_tout_suppressor() as supp:
             self.clear_status()
             self.read_file_from_instrument_to_pc(r"C:\Users\Instrument\Documents\lab_automation\test.CSV", filename)
-        if supp.get_timeout_occurred():
-            return False
-        else:
-            return True
+        return not supp.get_timeout_occurred()
+
 
