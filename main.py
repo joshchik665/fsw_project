@@ -6,9 +6,11 @@ from ui.common_gui.connect_dialog import IpEntryDialog
 import sys
 from pathlib import Path
 
+
 def load_stylesheet(filename: Path):
     with filename.open("r") as file:
         return file.read()
+
 
 def main():
     app = QApplication(sys.argv)

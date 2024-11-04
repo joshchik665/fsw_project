@@ -15,14 +15,15 @@ class RsFswInstrument(RsInstrument):
         # Initializes the RsInstrument object
         try:
             # Adjust the VISA Resource string to fit your instrument
-            super().__init__(f"TCPIP::{ip_address}::INSTR", True, False, "SelectVisa = 'rs'")
-            self.visa_timeout = visa_timeout  # Timeout for VISA Read Operations
-            self.opc_timeout = opc_timeout  # Timeout for opc-synchronised operations
-            self.instrument_status_checking = True  # Error check after each command
-            print('Hello I am: ' + self.query('*IDN?')) # Asks the FSW it's ID
+            super().__init__(f"TCPIP::{ip_address}::hislip0", True, False, "SelectVisa = 'rs'")
         except Exception as ex:
             print('Error initializing the instrument session:\n' + ex.args[0]) # Error
             exit()
+        
+        self.visa_timeout = visa_timeout  # Timeout for VISA Read Operations
+        self.opc_timeout = opc_timeout  # Timeout for opc-synchronised operations
+        self.instrument_status_checking = True  # Error check after each command
+        print('Hello I am: ' + self.query('*IDN?')) # Asks the FSW it's ID
         
         self.write('*RST') # Reset the instrument
         

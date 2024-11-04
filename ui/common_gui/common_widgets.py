@@ -196,7 +196,7 @@ class SpectralWidget(QWidget):
         self.trace_logger = TraceLogger(self)  # Pass self as parent
         
         self.do_updates = True
-        default_update_period = 1000
+        default_update_period = 100
         
         # Connect signals
         self.trace_logger.logging_started.connect(self.on_logging_started)
