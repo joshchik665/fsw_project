@@ -1,7 +1,6 @@
 # device.py
 
 from RsInstrument import RsInstrument
-import os
 
 class RsFswInstrument(RsInstrument):
     def __init__(self, ip_address:str, visa_timeout:int, opc_timeout:int):
@@ -94,5 +93,7 @@ class RsFswInstrument(RsInstrument):
             self.clear_status()
             self.read_file_from_instrument_to_pc(r"C:\Users\Instrument\Documents\lab_automation\test.CSV", filename)
         return not supp.get_timeout_occurred()
-
-
+    
+    
+    
+    

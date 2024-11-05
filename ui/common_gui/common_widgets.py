@@ -14,12 +14,12 @@ from PySide6.QtCore import QTimer
 from PySide6.QtGui import QDoubleValidator, QIntValidator
 from fsw.setting_objects.numerical_setting import NumericalSetting
 from fsw.setting_objects.mode_setting import ModeSetting
+from fsw.device.settings_manager import SettingsManager
 from ui.common.utilities import remove_trailing_zeros
 from ui.common_gui.csv_logger import TraceLogger
 from typing import Union
-import pyqtgraph as pg
-from fsw.device.settings_manager import SettingsManager
 from pathlib import Path
+import pyqtgraph as pg
 import numpy as np
 
 
