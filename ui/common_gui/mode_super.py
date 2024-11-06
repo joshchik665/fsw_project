@@ -213,10 +213,10 @@ class ModeSuper(QWidget):
     
     def load(self) -> None:
         """File dialog to select preset to load"""
-        filepath = Path(open_file_dialog('Open JSON file', r'configs\user_configs', '.json', self))
+        filepath = open_file_dialog('Open JSON file', r'configs\user_configs', '.json', self)
         
-        if filepath.exists():
-            with filepath.open('r') as file:
+        if filepath:
+            with open(filepath, 'r') as file:
                 config = json.load(file)
             
             self.load_settings(config)
