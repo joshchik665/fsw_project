@@ -85,20 +85,33 @@ class RsFswInstrument():
     
     
     def clear_spectrogram(self) -> None:
+        """Clears the spectrogram on the device"""
         self.write_command('CALC2:SGR:CLE:IMM')
     
     
     def copy_spectrogram(self, filename:str) -> bool:
-        
-        # Example using SCPI commands
-        self.instrument.write(f'MMEM:DATA? "test.csv"')
-        data = self.instrument.read_raw()  # Read binary data
+        """Copy the spectrogram files from the instrument to the local computer
 
-        # Save to local file
-        with open(filename, 'wb') as f:
-            f.write(data)
+        Args:
+            filename (str): Filename to save to on the local computer
+
+        Returns:
+            bool: Copied sucessfully
+        """
+        try:
+            self.instrument.write(f'MMEM:DATA? "test.csv"')
+            data = self.instrument.read_raw()  # Read binary data
+
+            # Save to local file
+            with open(filename, 'wb') as f:
+                f.write(data)
+            
+            return True
+        except:
+            return False
     
     
     def close(self) -> None:
+        """Closes the instrument session"""
         self.instrument.close()
     
