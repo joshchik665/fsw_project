@@ -5,9 +5,10 @@ from PySide6.QtWidgets import (
     QMainWindow,
     QTabWidget,
 )
-from ui.fsw_gui.mode_spec import ModeSpec
-from ui.fsw_gui.mode_rts import ModeRts
-from ui.fsw_gui.mode_zero_span import ModeZs
+import ui.fsw_gui.mode_spec as FSW43Spec
+import ui.fsw_gui.mode_rts as FSW43Rts
+import ui.fsw_gui.mode_zero_span as FSW43Zs
+import ui.cxa_gui.mode_spec as CXASpec
 from fsw.device.settings_manager import SettingsManager
 
 
@@ -22,29 +23,26 @@ class MainWindow(QMainWindow):
         """
         super().__init__()
         
-        # indicies for the tabs, will change later
-        self.tab_indicies = {
-            "Spectrum": 0,
-            "Real-Time Spectrum": 1,
-            "Zero-Span": 2,
-        }
         self._programmatic_change = False # Flag to change the behavior of the tab change function
-        
-        self._set_title_and_window() # Set the window oand label for the main window
         
         # Creates instance of the SettingsManager class that controls the instrument
         self.instrument = SettingsManager(
             config['ip_address'],
-            r"configs\fsw_settings\default.json", 
             visa_timeout, 
             opc_timeout
             )
+        
+        self.modes = self.instrument.modes
+        self.device_type = self.instrument.device_type
+        
+        self._set_title_and_window() # Set the window oand label for the main window
         
         self._set_status_bar(config['ip_address']) # Set the status bar
         
         self._create_tabs() # Creates the tabs
         
         current_tab_widget = self.tab_widget.widget(self.current_tab_index)
+        
         if config['data']:
             current_tab_widget.load_settings(config)
         else:
@@ -54,7 +52,11 @@ class MainWindow(QMainWindow):
     def _set_title_and_window(self) -> None:
         """Set the title and window
         """
-        self.setWindowTitle('Rhode&Schwarz FSW-43 GUI')
+        titles = {
+            "RSFSW43": 'Rhode&Schwarz FSW-43 GUI',
+            "KTCXA": "Keysight Technolocies CXA N9000B GUI"
+        }
+        self.setWindowTitle(titles[self.device_type])
         my_icon = QIcon()
         my_icon.addFile('images\\crc_icon.ico')
         self.setWindowIcon(my_icon)
@@ -66,26 +68,40 @@ class MainWindow(QMainWindow):
         Args:
             ip_address (str): IP address of the instrument
         """
+        status_messages = {
+            "RSFSW43": "Connected to Rhode&Schwarz FSW-43 @",
+            "KTCXA": "Connected to Keysight Technologies CXA N9000B @"
+        }
         status_bar = self.statusBar()
         status_bar.showMessage(
-            f'Connected to Rhode&Schwarz FSW-43 @ {ip_address}', 
+            f'{status_messages[self.device_type]} {ip_address}', 
             timeout=0
             )
     
     
     def _create_tabs(self) -> None:
-        """Creats the tab widget and initiates the individual tab widgets
-        """
+        """Creats the tab widget and initiates the individual tab widgets"""
+        tab_widgets = {
+            "RSFSW43": {
+                "Spectrum": FSW43Spec.ModeSpec,
+                "Real-Time Spectrum": FSW43Rts.ModeRts,
+                "Zero-Span": FSW43Zs.ModeZs
+            },
+            "KTCXA": {
+                "Spectrum": CXASpec.ModeSpec
+            }
+        }
+        
         # Create and set the tab widget
         self.tab_widget = QTabWidget()
         self.setCentralWidget(self.tab_widget)
         
+        self.tab_indicies = {mode: index for index, mode in enumerate(self.modes)}
+        
         self.current_tab_index = 0
         
-        # Creates the tab widgets and adds them to the main tab widget
-        self.tab_widget.addTab(ModeSpec(self.instrument, self.tab_widget), "Spectrum Mode")
-        self.tab_widget.addTab(ModeRts(self.instrument, self.tab_widget), "Real-Time Spectrume Mode")
-        self.tab_widget.addTab(ModeZs(self.instrument, self.tab_widget), "Zero Span Mode")
+        for mode in self.modes:
+            self.tab_widget.addTab(tab_widgets[self.device_type][mode](self.instrument, self.tab_widget), f"{mode} Mode")
         
         # When the tab changes, function called
         self.tab_widget.currentChanged.connect(self.on_tab_changed)

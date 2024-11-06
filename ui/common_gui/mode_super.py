@@ -41,6 +41,7 @@ class ModeSuper(QWidget):
         
         # Gets the instrument and the parent widgets
         self.instrument = device
+        self.device_type = self.instrument.device_type
         self.tab_widget = self.parent()
         self.main_window = self.tab_widget.parent()
         
@@ -71,7 +72,11 @@ class ModeSuper(QWidget):
     
     def _set_title(self) -> None:
         """Set the Title of this widget"""
-        title = QLabel('Rhode & Schwarz FSW-43 GUI')
+        titles = {
+            "RSFSW43": "Rhode & Schwarz FSW-43 GUI",
+            "KTCXA": "Keysight Technologies CXA N9000B GUI"
+        }
+        title = QLabel(titles[self.device_type])
         title.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         title.setObjectName('title')
         

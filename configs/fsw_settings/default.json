@@ -1,4 +1,15 @@
 {
+    "Default Mode": "Spectrum",
+    "Modes": [
+        "Spectrum",
+        "Real-Time Spectrum",
+        "Zero-Span"
+    ],
+    "Modes SCPI Commands": {
+        "Spectrum": "SANALYZER",
+        "Real-Time Spectrum": "RTIM",
+        "Zero-Span": "SANALYZER"
+    },
     "Numerical Settings": {
         "Center Frequency": {
             "measure": "frequency",

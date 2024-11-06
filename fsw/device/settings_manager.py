@@ -1,13 +1,13 @@
 # settings_manager.py
 
-from fsw.device.device import RsFswInstrument
+from fsw.device.device import Instrument
 from fsw.common.common_functions import is_number, compare_number_strings
 from fsw.setting_objects.numerical_setting import NumericalSetting
 from fsw.setting_objects.mode_setting import ModeSetting
 import json
 
-class SettingsManager(RsFswInstrument):
-    def __init__(self, ip_address:str, default_config_filepath:str, visa_timeout:int, opc_timeout:int):
+class SettingsManager(Instrument):
+    def __init__(self, ip_address:str, visa_timeout:int, opc_timeout:int):
         """Initializes the Setting Manager instrument that controls all the settings on the instrument
 
         Args:
@@ -18,10 +18,28 @@ class SettingsManager(RsFswInstrument):
         """
         super().__init__(ip_address, visa_timeout, opc_timeout)
         
-        self.current_mode = 'Spectrum' # Default mode on startup
+        device_names = {
+            "Rohde&Schwarz,FSW-43": "RSFSW43",
+            "Keysight Technologies,N9000B": "KTCXA"
+        }
         
-        with open(default_config_filepath, 'r') as file: # Opens file containing all the settings
+        default_settings_configs = {
+            "RSFSW43": r"configs\fsw_settings\default.json",
+            "KTCXA": r"configs\cxa_settings\default.json"
+        }
+        
+        self.device_type = next((value for key, value in device_names.items() if self.idn.startswith(key)))
+        
+        default_settings_filepath = default_settings_configs[self.device_type]
+        
+        with open(default_settings_filepath, 'r') as file: # Opens file containing all the settings
             config = json.load(file)
+        
+        self.current_mode = config["Default Mode"] # Default mode on startup
+        
+        self.modes = config["Modes"]
+        
+        self.mode_scpi = config["Modes SCPI Commands"] # Scpi commands to change modes
         
         # Initializes the Setting objects and puts them into dictionaries. The dictionaries are combined together into joint dictionary
         self.numerical_settings = {name: NumericalSetting.from_dict(name,**setting) for name, setting in config["Numerical Settings"].items()}
@@ -100,7 +118,7 @@ class SettingsManager(RsFswInstrument):
             setting.current_value = value # Set the current value in the object
         except Exception as e:
             # Error writing setting
-            return False, f'Error writing setting: {str(e).split(',')[1]}'
+            return False, f'Error writing setting: {e}'
         
         return True, 'Set sucessful'
     
@@ -142,7 +160,7 @@ class SettingsManager(RsFswInstrument):
             # Try to get the value from the device
             response = self.query_command(command)
         except Exception as e:
-            return False, f'Error querying setting: {str(e).split(',')[1]}'
+            return False, f'Error querying setting: {e}'
         
         # Check to see if the value is set correctly
         if is_number(response) and compare_number_strings(setting.current_value, response):
@@ -160,14 +178,7 @@ class SettingsManager(RsFswInstrument):
         Args:
             mode (str): Mode to be set
         """
-        # SCPI command for modes
-        mode_scpi = {
-            'Spectrum': "SANALYZER",
-            'Real-Time Spectrum': "RTIM",
-            'Zero-Span': 'SANALYZER',
-        }
-        
-        command = f"INST:CRE:REPL '{self.current_mode}', {mode_scpi[mode]}, '{mode}'" # Command to change mode
+        command = f"INST:CRE:REPL '{self.current_mode}', {self.mode_scpi[mode]}, '{mode}'" # Command to change mode
         
         self.write_command(command)
         
