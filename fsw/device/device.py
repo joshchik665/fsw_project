@@ -1,9 +1,8 @@
 # device.py
 
-from RsInstrument import RsInstrument
 from pyvisa import ResourceManager
 
-class RsFswInstrument():
+class Instrument():
     def __init__(self, ip_address:str, visa_timeout:int, opc_timeout:int):
         """ Initialize the Instrument
 
@@ -16,13 +15,14 @@ class RsFswInstrument():
         try:
             self.instrument = self.rm.open_resource(f"TCPIP::{ip_address}::hislip0")
         except Exception as ex:
-            print('Error initializing the instrument session:\n' + ex.args[0]) # Error
+            print(f'Error initializing the instrument session:\n{ex.args[0]}') # Error
             exit()
         
         self.visa_timeout = visa_timeout  # Timeout for VISA Read Operations
         self.opc_timeout = opc_timeout  # Timeout for opc-synchronised operations
         self.instrument_status_checking = True  # Error check after each command
-        print('Hello I am: ' + self.instrument.query('*IDN?')) # Asks the FSW it's ID
+        self.idn = self.instrument.query('*IDN?')
+        print(f'Hello I am: {self.idn}') # Asks the FSW it's ID
         
         self.write_command('*RST') # Reset the instrument
         
