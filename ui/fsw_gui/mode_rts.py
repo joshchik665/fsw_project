@@ -5,7 +5,7 @@ from PySide6.QtWidgets import (
     QLabel
 )
 from ui.common_gui.mode_super import ModeSuper
-from ui.common_gui.setting_widgets import SpectralWidget
+from ui.common_gui.trace_widget import SpectralWidget
 from ui.common.utilities import save_file_dialog, open_file_dialog
 from ui.common_gui.message_boxes import copy_error, copy_sucess
 from ui.common_gui.spectrogram_window import SpectrogramWindow
