@@ -10,7 +10,7 @@
         "Real-Time Spectrum": "RTIM",
         "Zero-Span": "SANALYZER"
     },
-    "Numerical Settings": {
+    "Settings": {
         "Center Frequency": {
             "measure": "frequency",
             "applicable_modes": [
@@ -18,6 +18,7 @@
                 "Real-Time Spectrum",
                 "Zero-Span"
             ],
+            "setting_type": "numerical",
             "default_value": "21500000000",
             "write_command": "FREQ:CENT",
             "query_command": "FREQ:CENT?"
@@ -27,6 +28,7 @@
             "applicable_modes": [
                 "Real-Time Spectrum"
             ],
+            "setting_type": "numerical",
             "default_value": "1",
             "write_command": "SENS:SWE:DTIM",
             "query_command": "SENS:SWE:DTIM?"
@@ -38,6 +40,7 @@
                 "Real-Time Spectrum",
                 "Zero-Span"
             ],
+            "setting_type": "numerical",
             "default_value": "0",
             "write_command": "DISP:WIND:TRAC:Y:SCAL:RLEV",
             "query_command": "DISP:WIND:TRAC:Y:SCAL:RLEV?"
@@ -49,6 +52,7 @@
                 "Real-Time Spectrum",
                 "Zero-Span"
             ],
+            "setting_type": "numerical",
             "default_value": "43000000000",
             "write_command": "FREQ:SPAN",
             "query_command": "FREQ:SPAN?"
@@ -60,6 +64,7 @@
                 "Real-Time Spectrum",
                 "Zero-Span"
             ],
+            "setting_type": "numerical",
             "default_value": "3000000",
             "write_command": "BAND",
             "query_command": "BAND?"
@@ -71,6 +76,7 @@
                 "Real-Time Spectrum",
                 "Zero-Span"
             ],
+            "setting_type": "numerical",
             "default_value": "0.172",
             "write_command": "SENS:SWE:TIME",
             "query_command": "SENS:SWE:TIME?"
@@ -80,6 +86,7 @@
             "applicable_modes": [
                 "Real-Time Spectrum"
             ],
+            "setting_type": "numerical",
             "default_value": "3000",
             "write_command": "CALC2:SGR:HDEP",
             "query_command": "CALC2:SGR:HDEP?"
@@ -90,6 +97,7 @@
                 "Spectrum",
                 "Zero-Span"
             ],
+            "setting_type": "numerical",
             "default_value": "1001",
             "write_command": "SENS:SWE:WIND1:POIN",
             "query_command": "SENS:SWE:WIND1:POIN?"
@@ -100,29 +108,30 @@
                 "Spectrum",
                 "Zero-Span"
             ],
+            "setting_type": "numerical",
             "default_value": "3000000",
             "write_command": "BAND:VID",
             "query_command": "BAND:VID?"
         },
         "Attenuation": {
-        "measure": "number",
-        "applicable_modes": [
-            "Spectrum",
-            "Real-Time Spectrum",
-            "Zero-Span"
-        ],
-        "default_value": "10",
-        "write_command": "INP:ATT",
-        "query_command": "INP:ATT?"
-        }
-    },
-    "Mode Settings": {
+            "measure": "number",
+            "applicable_modes": [
+                "Spectrum",
+                "Real-Time Spectrum",
+                "Zero-Span"
+            ],
+            "setting_type": "numerical",
+            "default_value": "10",
+            "write_command": "INP:ATT",
+            "query_command": "INP:ATT?"
+        },
         "Sweep Time Auto": {
             "applicable_modes": [
                 "Spectrum",
                 "Real-Time Spectrum",
                 "Zero-Span"
             ],
+            "setting_type": "mode",
             "default_value": "1",
             "write_commands": {
                 "1": "SENS:SWE:TIME:AUTO ON",
@@ -140,6 +149,7 @@
                 "Real-Time Spectrum",
                 "Zero-Span"
             ],
+            "setting_type": "mode",
             "default_value": "APE",
             "write_commands": {
                 "APE":"SENS:WIND1:DET1:FUNC APE",
@@ -165,6 +175,7 @@
                 "Real-Time Spectrum",
                 "Zero-Span"
             ],
+            "setting_type": "mode",
             "default_value": "1",
             "write_commands": {
                 "1": "INP:ATT:AUTO ON",
@@ -182,6 +193,7 @@
                 "Real-Time Spectrum",
                 "Zero-Span"
             ],
+            "setting_type": "mode",
             "default_value": "30",
             "write_commands": {
                 "15": "INP:GAIN:VAL 15",
@@ -195,6 +207,7 @@
                 "Real-Time Spectrum",
                 "Zero-Span"
             ],
+            "setting_type": "mode",
             "default_value": "0",
             "write_commands": {
                 "0": "INP:GAIN:STAT OFF",
@@ -212,6 +225,7 @@
                 "Real-Time Spectrum",
                 "Zero-Span"
             ],
+            "setting_type": "mode",
             "default_value": "1",
             "write_commands": {
                 "1":"INIT:CONT ON",

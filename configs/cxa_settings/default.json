@@ -7,13 +7,14 @@
         "Spectrum": "SANALYZER",
         "Zero-Span": "SANALYZER"
     },
-    "Numerical Settings": {
+    "Settings": {
         "Center Frequency": {
             "measure": "frequency",
             "applicable_modes": [
                 "Spectrum",
                 "Zero-Span"
             ],
+            "setting_type": "numerical",
             "default_value": "3755000000",
             "write_command": "FREQ:CENT",
             "query_command": "FREQ:CENT?"
@@ -24,6 +25,7 @@
                 "Spectrum",
                 "Zero-Span"
             ],
+            "setting_type": "numerical",
             "default_value": "7490000000",
             "write_command": "FREQ:SPAN",
             "query_command": "FREQ:SPAN?"
@@ -34,6 +36,7 @@
                 "Spectrum",
                 "Zero-Span"
             ],
+            "setting_type": "numerical",
             "default_value": "3000000",
             "write_command": "BAND",
             "query_command": "BAND?"
@@ -44,6 +47,7 @@
                 "Spectrum",
                 "Zero-Span"
             ],
+            "setting_type": "numerical",
             "default_value": "0.0032667",
             "write_command": "SWE:TIME",
             "query_command": "SWE:TIME?"
@@ -54,6 +58,7 @@
                 "Spectrum",
                 "Zero-Span"
             ],
+            "setting_type": "numerical",
             "default_value": "1001",
             "write_command": "SWE:WIND1:POIN",
             "query_command": "SWE:WIND1:POIN?"
@@ -64,6 +69,7 @@
                 "Spectrum",
                 "Zero-Span"
             ],
+            "setting_type": "numerical",
             "default_value": "3000000",
             "write_command": "BAND:VID",
             "query_command": "BAND:VID?"
@@ -74,17 +80,17 @@
             "Spectrum",
             "Zero-Span"
         ],
+        "setting_type": "numerical",
         "default_value": "10",
         "write_command": "INP:ATT",
         "query_command": "INP:ATT?"
-        }
-    },
-    "Mode Settings": {
+        },
         "Sweep Time Auto": {
             "applicable_modes": [
                 "Spectrum",
                 "Zero-Span"
             ],
+            "setting_type": "mode",
             "default_value": "1",
             "write_commands": {
                 "1": "SWE:TIME:AUTO ON",
@@ -98,6 +104,7 @@
                 "Real-Time Spectrum",
                 "Zero-Span"
             ],
+            "setting_type": "mode",
             "default_value": "1",
             "write_commands": {
                 "1": "INP:ATT:AUTO ON",
@@ -111,6 +118,7 @@
                 "Real-Time Spectrum",
                 "Zero-Span"
             ],
+            "setting_type": "mode",
             "default_value": "1",
             "write_commands": {
                 "1":"INIT:CONT ON",

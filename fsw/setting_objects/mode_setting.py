@@ -11,6 +11,7 @@ class ModeSetting:
     write_commands: Dict[str, str]
     query_command: str
     applicable_modes: set[str]
+    setting_type: str
     current_value: Optional[Any] = None
     alias: Optional[Dict[str, str]] = None
     

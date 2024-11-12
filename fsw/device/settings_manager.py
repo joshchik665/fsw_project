@@ -35,8 +35,8 @@ class SettingsManager(Instrument):
         self.mode_scpi = config["Modes SCPI Commands"] # Scpi commands to change modes
         
         # Initializes the Setting objects and puts them into dictionaries. The dictionaries are combined together into joint dictionary
-        self.numerical_settings = {name: NumericalSetting.from_dict(name,**setting) for name, setting in config["Numerical Settings"].items()}
-        self.mode_settings = {name: ModeSetting.from_dict(name,**setting) for name, setting in config["Mode Settings"].items()}
+        self.numerical_settings = {name: NumericalSetting.from_dict(name,**setting) for name, setting in config["Settings"].items() if setting["setting_type"] == "numerical"}
+        self.mode_settings = {name: ModeSetting.from_dict(name,**setting) for name, setting in config["Settings"].items() if setting["setting_type"] == "mode"}
         self.settings = self.mode_settings | self.numerical_settings
     
     

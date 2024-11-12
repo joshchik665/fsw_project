@@ -15,7 +15,7 @@ from PySide6.QtGui import (
 from PySide6.QtCore import (
     Qt,
 )
-from ui.common_gui.common_widgets import SettingBox
+from ui.common_gui.common_widgets import NumericalSettingBox, ModeSettingBox
 from ui.common.utilities import save_file_dialog, open_file_dialog
 from fsw.device.settings_manager import SettingsManager
 from pathlib import Path
@@ -136,7 +136,10 @@ class ModeSuper(QWidget):
         """
         setting = self.instrument.get_setting_object(setting_name)
         
-        widget = SettingBox(self.instrument,setting,self)
+        if setting.setting_type == "numerical":
+            widget = NumericalSettingBox(self.instrument,setting,self)
+        else:
+            widget = ModeSettingBox(self.instrument,setting,self)
         widget.set_value(setting.current_value)
         
         self.settings_widgets[setting_name] = widget

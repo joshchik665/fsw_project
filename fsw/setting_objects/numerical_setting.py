@@ -12,6 +12,7 @@ class NumericalSetting:
     default_value: str
     write_command: str
     query_command: str
+    setting_type: str
     applicable_modes: set[str]
     current_value: Optional[Any] = None
     

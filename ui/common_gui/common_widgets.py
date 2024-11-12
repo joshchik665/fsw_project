@@ -23,7 +23,7 @@ import pyqtgraph as pg
 import numpy as np
 
 
-class SettingBox(QWidget):
+class NumericalSettingBox(QWidget):
     def __init__(self, instrument:SettingsManager, setting:Union[NumericalSetting,ModeSetting], parent=None):
         """Initializes the setting box widget
 
@@ -47,35 +47,6 @@ class SettingBox(QWidget):
         
         self.instrument = instrument
         
-        # Checks to see what type of setting this is by checking the type of the setting object
-        if isinstance(self.setting, NumericalSetting):
-            self.setting_type = 'numerical'
-            self._make_numerical_setting_widget()
-        elif isinstance(self.setting, ModeSetting):
-            self.setting_type = 'mode'
-            self._make_mode_setting_widget()
-        else:
-            raise TypeError("Unsupported object type")
-    
-    
-    def _make_mode_setting_widget(self) -> None:
-        """Make the layout if the layout is for a mode setting
-        """
-        # Creates the widget to select the options
-        self.option_box = QComboBox()
-        if self.setting.alias is not None:
-            self.option_box.addItems(self.setting.alias.keys())
-        else:
-            self.option_box.addItems(self.setting.write_commands.keys())
-        self.option_box.setFixedSize(110, 30)
-        self.layout.addWidget(self.option_box)
-        
-        self.layout.addStretch(1)
-    
-    
-    def _make_numerical_setting_widget(self) -> None:
-        """Make the layout if the layout is for a numerical setting
-        """
         # Get the units for this setting based on the measure of the setting
         self.all_units = {
             'frequency': {
@@ -122,18 +93,15 @@ class SettingBox(QWidget):
         Returns:
             str: String of the value of this widget
         """
-        if self.setting_type == 'numerical': # if the setting is numerical
-            # get text and unit
-            value = self.value_entry.text()
-            unit = self.unit_entry.currentText()
-            
-            value = float(value)
-            
-            widget_value = value * self.units[unit] # converts to base unit
-            
-            return str(widget_value)
-        elif self.setting_type == 'mode': # if the setting is for a mode
-            return self.option_box.currentText()
+        # get text and unit
+        value = self.value_entry.text()
+        unit = self.unit_entry.currentText()
+        
+        value = float(value)
+        
+        widget_value = value * self.units[unit] # converts to base unit
+        
+        return str(widget_value)
     
     
     def set_value(self,value:str) -> None:
@@ -142,29 +110,26 @@ class SettingBox(QWidget):
         Args:
             value (str): The value to be set on this widget
         """
-        if self.setting_type == 'numerical':
-            value = float(value)
-            
-            # Get all the units that are less than or equal to the value
-            eligible_units = {k: v for k, v in self.units.items() if v <= value}
-            
-            # gets the largest possible unit that is less that the value
-            if not eligible_units:
-                unit = max(self.units, key=self.units.get)
-            else:
-                unit = max(eligible_units, key=eligible_units.get)
-            
-            value = value / self.units[unit] # Convert the value to the correct unit
-            
-            # Create the text to write on the display
-            text = f"{value:.7f}"
-            text = remove_trailing_zeros(text)
-            
-            # Set the value on the widget
-            self.value_entry.setText(text)
-            self.unit_entry.setCurrentText(unit)
-        elif self.setting_type == 'mode':
-            self.option_box.setCurrentText(value) # Set the text on the display
+        value = float(value)
+        
+        # Get all the units that are less than or equal to the value
+        eligible_units = {k: v for k, v in self.units.items() if v <= value}
+        
+        # gets the largest possible unit that is less that the value
+        if not eligible_units:
+            unit = max(self.units, key=self.units.get)
+        else:
+            unit = max(eligible_units, key=eligible_units.get)
+        
+        value = value / self.units[unit] # Convert the value to the correct unit
+        
+        # Create the text to write on the display
+        text = f"{value:.7f}"
+        text = remove_trailing_zeros(text)
+        
+        # Set the value on the widget
+        self.value_entry.setText(text)
+        self.unit_entry.setCurrentText(unit)
     
     
     def set_status(self, state:bool, message:str) -> None:
@@ -174,12 +139,7 @@ class SettingBox(QWidget):
             state (bool): True if the setting is set correctly
             message (str): message to display to the user about the setting
         """
-        # Get the right widget to set the status
-        if self.setting_type == 'numerical':
-            widget = self.value_entry
-        elif self.setting_type == 'mode':
-            widget = self.option_box
-        
+        widget = self.value_entry
         # Set the status of the setting by color and set tooltip message
         if state:
             widget.setStyleSheet("background-color: #9CEC7B")
@@ -188,6 +148,77 @@ class SettingBox(QWidget):
             widget.setStyleSheet("background-color: #FFB94F")
             widget.setToolTip(message)
 
+
+class ModeSettingBox(QWidget):
+    def __init__(self, instrument:SettingsManager, setting:Union[NumericalSetting,ModeSetting], parent=None):
+        """Initializes the setting box widget
+
+        Args:
+            instrument (SettingManager): The instrument
+            setting (Union[NumericalSetting,ModeSetting]): The setting object
+            parent (QWidget, optional): The parent widget. Defaults to None.
+        """
+        super().__init__(parent)
+        
+        self.setting = setting # Store the setting object
+        
+        # The layout for this widget
+        self.layout = QHBoxLayout()
+        self.setLayout(self.layout)
+        
+        # Setting name widget
+        label = QLabel(self.setting.name)
+        label.setFixedWidth(150)
+        self.layout.addWidget(label)
+        
+        self.instrument = instrument
+        
+        # Creates the widget to select the options
+        self.option_box = QComboBox()
+        if self.setting.alias is not None:
+            self.option_box.addItems(self.setting.alias.keys())
+        else:
+            self.option_box.addItems(self.setting.write_commands.keys())
+        self.option_box.setFixedSize(110, 30)
+        self.layout.addWidget(self.option_box)
+        
+        self.layout.addStretch(1)
+    
+    
+    def get_value(self) -> str:
+        """Gets the current value of this widget and returns if as a string
+
+        Returns:
+            str: String of the value of this widget
+        """
+        return self.option_box.currentText()
+    
+    
+    def set_value(self,value:str) -> None:
+        """Set the current value of the widget
+
+        Args:
+            value (str): The value to be set on this widget
+        """
+        self.option_box.setCurrentText(value) # Set the text on the display
+    
+    
+    def set_status(self, state:bool, message:str) -> None:
+        """Show the status of the setting on the widget and set the tool tip message
+
+        Args:
+            state (bool): True if the setting is set correctly
+            message (str): message to display to the user about the setting
+        """
+        widget = self.option_box
+        
+        # Set the status of the setting by color and set tooltip message
+        if state:
+            widget.setStyleSheet("background-color: #9CEC7B")
+            widget.setToolTip("All good")
+        else:
+            widget.setStyleSheet("background-color: #FFB94F")
+            widget.setToolTip(message)
 
 class SpectralWidget(QWidget):
     def __init__(self, device: SettingsManager, mode: str):
