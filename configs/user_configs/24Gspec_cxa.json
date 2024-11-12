@@ -1,0 +1,14 @@
+{
+    "ip_address": "192.168.2.115",
+    "mode": "Spectrum",
+    "data": {
+        "Center Frequency": "2440000000.0",
+        "Frequency Span": "80000000.0",
+        "Resolution Bandwidth": "3000000.0",
+        "Video Bandwidth": "3000000.0",
+        "Sweep Time": "0.0033333",
+        "Number of Points": "1001.0",
+        "Attenuation": "10.0",
+        "Sweep": "1"
+    }
+}

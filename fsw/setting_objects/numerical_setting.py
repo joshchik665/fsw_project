@@ -12,6 +12,7 @@ class NumericalSetting:
     default_value: str
     write_command: str
     query_command: str
+    setting_type: str
     applicable_modes: set[str]
     current_value: Optional[Any] = None
     
@@ -79,3 +80,12 @@ class NumericalSetting:
             bool: True if the value is valid for this setting (is a number)
         """
         return is_number(value)
+    
+    
+    def set_current_value(self, value: str) -> None:
+        """Set the current value
+
+        Args:
+            value (str): The value to set as the current value
+        """
+        self.current_value = value

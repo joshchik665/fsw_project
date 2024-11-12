@@ -14,20 +14,14 @@ class ModeSpec(ModeSuper):
         self.setting_layout2 = QVBoxLayout()
         
         self.create_place_setting_box_widget("Center Frequency", self.setting_layout1)
-        self.create_place_setting_box_widget("Reference Level", self.setting_layout1)
         self.create_place_setting_box_widget("Frequency Span", self.setting_layout1)
         self.create_place_setting_box_widget("Resolution Bandwidth", self.setting_layout1)
         self.create_place_setting_box_widget("Video Bandwidth", self.setting_layout1)
         self.create_place_setting_box_widget("Sweep Time", self.setting_layout1)
         self.create_place_setting_box_widget("Number of Points", self.setting_layout1)
-        self.create_place_setting_box_widget("Attenuation", self.setting_layout1)
         
-        self.create_place_setting_box_widget("Detector", self.setting_layout2)
         self.create_place_setting_box_widget("Sweep", self.setting_layout2)
-        self.create_place_setting_box_widget("Sweep Time Auto", self.setting_layout2)
-        self.create_place_setting_box_widget("Attenuation Auto", self.setting_layout2)
-        self.create_place_setting_box_widget("Pre-Amp Value", self.setting_layout2)
-        self.create_place_setting_box_widget("Pre-Amp Mode", self.setting_layout2)
+        self.create_place_setting_box_widget("Detector", self.setting_layout2)
         
         self.setting_layout1.addStretch(1)
         self.setting_layout2.addStretch(1)

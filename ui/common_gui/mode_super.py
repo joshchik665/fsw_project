@@ -15,10 +15,9 @@ from PySide6.QtGui import (
 from PySide6.QtCore import (
     Qt,
 )
-from ui.common_gui.common_widgets import SettingBox
+from ui.common_gui.setting_widgets import NumericalSettingBox, ModeSettingBox
 from ui.common.utilities import save_file_dialog, open_file_dialog
 from fsw.device.settings_manager import SettingsManager
-from pathlib import Path
 import json
 
 class ModeSuper(QWidget):
@@ -32,15 +31,9 @@ class ModeSuper(QWidget):
         """
         super().__init__(parent)
         
-        # Tab indicies, will be changed later
-        self.tab_indicies = {
-            "Spectrum": 0,
-            "Real-Time Spectrum": 1,
-            "Zero-Span": 2,
-        }
-        
         # Gets the instrument and the parent widgets
         self.instrument = device
+        self.device_type = self.instrument.device_type
         self.tab_widget = self.parent()
         self.main_window = self.tab_widget.parent()
         
@@ -71,7 +64,10 @@ class ModeSuper(QWidget):
     
     def _set_title(self) -> None:
         """Set the Title of this widget"""
-        title = QLabel('Rhode & Schwarz FSW-43 GUI')
+        
+        with open(r"configs\device_types\configs.json", "r") as file:
+            devices_config = json.load(file)
+        title = QLabel(devices_config["Device Titles"][self.device_type])
         title.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         title.setObjectName('title')
         
@@ -132,7 +128,10 @@ class ModeSuper(QWidget):
         """
         setting = self.instrument.get_setting_object(setting_name)
         
-        widget = SettingBox(self.instrument,setting,self)
+        if setting.setting_type == "numerical":
+            widget = NumericalSettingBox(self.instrument,setting,self)
+        else:
+            widget = ModeSettingBox(self.instrument,setting,self.mode,self)
         widget.set_value(setting.current_value)
         
         self.settings_widgets[setting_name] = widget
@@ -165,7 +164,7 @@ class ModeSuper(QWidget):
         Returns:
             dict: The results of the setting returned as a dict of setting names and a tuple containing a boolean and a message
         """
-        setting_names_values = {key: setting.get_value() for key, setting in self.settings_widgets.items()}
+        setting_names_values = {key: setting.get_value() for key, setting in self.settings_widgets.items() if setting.changed}
         return self.instrument.set_all_settings(setting_names_values)
     
     
@@ -208,10 +207,10 @@ class ModeSuper(QWidget):
     
     def load(self) -> None:
         """File dialog to select preset to load"""
-        filepath = Path(open_file_dialog('Open JSON file', r'configs\user_configs', '.json', self))
+        filepath = open_file_dialog('Open JSON file', r'configs\user_configs', '.json', self)
         
-        if filepath.exists():
-            with filepath.open('r') as file:
+        if filepath:
+            with open(filepath, 'r') as file:
                 config = json.load(file)
             
             self.load_settings(config)
@@ -223,11 +222,13 @@ class ModeSuper(QWidget):
         Args:
             config (dict): A dictionary of name value pairs of settings to set
         """
-        self.main_window.change_tab_programmatically(self.tab_indicies[config['mode']])
+        tab_indicies = self.main_window.tab_indicies
+        
+        self.main_window.change_tab_programmatically(tab_indicies[config['mode']])
         
         self.instrument.set_all_settings(config['data'])
         
-        self.tab_widget.widget(self.tab_indicies[config['mode']]).verify()
+        self.tab_widget.widget(tab_indicies[config['mode']]).verify()
     
     
     def save(self) -> None:

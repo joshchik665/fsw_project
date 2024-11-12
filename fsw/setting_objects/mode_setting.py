@@ -11,7 +11,10 @@ class ModeSetting:
     write_commands: Dict[str, str]
     query_command: str
     applicable_modes: set[str]
+    setting_type: str
     current_value: Optional[Any] = None
+    alias: Optional[Dict[str, str]] = None
+    custom_modes: Optional[dict[str, set[str]]] = None
     
     
     def __post_init__(self):
@@ -43,6 +46,9 @@ class ModeSetting:
         Returns:
             str: SCPI command to set that setting
         """
+        if self.alias is not None:
+            if value in self.alias:
+                return self.write_commands[self.alias[value]]
         return self.write_commands[value]
     
     
@@ -76,7 +82,23 @@ class ModeSetting:
         Returns:
             bool: True if that value is valid
         """
+        if self.alias is not None:
+            if value in self.alias:
+                return True
         return value in self.write_commands
+    
+    
+    def set_current_value(self, value: str) -> None:
+        """Sets the current value, needed to convert from an alias
+
+        Args:
+            value (str): Value to set as current value
+        """
+        if self.alias is not None:
+            if value in self.alias:
+                self.current_value = self.alias[value]
+                return
+        self.current_value = value
 
 
 
