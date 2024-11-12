@@ -1,7 +1,8 @@
 {
     "Default Mode": "Spectrum",
     "Modes": [
-        "Spectrum"
+        "Spectrum",
+        "Zero-Span"
     ],
     "Modes SCPI Commands": {
         "Spectrum": "SANALYZER",
@@ -96,6 +97,10 @@
                 "1": "SWE:TIME:AUTO ON",
                 "0": "SWE:TIME:AUTO OFF"
             },
+            "alias": {
+                "ON": "1",
+                "OFF": "0"
+            },
             "query_command": "SWE:TIME:AUTO?"
         },
         "Attenuation Auto": {
@@ -110,6 +115,10 @@
                 "1": "INP:ATT:AUTO ON",
                 "0": "INP:ATT:AUTO OFF"
             },
+            "alias": {
+                "ON": "1",
+                "OFF": "0"
+            },
             "query_command": "INP:ATT:AUTO?"
         },
         "Sweep": {
@@ -123,6 +132,10 @@
             "write_commands": {
                 "1":"INIT:CONT ON",
                 "0": "INIT:CONT OFF"
+            },
+            "alias": {
+                "Continuous": "1",
+                "Single": "0"
             },
             "query_command": "INIT:CONT?"
         }

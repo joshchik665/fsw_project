@@ -9,6 +9,7 @@ import ui.fsw_gui.mode_spec as FSW43Spec
 import ui.fsw_gui.mode_rts as FSW43Rts
 import ui.fsw_gui.mode_zero_span as FSW43Zs
 import ui.cxa_gui.mode_spec as CXASpec
+import ui.cxa_gui.mode_zero_span as CXAZs
 from fsw.device.settings_manager import SettingsManager
 import json
 
@@ -84,7 +85,8 @@ class MainWindow(QMainWindow):
                 "Zero-Span": FSW43Zs.ModeZs
             },
             "KTCXA": {
-                "Spectrum": CXASpec.ModeSpec
+                "Spectrum": CXASpec.ModeSpec,
+                "Zero-Span": CXAZs.ModeZs
             }
         }
         
