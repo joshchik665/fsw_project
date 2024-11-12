@@ -14,6 +14,7 @@ class ModeSetting:
     setting_type: str
     current_value: Optional[Any] = None
     alias: Optional[Dict[str, str]] = None
+    custom_modes: Optional[dict[str, set[str]]] = None
     
     
     def __post_init__(self):

@@ -154,15 +154,16 @@ class NumericalSettingBox(QWidget):
         if state:
             widget.setStyleSheet("background-color: #9CEC7B")
             widget.setToolTip("All good")
+            self.changed = False
         else:
             widget.setStyleSheet("background-color: #FFB94F")
             widget.setToolTip(message)
-        
-        self.changed = False
+            self.changed = True
+
 
 
 class ModeSettingBox(QWidget):
-    def __init__(self, instrument:SettingsManager, setting:Union[NumericalSetting,ModeSetting], parent=None):
+    def __init__(self, instrument:SettingsManager, setting:Union[NumericalSetting,ModeSetting], mode: str, parent=None):
         """Initializes the setting box widget
 
         Args:
@@ -188,9 +189,15 @@ class ModeSettingBox(QWidget):
         # Creates the widget to select the options
         self.option_box = QComboBox()
         if self.setting.alias is not None:
-            self.option_box.addItems(self.setting.alias.keys())
+            if self.setting.custom_modes is not None:
+                self.option_box.addItems(self.setting.custom_modes[mode])
+            else:
+                self.option_box.addItems(self.setting.alias.keys())
         else:
-            self.option_box.addItems(self.setting.write_commands.keys())
+            if self.setting.custom_modes is not None:
+                self.option_box.addItems(self.setting.custom_modes[mode])
+            else:
+                self.option_box.addItems(self.setting.write_commands.keys())
         self.option_box.setFixedSize(110, 30)
         self.option_box.currentTextChanged.connect(self.value_changed)
         self.layout.addWidget(self.option_box)
@@ -237,11 +244,12 @@ class ModeSettingBox(QWidget):
         if state:
             widget.setStyleSheet("background-color: #9CEC7B")
             widget.setToolTip("All good")
+            self.changed = False
         else:
             widget.setStyleSheet("background-color: #FFB94F")
             widget.setToolTip(message)
-        
-        self.changed = False
+            self.changed = True
+
 
 class SpectralWidget(QWidget):
     def __init__(self, device: SettingsManager, mode: str):

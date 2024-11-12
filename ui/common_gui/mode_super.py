@@ -132,7 +132,7 @@ class ModeSuper(QWidget):
         if setting.setting_type == "numerical":
             widget = NumericalSettingBox(self.instrument,setting,self)
         else:
-            widget = ModeSettingBox(self.instrument,setting,self)
+            widget = ModeSettingBox(self.instrument,setting,self.mode,self)
         widget.set_value(setting.current_value)
         
         self.settings_widgets[setting_name] = widget
