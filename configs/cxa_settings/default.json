@@ -72,8 +72,8 @@
             ],
             "setting_type": "numerical",
             "default_value": "1001",
-            "write_command": "SWE:WIND1:POIN",
-            "query_command": "SWE:WIND1:POIN?"
+            "write_command": "SWE:POIN",
+            "query_command": "SWE:POIN?"
         },
         "Video Bandwidth": {
             "measure": "frequency",
@@ -146,9 +146,7 @@
                 "SAMP":"DET SAMP",
                 "POS":"DET POS",
                 "NEG":"DET NEG",
-                "RAV":"DET RAV",
-                "EAV":"DET EAV",
-                "QPE":"DET QPE"
+                "RAV":"DET RAV"
             },
             "alias": {
                 "Normal": "NORM",
@@ -156,9 +154,7 @@
                 "Negative Peak": "NEG",
                 "RMS": "RAV",
                 "Average": "AVER",
-                "Sample": "SAMP",
-                "EMI Average": "EAV",
-                "Quasi Peak": "QPE"
+                "Sample": "SAMP"
             },
             "query_command": "DET?"
         },

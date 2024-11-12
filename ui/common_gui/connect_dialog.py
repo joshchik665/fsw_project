@@ -8,7 +8,7 @@ from PySide6.QtWidgets import (
     QPushButton,
     QHBoxLayout,
 ) 
-from PySide6.QtGui import QIcon, QDoubleValidator
+from PySide6.QtGui import QIcon
 import json
 from ui.common.utilities import open_file_dialog
 from pathlib import Path

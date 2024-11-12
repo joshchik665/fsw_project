@@ -1,4 +1,4 @@
-# common_widgets.py
+# setting_widgets.py
 
 from PySide6.QtWidgets import (
     QWidget,
