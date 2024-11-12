@@ -79,3 +79,12 @@ class NumericalSetting:
             bool: True if the value is valid for this setting (is a number)
         """
         return is_number(value)
+    
+    
+    def set_current_value(self, value: str) -> None:
+        """Set the current value
+
+        Args:
+            value (str): The value to set as the current value
+        """
+        self.current_value = value

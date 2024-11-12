@@ -107,11 +107,11 @@ class SettingsManager(Instrument):
             # Try writing the full command to thei instrument
             for command in command_list:
                 self.write_command(command)
-            
-            setting.current_value = value # Set the current value in the object
         except Exception as e:
             # Error writing setting
             return False, f'Error writing setting: {e}'
+        
+        setting.set_current_value(value) # Set the current value in the object
         
         return True, 'Set sucessful'
     
@@ -151,7 +151,7 @@ class SettingsManager(Instrument):
         
         try:
             # Try to get the value from the device
-            response = self.query_command(command)
+            response = self.query_command(command).split("\n")[0]
         except Exception as e:
             return False, f'Error querying setting: {e}'
         
@@ -161,7 +161,7 @@ class SettingsManager(Instrument):
         elif setting.current_value == response:
             return True, 'Setting verified'
         else:
-            setting.current_value = response
+            setting.set_current_value(response)
             return False, f'Setting set incorrect:{response}'
     
     

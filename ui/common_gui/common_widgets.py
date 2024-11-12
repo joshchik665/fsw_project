@@ -63,7 +63,10 @@ class SettingBox(QWidget):
         """
         # Creates the widget to select the options
         self.option_box = QComboBox()
-        self.option_box.addItems(self.setting.write_commands.keys())
+        if self.setting.alias is not None:
+            self.option_box.addItems(self.setting.alias.keys())
+        else:
+            self.option_box.addItems(self.setting.write_commands.keys())
         self.option_box.setFixedSize(110, 30)
         self.layout.addWidget(self.option_box)
         
