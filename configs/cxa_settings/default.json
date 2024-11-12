@@ -20,6 +20,17 @@
             "write_command": "FREQ:CENT",
             "query_command": "FREQ:CENT?"
         },
+        "Reference Level": {
+            "measure": "power",
+            "applicable_modes": [
+                "Spectrum",
+                "Zero-Span"
+            ],
+            "setting_type": "numerical",
+            "default_value": "0",
+            "write_command": "DISP:WIND:TRAC:Y:SCAL:RLEV",
+            "query_command": "DISP:WIND:TRAC:Y:SCAL:RLEV?"
+        },
         "Frequency Span": {
             "measure": "frequency",
             "applicable_modes": [
@@ -120,6 +131,36 @@
                 "OFF": "0"
             },
             "query_command": "INP:ATT:AUTO?"
+        },
+        "Detector": {
+            "applicable_modes": [
+                "Spectrum",
+                "Real-Time Spectrum",
+                "Zero-Span"
+            ],
+            "setting_type": "mode",
+            "default_value": "NORM",
+            "write_commands": {
+                "NORM":"DET NORM",
+                "AVER":"DET AVER",
+                "SAMP":"DET SAMP",
+                "POS":"DET POS",
+                "NEG":"DET NEG",
+                "RAV":"DET RAV",
+                "EAV":"DET EAV",
+                "QPE":"DET QPE"
+            },
+            "alias": {
+                "Normal": "NORM",
+                "Positive Peak": "POS",
+                "Negative Peak": "NEG",
+                "RMS": "RAV",
+                "Average": "AVER",
+                "Sample": "SAMP",
+                "EMI Average": "EAV",
+                "Quasi Peak": "QPE"
+            },
+            "query_command": "DET?"
         },
         "Sweep": {
             "applicable_modes": [

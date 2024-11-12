@@ -7,7 +7,7 @@ from fsw.setting_objects.mode_setting import ModeSetting
 import json
 
 class SettingsManager(Instrument):
-    def __init__(self, ip_address:str, visa_timeout:int, opc_timeout:int):
+    def __init__(self, ip_address:str):
         """Initializes the Setting Manager instrument that controls all the settings on the instrument
 
         Args:
@@ -16,7 +16,7 @@ class SettingsManager(Instrument):
             visa_timeout (int): Visa timeout in milliseconds
             opc_timeout (int): OPC timeout in milliseconds
         """
-        super().__init__(ip_address, visa_timeout, opc_timeout)
+        super().__init__(ip_address)
         
         with open(r"configs\device_types\configs.json", "r") as file:
             devices_config = json.load(file)

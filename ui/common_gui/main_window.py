@@ -15,7 +15,7 @@ import json
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, config: dict, visa_timeout: int, opc_timeout: int):
+    def __init__(self, config: dict):
         """Main window for the GUI
 
         Args:
@@ -32,9 +32,7 @@ class MainWindow(QMainWindow):
         
         # Creates instance of the SettingsManager class that controls the instrument
         self.instrument = SettingsManager(
-            config['ip_address'],
-            visa_timeout, 
-            opc_timeout
+            config['ip_address']
             )
         
         self.modes = self.instrument.modes

@@ -3,7 +3,7 @@
 from pyvisa import ResourceManager
 
 class Instrument():
-    def __init__(self, ip_address:str, visa_timeout:int, opc_timeout:int):
+    def __init__(self, ip_address:str):
         """ Initialize the Instrument
 
         Args:
@@ -18,9 +18,6 @@ class Instrument():
             print(f'Error initializing the instrument session:\n{ex.args[0]}') # Error
             exit()
         
-        self.visa_timeout = visa_timeout  # Timeout for VISA Read Operations
-        self.opc_timeout = opc_timeout  # Timeout for opc-synchronised operations
-        self.instrument_status_checking = True  # Error check after each command
         self.idn = self.instrument.query('*IDN?')
         print(f'Hello I am: {self.idn}') # Asks the FSW it's ID
         
