@@ -32,13 +32,6 @@ class ModeSuper(QWidget):
         """
         super().__init__(parent)
         
-        # Tab indicies, will be changed later
-        self.tab_indicies = {
-            "Spectrum": 0,
-            "Real-Time Spectrum": 1,
-            "Zero-Span": 2,
-        }
-        
         # Gets the instrument and the parent widgets
         self.instrument = device
         self.device_type = self.instrument.device_type
@@ -230,11 +223,13 @@ class ModeSuper(QWidget):
         Args:
             config (dict): A dictionary of name value pairs of settings to set
         """
-        self.main_window.change_tab_programmatically(self.tab_indicies[config['mode']])
+        tab_indicies = self.main_window.tab_indicies
+        
+        self.main_window.change_tab_programmatically(tab_indicies[config['mode']])
         
         self.instrument.set_all_settings(config['data'])
         
-        self.tab_widget.widget(self.tab_indicies[config['mode']]).verify()
+        self.tab_widget.widget(tab_indicies[config['mode']]).verify()
     
     
     def save(self) -> None:
