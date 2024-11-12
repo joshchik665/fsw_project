@@ -87,11 +87,15 @@ class NumericalSettingBox(QWidget):
         self.layout.addWidget(self.unit_entry)
         
         self.layout.addStretch(1)
+        
+        self.changed = False
     
     
     def value_changed(self) -> None:
         if self.value_entry.hasFocus() or self.unit_entry.hasFocus():
             self.value_entry.setStyleSheet("background-color: white")
+            self.changed = True
+    
     
     def get_value(self) -> str:
         """Gets the current value of this widget and returns if as a string
@@ -153,6 +157,8 @@ class NumericalSettingBox(QWidget):
         else:
             widget.setStyleSheet("background-color: #FFB94F")
             widget.setToolTip(message)
+        
+        self.changed = False
 
 
 class ModeSettingBox(QWidget):
@@ -190,11 +196,14 @@ class ModeSettingBox(QWidget):
         self.layout.addWidget(self.option_box)
         
         self.layout.addStretch(1)
+        
+        self.changed = False
     
     
     def value_changed(self) -> None:
         if self.option_box.hasFocus():
             self.option_box.setStyleSheet("background-color: white")
+            self.changed = True
     
     
     def get_value(self) -> str:
@@ -231,6 +240,8 @@ class ModeSettingBox(QWidget):
         else:
             widget.setStyleSheet("background-color: #FFB94F")
             widget.setToolTip(message)
+        
+        self.changed = False
 
 class SpectralWidget(QWidget):
     def __init__(self, device: SettingsManager, mode: str):

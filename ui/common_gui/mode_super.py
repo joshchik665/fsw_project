@@ -165,7 +165,7 @@ class ModeSuper(QWidget):
         Returns:
             dict: The results of the setting returned as a dict of setting names and a tuple containing a boolean and a message
         """
-        setting_names_values = {key: setting.get_value() for key, setting in self.settings_widgets.items()}
+        setting_names_values = {key: setting.get_value() for key, setting in self.settings_widgets.items() if setting.changed}
         return self.instrument.set_all_settings(setting_names_values)
     
     
