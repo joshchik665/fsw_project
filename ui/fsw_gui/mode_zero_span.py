@@ -3,7 +3,7 @@ from PySide6.QtWidgets import (
     QPushButton,
 )
 from ui.common_gui.mode_super import ModeSuper
-from ui.common_gui.common_widgets import SpectralWidget
+from ui.common_gui.setting_widgets import SpectralWidget
 
 class ModeZs(ModeSuper):
     def __init__(self, device, parent=None):
