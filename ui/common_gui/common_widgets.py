@@ -154,7 +154,7 @@ class SettingBox(QWidget):
             value = value / self.units[unit] # Convert the value to the correct unit
             
             # Create the text to write on the display
-            text = f"{value:.4f}"
+            text = f"{value:.7f}"
             text = remove_trailing_zeros(text)
             
             # Set the value on the widget

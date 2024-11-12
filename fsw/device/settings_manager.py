@@ -18,19 +18,12 @@ class SettingsManager(Instrument):
         """
         super().__init__(ip_address, visa_timeout, opc_timeout)
         
-        device_names = {
-            "Rohde&Schwarz,FSW-43": "RSFSW43",
-            "Keysight Technologies,N9000B": "KTCXA"
-        }
+        with open(r"configs\device_types\configs.json", "r") as file:
+            devices_config = json.load(file)
         
-        default_settings_configs = {
-            "RSFSW43": r"configs\fsw_settings\default.json",
-            "KTCXA": r"configs\cxa_settings\default.json"
-        }
+        self.device_type = next((value for key, value in devices_config["Device IDNs"].items() if self.idn.startswith(key))) # using the idn from this instrument, determins device type
         
-        self.device_type = next((value for key, value in device_names.items() if self.idn.startswith(key)))
-        
-        default_settings_filepath = default_settings_configs[self.device_type]
+        default_settings_filepath = devices_config["Device Default Configs"][self.device_type]
         
         with open(default_settings_filepath, 'r') as file: # Opens file containing all the settings
             config = json.load(file)

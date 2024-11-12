@@ -10,6 +10,7 @@ import ui.fsw_gui.mode_rts as FSW43Rts
 import ui.fsw_gui.mode_zero_span as FSW43Zs
 import ui.cxa_gui.mode_spec as CXASpec
 from fsw.device.settings_manager import SettingsManager
+import json
 
 
 class MainWindow(QMainWindow):
@@ -23,6 +24,9 @@ class MainWindow(QMainWindow):
         """
         super().__init__()
         
+        with open(r"configs\device_types\configs.json", "r") as file:
+            self.devices_config = json.load(file)
+        
         self._programmatic_change = False # Flag to change the behavior of the tab change function
         
         # Creates instance of the SettingsManager class that controls the instrument
@@ -35,7 +39,7 @@ class MainWindow(QMainWindow):
         self.modes = self.instrument.modes
         self.device_type = self.instrument.device_type
         
-        self._set_title_and_window() # Set the window oand label for the main window
+        self._set_title_and_window() # Set the window and label for the main window
         
         self._set_status_bar(config['ip_address']) # Set the status bar
         
@@ -52,11 +56,7 @@ class MainWindow(QMainWindow):
     def _set_title_and_window(self) -> None:
         """Set the title and window
         """
-        titles = {
-            "RSFSW43": 'Rhode&Schwarz FSW-43 GUI',
-            "KTCXA": "Keysight Technolocies CXA N9000B GUI"
-        }
-        self.setWindowTitle(titles[self.device_type])
+        self.setWindowTitle(self.devices_config["Device Titles"][self.device_type])
         my_icon = QIcon()
         my_icon.addFile('images\\crc_icon.ico')
         self.setWindowIcon(my_icon)
@@ -68,13 +68,9 @@ class MainWindow(QMainWindow):
         Args:
             ip_address (str): IP address of the instrument
         """
-        status_messages = {
-            "RSFSW43": "Connected to Rhode&Schwarz FSW-43 @",
-            "KTCXA": "Connected to Keysight Technologies CXA N9000B @"
-        }
         status_bar = self.statusBar()
         status_bar.showMessage(
-            f'{status_messages[self.device_type]} {ip_address}', 
+            f'{self.devices_config["Device Status Message"][self.device_type]} {ip_address}', 
             timeout=0
             )
     

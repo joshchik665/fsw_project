@@ -1,0 +1,18 @@
+{
+    "Device IDNs": {
+        "Rohde&Schwarz,FSW-43": "RSFSW43",
+        "Keysight Technologies,N9000B": "KTCXA"
+    },
+    "Device Default Configs": {
+        "RSFSW43": "configs\\fsw_settings\\default.json",
+        "KTCXA": "configs\\cxa_settings\\default.json"
+    },
+    "Device Titles": {
+        "RSFSW43": "Rhode&Schwarz FSW-43 GUI",
+        "KTCXA": "Keysight Technolocies CXA N9000B GUI"
+    },
+    "Device Status Message": {
+        "RSFSW43": "Connected to Rhode&Schwarz FSW-43 @",
+        "KTCXA": "Connected to Keysight Technologies CXA N9000B @"
+    }
+}

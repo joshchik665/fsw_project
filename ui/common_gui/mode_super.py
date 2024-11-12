@@ -72,11 +72,10 @@ class ModeSuper(QWidget):
     
     def _set_title(self) -> None:
         """Set the Title of this widget"""
-        titles = {
-            "RSFSW43": "Rhode & Schwarz FSW-43 GUI",
-            "KTCXA": "Keysight Technologies CXA N9000B GUI"
-        }
-        title = QLabel(titles[self.device_type])
+        
+        with open(r"configs\device_types\configs.json", "r") as file:
+            devices_config = json.load(file)
+        title = QLabel(devices_config["Device Titles"][self.device_type])
         title.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         title.setObjectName('title')
         
