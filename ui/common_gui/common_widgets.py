@@ -76,16 +76,22 @@ class NumericalSettingBox(QWidget):
         validator.setNotation(QDoubleValidator.StandardNotation)
         self.value_entry.setValidator(validator)
         self.value_entry.setFixedSize(60, 30)
+        self.value_entry.textChanged.connect(self.value_changed)
         self.layout.addWidget(self.value_entry)
         
         # Adds the widget to select the unit for the setting
         self.unit_entry = QComboBox()
         self.unit_entry.addItems(list(self.units.keys()))
         self.unit_entry.setFixedSize(50, 30)
+        self.unit_entry.currentTextChanged.connect(self.value_changed)
         self.layout.addWidget(self.unit_entry)
         
         self.layout.addStretch(1)
     
+    
+    def value_changed(self) -> None:
+        if self.value_entry.hasFocus() or self.unit_entry.hasFocus():
+            self.value_entry.setStyleSheet("background-color: white")
     
     def get_value(self) -> str:
         """Gets the current value of this widget and returns if as a string
@@ -124,7 +130,7 @@ class NumericalSettingBox(QWidget):
         value = value / self.units[unit] # Convert the value to the correct unit
         
         # Create the text to write on the display
-        text = f"{value:.7f}"
+        text = f"{value:.5f}"
         text = remove_trailing_zeros(text)
         
         # Set the value on the widget
@@ -180,9 +186,15 @@ class ModeSettingBox(QWidget):
         else:
             self.option_box.addItems(self.setting.write_commands.keys())
         self.option_box.setFixedSize(110, 30)
+        self.option_box.currentTextChanged.connect(self.value_changed)
         self.layout.addWidget(self.option_box)
         
         self.layout.addStretch(1)
+    
+    
+    def value_changed(self) -> None:
+        if self.option_box.hasFocus():
+            self.option_box.setStyleSheet("background-color: white")
     
     
     def get_value(self) -> str:
