@@ -18,8 +18,6 @@ class ModeSpec(ModeSuper):
         self.create_place_setting_box_widget("Resolution Bandwidth", self.setting_layout1)
         self.create_place_setting_box_widget("Video Bandwidth", self.setting_layout1)
         self.create_place_setting_box_widget("Sweep Time", self.setting_layout1)
-        self.create_place_setting_box_widget("Number of Points", self.setting_layout1)
-        self.create_place_setting_box_widget("Attenuation", self.setting_layout1)
         
         self.create_place_setting_box_widget("Sweep", self.setting_layout2)
         
