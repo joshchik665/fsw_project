@@ -1,0 +1,14 @@
+{
+    "Device IDNs": {
+        "Rohde&Schwarz,FSW-43": "RSFSW43",
+        "Keysight Technologies,N9000B": "KTCXA"
+    },
+    "Device Names": {
+        "RSFSW43": "Rhode & Schwarz FSW-43",
+        "KTCXA": "Keysight Technoloties CXA N9000B"
+    },
+    "Device Default Configs": {
+        "RSFSW43": "configs\\fsw_settings\\default.json",
+        "KTCXA": "configs\\cxa_settings\\default.json"
+    }
+}

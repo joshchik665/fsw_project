@@ -67,7 +67,7 @@ class ModeSuper(QWidget):
         
         with open(r"configs\device_types\configs.json", "r") as file:
             devices_config = json.load(file)
-        title = QLabel(devices_config["Device Titles"][self.device_type])
+        title = QLabel(f"{self.devices_config["Device Names"][self.device_type]} GUI")
         title.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         title.setObjectName('title')
         

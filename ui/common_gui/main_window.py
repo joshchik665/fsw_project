@@ -25,15 +25,15 @@ class MainWindow(QMainWindow):
         """
         super().__init__()
         
-        with open(r"configs\device_types\configs.json", "r") as file:
-            self.devices_config = json.load(file)
-        
-        self._programmatic_change = False # Flag to change the behavior of the tab change function
-        
         # Creates instance of the SettingsManager class that controls the instrument
         self.instrument = SettingsManager(
             config['ip_address']
             )
+        
+        with open(r"configs\device_types\configs.json", "r") as file:
+            self.devices_config = json.load(file)
+        
+        self._programmatic_change = False # Flag to change the behavior of the tab change function
         
         self.modes = self.instrument.modes
         self.device_type = self.instrument.device_type
@@ -55,7 +55,7 @@ class MainWindow(QMainWindow):
     def _set_title_and_window(self) -> None:
         """Set the title and window
         """
-        self.setWindowTitle(self.devices_config["Device Titles"][self.device_type])
+        self.setWindowTitle(f"{self.devices_config["Device Names"][self.device_type]} GUI")
         my_icon = QIcon()
         my_icon.addFile('images\\crc_icon.ico')
         self.setWindowIcon(my_icon)
@@ -69,7 +69,7 @@ class MainWindow(QMainWindow):
         """
         status_bar = self.statusBar()
         status_bar.showMessage(
-            f'{self.devices_config["Device Status Message"][self.device_type]} {ip_address}', 
+            f'Connected to {self.devices_config["Device Names"][self.device_type]} @ {ip_address}', 
             timeout=0
             )
     
