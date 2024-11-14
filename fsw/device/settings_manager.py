@@ -18,7 +18,7 @@ class SettingsManager(Instrument):
         """
         super().__init__(ip_address)
         
-        with open(r"configs\device_types\configs.json", "r") as file:
+        with open(r"configs\device_configs\device_types\configs.json", "r") as file:
             devices_config = json.load(file)
         
         self.device_type = next((value for key, value in devices_config["Device IDNs"].items() if self.idn.startswith(key))) # using the idn from this instrument, determins device type

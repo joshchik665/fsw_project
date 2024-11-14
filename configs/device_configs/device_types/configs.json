@@ -8,7 +8,7 @@
         "KTCXA": "Keysight Technoloties CXA N9000B"
     },
     "Device Default Configs": {
-        "RSFSW43": "configs\\fsw_settings\\default.json",
-        "KTCXA": "configs\\cxa_settings\\default.json"
+        "RSFSW43": "configs\\device_configs\\fsw_settings\\default.json",
+        "KTCXA": "configs\\device_configs\\cxa_settings\\default.json"
     }
 }
