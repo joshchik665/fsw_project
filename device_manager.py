@@ -5,6 +5,7 @@ from PySide6.QtWidgets import (
     QWidget, 
     QVBoxLayout, 
     QHBoxLayout, 
+    QGridLayout,
     QPushButton, 
     QLineEdit, 
     QLabel, 
@@ -18,6 +19,7 @@ import os
 import sys
 import json
 from pathlib import Path
+from pyvisa import ResourceManager
 
 
 def load_stylesheet(filename):
@@ -47,7 +49,7 @@ class Dialog(QDialog):
     
     
     def create_device(self):
-        self.choice = "Create"
+        self.choice = "create"
         self.accept()
 
 
@@ -91,7 +93,7 @@ class CreateDialog(QDialog):
     def __init__(self):
         super().__init__()
         
-        layout = QHBoxLayout()
+        layout = QVBoxLayout()
         self.setLayout(layout)
         
         title = QLabel("Enter name of instrument to create: ")
@@ -100,21 +102,80 @@ class CreateDialog(QDialog):
         self.name_entry = QLineEdit()
         layout.addWidget(self.name_entry)
         
+        key_label = QLabel("Enter a short key to represent device type ex) RSFSW43: ")
+        layout.addWidget(key_label)
+        
+        self.key_entry = QLineEdit()
+        layout.addWidget(self.key_entry)
+        
+        idn_label = QLabel("Enter the IDN from the instrument, if you don't know the IDN, use the search IDN box: ")
+        layout.addWidget(idn_label)
+        
+        self.idn_entry = QLineEdit()
+        layout.addWidget(self.idn_entry)
+        
+        
+        ip_layout = QHBoxLayout()
+        
+        ip_label = QLabel("Enter an IP address to query the IDN of that device, (IP is not recoreded) (Optional, only for getting the IDN): ")
+        layout.addWidget(ip_label)
+        
+        self.ip_entry = QLineEdit()
+        ip_layout.addWidget(self.ip_entry)
+        
+        self.ip_button = QPushButton("Query IDN")
+        self.ip_button.pressed.connect(self.query_idn)
+        ip_layout.addWidget(self.ip_button)
+        
+        layout.addLayout(ip_layout)
+        
+        
         self.button = QPushButton("Create new device")
         self.button.pressed.connect(self.select_or_create_folder)
         layout.addWidget(self.button)
+    
+    
+    def query_idn(self):
+        rm = ResourceManager("@py")
+        try:
+            instr = rm.open_resource(f"TCPIP::{self.ip_entry.text()}::INSTR")
+            
+            idn = instr.query('*IDN?')
+            self.idn_entry.setText(idn)
+        except Exception as ex:
+            print(f'Error querying the instrument session:\n{ex.args[0]}') # Error
     
     
     def select_or_create_folder(self):
         folder_path = QFileDialog.getExistingDirectory(
             self, 
             "Select or Create Folder", 
-            str(Path.home() / "fsw_project" / "configs"),
+            str(Path.home() / "fsw_project" / "configs" / "device_configs"),
             QFileDialog.ShowDirsOnly | QFileDialog.DontResolveSymlinks
         )
         
         if folder_path:
             default_json_path = os.path.join(folder_path, "default.json")
+            
+            with open(r"configs\device_configs\device_types\configs.json", "r") as file:
+                device_types = json.load(file)
+            
+            device_types["Device IDNs"][self.idn_entry.text()] = self.key_entry.text()
+            
+            device_types["Device Names"][self.key_entry.text()] = self.name_entry.text()
+            
+            device_types["Device Default Configs"][self.key_entry.text()] = default_json_path
+            
+            with open(r"configs\device_configs\device_types\configs.json", "w") as file:
+                json.dump(device_types, file, indent=4)
+            
+            with open(r"device_manager_config\config.json", "r") as file:
+                config = json.load(file)
+            
+            config[self.name_entry.text()] = default_json_path
+            
+            with open(r"device_manager_config\config.json", "w") as file:
+                json.dump(config, file, indent=4)
             
             default_data = {
                 "Device Name": self.name_entry.text()
@@ -123,12 +184,130 @@ class CreateDialog(QDialog):
             with open(default_json_path, 'w') as json_file:
                 json.dump(default_data, json_file, indent=4)
         
+        self.filepath = default_json_path
+        
         self.accept()
 
 
 class MainWindow(QMainWindow):
     def __init__(self, filepath):
         super().__init__()
+        
+        self.filepath = filepath
+        
+        with open(filepath, "r") as file:
+            self.config = json.load(file)
+        
+        self.window_layout = QGridLayout()
+        
+        self.info_layout = QVBoxLayout()
+        self.window_layout.addLayout(self.info_layout, 0, 0)
+        
+        self.settings_layout = QVBoxLayout()
+        self.window_layout.addLayout(self.settings_layout, 0, 1)
+        
+        self._set_info_layout()
+        self._set_setting_layout()
+        
+        container = QWidget()
+        container.setLayout(self.window_layout)
+        self.setCentralWidget(container)
+    
+    
+    def _create_place_info_setting(self, name:str, parent_layout):
+        layout = QHBoxLayout()
+        
+        label = QLabel(name)
+        label.setFixedSize(200, 25)
+        layout.addWidget(label)
+        
+        entry = QLineEdit()
+        entry.setFixedSize(500, 25)
+        self.info_widgets[name] = entry
+        entry.setText(str(self.config[name]))
+        layout.addWidget(entry)
+        
+        parent_layout.addLayout(layout)
+    
+    
+    def _set_info_layout(self):
+        self.info_widgets = {}
+        
+        self._create_place_info_setting("Device Name", self.info_layout)
+        self._create_place_info_setting("Default Mode", self.info_layout)
+        self._create_place_info_setting("Modes", self.info_layout)
+        self._create_place_info_setting("Modes SCPI Commands", self.info_layout)
+        
+        self.apply_info_button = QPushButton("Apply Info Settings")
+        self.apply_info_button.pressed.connect(self.apply_info)
+        self.info_layout.addWidget(self.apply_info_button)
+        
+        self.info_layout.addStretch(1)
+    
+    
+    def apply_info(self):
+        for key, value in self.info_widgets.items():
+            self.config[key] = value.text()
+            
+        with open(self.filepath, "w") as file:
+            json.dump(self.config, file, indent=4)
+    
+    
+    def _create_place_setting_box(self, name, parent_layout):
+        layout = QHBoxLayout()
+        
+        label = QLabel(name)
+        label.setFixedSize(200, 25)
+        layout.addWidget(label)
+        
+        button = QPushButton("Edit")
+        self.settings[name] = button
+        button.pressed.connect(lambda: self.edit_setting(name))
+        layout.addWidget(button)
+        
+        parent_layout.addLayout(layout)
+        
+    
+    def _set_setting_layout(self):
+        self.settings = {}
+        
+        for setting_name in self.config["Settings"].keys():
+            self._create_place_setting_box(setting_name, self.settings_layout)
+        
+        self.settings_layout.addStretch(1)
+    
+    
+    def edit_setting(self, name):
+        print(f"Editing: {name}")
+
+
+class EditSettingDialog(QDialog):
+    def __init__(self, setting_name:str, config:dict):
+        super().__init__()
+        
+        self.setting_name = setting_name
+        self.config = config
+        
+        self.entry_boxes = {}
+        
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+    
+    
+    def _create_place_info_setting(self, name:str, parent_layout):
+        layout = QHBoxLayout()
+        
+        label = QLabel(name)
+        label.setFixedSize(125, 25)
+        layout.addWidget(label)
+        
+        entry = QLineEdit()
+        entry.setFixedSize(200, 25)
+        self.entry_boxes[name] = entry
+        # entry.setText(str(self.config["Setting"][name]))
+        layout.addWidget(entry)
+        
+        parent_layout.addLayout(layout)
 
 
 app = QApplication(sys.argv)
@@ -144,6 +323,8 @@ if dialog.exec() == QDialog.Accepted:
     
     if next_dialog.exec() == QDialog.Accepted:
         config_filepath = next_dialog.filepath
+    else:
+        sys.exit()
     
     if config_filepath:
         window = MainWindow(config_filepath)
