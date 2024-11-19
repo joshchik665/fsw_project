@@ -1,5 +1,6 @@
 {
     "Rhode & Schwarz FSW-43": "configs\\device_configs\\fsw_settings\\default.json",
     "Keysight Technologies CXA N9000B": "configs\\device_configs\\cxa_settings\\default.json",
-    "test": "C:/Users/joshua.chik/fsw_project/configs/device_configs/test_settings\\default.json"
+    "test": "C:/Users/joshua.chik/fsw_project/configs/device_configs/test_settings\\default.json",
+    "test2": "C:/Users/joshua.chik/fsw_project/configs/device_configs/test_settings\\default.json"
 }

@@ -257,19 +257,24 @@ class MainWindow(QMainWindow):
         layout = QHBoxLayout()
         
         label = QLabel(name)
+        self.label_widgets[name] = label
         label.setFixedSize(200, 25)
         layout.addWidget(label)
         
         button = QPushButton("Edit")
-        self.settings[name] = button
+        self.entry_widgets[name] = button
         button.pressed.connect(lambda: self.edit_setting(name))
         layout.addWidget(button)
+        
+        self.layouts[name] = layout
         
         parent_layout.addLayout(layout)
         
     
     def _set_setting_layout(self):
-        self.settings = {}
+        self.layouts = {}
+        self.label_widgets = {}
+        self.entry_widgets = {}
         
         for setting_name in self.config["Settings"].keys():
             self._create_place_setting_box(setting_name, self.settings_layout)
@@ -279,7 +284,21 @@ class MainWindow(QMainWindow):
     
     def edit_setting(self, name):
         print(f"Editing: {name}")
-
+        
+        dialog = EditSettingDialog(name, self.config)
+        
+        if dialog.exec() == QDialog.Accepted:
+            self.config = dialog.config
+            
+            with open(self.filepath, 'w') as file:
+                json.dump(self.config, file, indent=4)
+            
+            if dialog.deleted:
+                self.label_widgets[name].deleteLater()
+                self.entry_widgets[name].deleteLater()
+                self.settings_layout.removeItem(self.layouts[name])
+        
+        
 
 class EditSettingDialog(QDialog):
     def __init__(self, setting_name:str, config:dict):
@@ -291,7 +310,46 @@ class EditSettingDialog(QDialog):
         self.entry_boxes = {}
         
         layout = QVBoxLayout()
+        
+        for setting_param in self.config["Settings"][self.setting_name].keys():
+            self._create_place_info_setting(setting_param, layout)
+        
+        self.apply_button = QPushButton("Apply Settings")
+        self.apply_button.pressed.connect(self.apply)
+        layout.addWidget(self.apply_button)
+        
+        self.cancel_button = QPushButton("Cancel Edit")
+        self.cancel_button.pressed.connect(self.cancel)
+        layout.addWidget(self.cancel_button)
+        
+        self.delete_button = QPushButton("Delete Setting")
+        self.delete_button.pressed.connect(self.delete)
+        layout.addWidget(self.delete_button)
+        
         self.setLayout(layout)
+    
+    
+    def delete(self):
+        self.config["Settings"].pop(self.setting_name)
+        
+        self.deleted = True
+        
+        self.accept()
+    
+    
+    def cancel(self):
+        
+        self.deleted = False
+        
+        self.accept()
+    
+    def apply(self):
+        for setting_atr, entry in self.entry_boxes.items():
+            self.config["Settings"][self.setting_name][setting_atr] = entry.text()
+        
+        self.deleted = False
+        
+        self.accept()
     
     
     def _create_place_info_setting(self, name:str, parent_layout):
@@ -304,7 +362,7 @@ class EditSettingDialog(QDialog):
         entry = QLineEdit()
         entry.setFixedSize(200, 25)
         self.entry_boxes[name] = entry
-        # entry.setText(str(self.config["Setting"][name]))
+        entry.setText(str(self.config["Settings"][self.setting_name][name]))
         layout.addWidget(entry)
         
         parent_layout.addLayout(layout)
