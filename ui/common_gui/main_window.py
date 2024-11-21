@@ -74,7 +74,7 @@ class MainWindow(QMainWindow):
     def _set_title_and_window(self) -> None:
         """Set the title and window
         """
-        self.setWindowTitle(f"{self.devices_config["Device Names"][self.device_type]} GUI")
+        self.setWindowTitle(f"{self.device_type} GUI")
         my_icon = QIcon()
         my_icon.addFile('images\\crc_icon.ico')
         self.setWindowIcon(my_icon)
@@ -88,7 +88,7 @@ class MainWindow(QMainWindow):
         """
         status_bar = self.statusBar()
         status_bar.showMessage(
-            f'Connected to {self.devices_config["Device Names"][self.device_type]} @ {ip_address}', 
+            f'Connected to {self.device_type} @ {ip_address}', 
             timeout=0
             )
     
@@ -96,12 +96,12 @@ class MainWindow(QMainWindow):
     def _create_tabs(self) -> None:
         """Creats the tab widget and initiates the individual tab widgets"""
         tab_widgets = {
-            "RSFSW43": {
+            "Rhode & Schwarz FSW-43": {
                 "Spectrum": FSW43Spec.ModeSpec,
                 "Real-Time Spectrum": FSW43Rts.ModeRts,
                 "Zero-Span": FSW43Zs.ModeZs
             },
-            "KTCXA": {
+            "Keysight Technoloties CXA N9000B": {
                 "Spectrum": CXASpec.ModeSpec,
                 "Zero-Span": CXAZs.ModeZs
             }

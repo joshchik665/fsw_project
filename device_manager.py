@@ -60,13 +60,13 @@ class EditDialog(QDialog):
         layout = QVBoxLayout()
         self.setLayout(layout)
         
-        with open(r"device_manager_config\\config.json", "r") as file:
-            self.device_configs_filepaths = json.load(file)
+        with open(r"configs\device_configs\device_types\configs.json", "r") as file:
+            self.device_configs = json.load(file)
         
         self.button_group = QButtonGroup()
         self.button_group.setExclusive(True)
         
-        for key in self.device_configs_filepaths.keys():
+        for key in self.device_configs["Device Default Configs"].keys():
             radio_btn = QRadioButton(str(key))
             radio_btn.setChecked(True)
             self.button_group.addButton(radio_btn)

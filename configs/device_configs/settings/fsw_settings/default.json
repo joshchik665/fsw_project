@@ -6,7 +6,7 @@
         "Real-Time Spectrum", 
         "Zero-Span"
     ],
-    "Modes SCPI Commands": "{'Spectrum': 'SANALYZER', 'Real-Time Spectrum': 'RTIM', 'Zero-Span': 'SANALYZER'}",
+    "Modes SCPI Commands": {"Spectrum": "SANALYZER", "Real-Time Spectrum": "RTIM", "Zero-Span": "SANALYZER"},
     "Settings": {
         "Center Frequency": {
             "measure": "frequency",

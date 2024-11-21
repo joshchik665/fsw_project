@@ -1,20 +1,10 @@
 {
     "Device IDNs": {
-        "Rohde&Schwarz,FSW-43": "RSFSW43",
-        "Keysight Technologies,N9000B": "KTCXA",
-        "test": "test",
-        "Rohde&Schwarz,FSW-43,1331.5003K43/102762,5.30SP1\n": "test2"
-    },
-    "Device Names": {
-        "RSFSW43": "Rhode & Schwarz FSW-43",
-        "KTCXA": "Keysight Technoloties CXA N9000B",
-        "test": "test",
-        "test2": "test2"
+        "Rohde&Schwarz,FSW-43": "Rhode & Schwarz FSW-43",
+        "Keysight Technologies,N9000B": "Keysight Technoloties CXA N9000B"
     },
     "Device Default Configs": {
-        "RSFSW43": "configs\\device_configs\\fsw_settings\\default.json",
-        "KTCXA": "configs\\device_configs\\cxa_settings\\default.json",
-        "test": "C:/Users/joshua.chik/fsw_project/configs/device_configs/test_settings\\default.json",
-        "test2": "C:/Users/joshua.chik/fsw_project/configs/device_configs/test_settings\\default.json"
+        "Rhode & Schwarz FSW-43": "configs\\device_configs\\settings\\fsw_settings\\default.json",
+        "Keysight Technoloties CXA N9000B": "configs\\device_configs\\settings\\cxa_settings\\default.json"
     }
 }
