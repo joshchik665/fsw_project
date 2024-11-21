@@ -17,7 +17,7 @@ from PySide6.QtCore import (
 )
 from ui.common_gui.setting_widgets import NumericalSettingBox, ModeSettingBox
 from ui.common.utilities import save_file_dialog, open_file_dialog
-from fsw.device.settings_manager import SettingsManager
+from device.settings_manager import SettingsManager
 import json
 
 class ModeSuper(QWidget):

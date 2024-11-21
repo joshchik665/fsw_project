@@ -11,7 +11,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import QTimer
 from PySide6.QtGui import QIntValidator
-from fsw.device.settings_manager import SettingsManager
+from device.settings_manager import SettingsManager
 from ui.common.utilities import remove_trailing_zeros
 from ui.common_gui.csv_logger import TraceLogger
 from pathlib import Path

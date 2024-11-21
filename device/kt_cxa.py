@@ -1,6 +1,6 @@
 # kt_cxa.py
 
-from fsw.device.settings_manager import SettingsManager
+from device.settings_manager import SettingsManager
 
 class KtCxa(SettingsManager):
     def __init__(self, ip_address:str):

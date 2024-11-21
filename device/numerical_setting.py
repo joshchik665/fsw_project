@@ -2,7 +2,6 @@
 
 from dataclasses import dataclass
 from typing import Optional, Any
-from fsw.common.common_functions import is_number
 
 
 @dataclass
@@ -79,7 +78,7 @@ class NumericalSetting:
         Returns:
             bool: True if the value is valid for this setting (is a number)
         """
-        return is_number(value)
+        return self.is_number(value)
     
     
     def set_current_value(self, value: str) -> None:
@@ -89,3 +88,19 @@ class NumericalSetting:
             value (str): The value to set as the current value
         """
         self.current_value = value
+    
+    
+    def is_number(self, string:str) -> bool:
+        """Checks if string passed could be a number
+
+        Args:
+            string (str): imput string
+
+        Returns:
+            bool: returns true if string represents a number
+        """
+        try:
+            float(string)
+            return True
+        except ValueError:
+            return False

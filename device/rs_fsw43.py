@@ -1,6 +1,6 @@
 # rs_fsw.py
 
-from fsw.device.settings_manager import SettingsManager
+from device.settings_manager import SettingsManager
 
 class RsFsw43(SettingsManager):
     def __init__(self, ip_address:str):

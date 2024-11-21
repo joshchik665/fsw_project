@@ -8,9 +8,9 @@ from PySide6.QtWidgets import (
     QComboBox,
 )
 from PySide6.QtGui import QDoubleValidator
-from fsw.setting_objects.numerical_setting import NumericalSetting
-from fsw.setting_objects.mode_setting import ModeSetting
-from fsw.device.settings_manager import SettingsManager
+from device.numerical_setting import NumericalSetting
+from device.mode_setting import ModeSetting
+from device.settings_manager import SettingsManager
 from ui.common.utilities import remove_trailing_zeros
 from typing import Union
 

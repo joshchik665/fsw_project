@@ -1,10 +1,11 @@
 # settings_manager.py
 
-from fsw.device.device import Instrument
-from fsw.common.common_functions import is_number, compare_number_strings
-from fsw.setting_objects.numerical_setting import NumericalSetting
-from fsw.setting_objects.mode_setting import ModeSetting
+from device.device import Instrument
+from device.numerical_setting import NumericalSetting
+from device.mode_setting import ModeSetting
+
 import json
+import math
 
 class SettingsManager(Instrument):
     def __init__(self, ip_address:str):
@@ -156,7 +157,7 @@ class SettingsManager(Instrument):
             return False, f'Error querying setting: {e}'
         
         # Check to see if the value is set correctly
-        if is_number(response) and compare_number_strings(setting.current_value, response):
+        if self.is_number(response) and self.compare_number_strings(setting.current_value, response):
             return True, 'Setting verified'
         elif setting.current_value == response:
             return True, 'Setting verified'
@@ -176,4 +177,39 @@ class SettingsManager(Instrument):
         self.write_command(command)
         
         self.current_mode = mode # update the current mode
+    
+    
+    def is_number(self, string:str) -> bool:
+        """Checks if string passed could be a number
+
+        Args:
+            string (str): imput string
+
+        Returns:
+            bool: returns true if string represents a number
+        """
+        try:
+            float(string)
+            return True
+        except ValueError:
+            return False
+
+
+    def compare_number_strings(self, str1:str, str2:str) -> bool:
+        """ Compares two strings that contain numbers, returns true if the match
+
+        Args:
+            str1 (str): string 1
+            str2 (str): string 2
+
+        Returns:
+            bool: Comparison result
+        """
+        try:
+            num1 = float(str1)
+            num2 = float(str2)
+            
+            return math.isclose(num1,num2)
+        except ValueError:
+            return False
 

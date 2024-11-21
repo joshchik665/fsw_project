@@ -12,8 +12,8 @@ import ui.fsw_gui.mode_zero_span as FSW43Zs
 import ui.cxa_gui.mode_spec as CXASpec
 import ui.cxa_gui.mode_zero_span as CXAZs
 
-from fsw.device.rs_fsw43 import RsFsw43
-from fsw.device.kt_cxa import KtCxa
+from device.rs_fsw43 import RsFsw43
+from device.kt_cxa import KtCxa
 
 from pyvisa import ResourceManager
 import json
@@ -56,7 +56,7 @@ class MainWindow(QMainWindow):
         
         self.modes = self.instrument.modes
         self.device_type = self.instrument.device_type
-        
+
         self._set_title_and_window() # Set the window and label for the main window
         
         self._set_status_bar(config['ip_address']) # Set the status bar
