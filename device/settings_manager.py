@@ -8,7 +8,7 @@ import json
 import math
 
 class SettingsManager(Instrument):
-    def __init__(self, ip_address:str):
+    def __init__(self, ip_address:str, settings_config_filepath:str):
         """Initializes the Setting Manager instrument that controls all the settings on the instrument
 
         Args:
@@ -19,14 +19,7 @@ class SettingsManager(Instrument):
         """
         super().__init__(ip_address)
         
-        with open(r"configs\device_configs\device_types\configs.json", "r") as file:
-            devices_config = json.load(file)
-        
-        self.device_type = next((value for key, value in devices_config["Device IDNs"].items() if key in self.idn)) # using the idn from this instrument, determins device type
-        
-        default_settings_filepath = devices_config["Device Default Configs"][self.device_type]
-        
-        with open(default_settings_filepath, 'r') as file: # Opens file containing all the settings
+        with open(settings_config_filepath, 'r') as file: # Opens file containing all the settings
             config = json.load(file)
         
         self.current_mode = config["Default Mode"] # Default mode on startup

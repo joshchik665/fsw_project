@@ -1,10 +1,18 @@
 # rs_fsw.py
 
 from device.settings_manager import SettingsManager
+import json
 
 class RsFsw43(SettingsManager):
     def __init__(self, ip_address:str):
-        super().__init__(ip_address)
+        
+        with open(r"configs\device_configs\device_types\configs.json") as file:
+            config = json.load(file)
+        
+        self.device_type = "Rhode & Schwarz FSW-43"
+        
+        super().__init__(ip_address, config["Device Default Configs"][self.device_type])
+    
     
     
     def abort(self) -> None:
