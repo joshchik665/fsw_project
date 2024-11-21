@@ -1,7 +1,11 @@
 {
     "Device Name": "Rhode & Schwarz FSW-43",
     "Default Mode": "Spectrum",
-    "Modes": "['Spectrum', 'Real-Time Spectrum', 'Zero-Span']",
+    "Modes": [
+        "Spectrum", 
+        "Real-Time Spectrum", 
+        "Zero-Span"
+    ],
     "Modes SCPI Commands": "{'Spectrum': 'SANALYZER', 'Real-Time Spectrum': 'RTIM', 'Zero-Span': 'SANALYZER'}",
     "Settings": {
         "Center Frequency": {

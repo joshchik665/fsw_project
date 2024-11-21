@@ -5,12 +5,17 @@ from PySide6.QtWidgets import (
     QMainWindow,
     QTabWidget,
 )
+
 import ui.fsw_gui.mode_spec as FSW43Spec
 import ui.fsw_gui.mode_rts as FSW43Rts
 import ui.fsw_gui.mode_zero_span as FSW43Zs
 import ui.cxa_gui.mode_spec as CXASpec
 import ui.cxa_gui.mode_zero_span as CXAZs
-from fsw.device.settings_manager import SettingsManager
+
+from fsw.device.rs_fsw43 import RsFsw43
+from fsw.device.kt_cxa import KtCxa
+
+from pyvisa import ResourceManager
 import json
 
 
@@ -25,10 +30,24 @@ class MainWindow(QMainWindow):
         """
         super().__init__()
         
+        instrument_objects = {
+            "Rohde&Schwarz,FSW-43": RsFsw43,
+            "Keysight Technologies,N9000B": KtCxa
+        }
+        
+        rm = ResourceManager("@py")
+        try:
+            instr = rm.open_resource(f"TCPIP::{config['ip_address']}::INSTR")
+            idn = instr.query('*IDN?')
+            instr.close()
+        except Exception as ex:
+            print(f'Error finding instrument:\n{ex.args[0]}') # Error
+            exit()
+        
+        device_class = next((value for key, value in instrument_objects.items() if idn.startswith(key)))
+        
         # Creates instance of the SettingsManager class that controls the instrument
-        self.instrument = SettingsManager(
-            config['ip_address']
-            )
+        self.instrument = device_class(config['ip_address'])
         
         with open(r"configs\device_configs\device_types\configs.json", "r") as file:
             self.devices_config = json.load(file)
