@@ -22,7 +22,7 @@ class SettingsManager(Instrument):
         with open(r"configs\device_configs\device_types\configs.json", "r") as file:
             devices_config = json.load(file)
         
-        self.device_type = next((value for key, value in devices_config["Device IDNs"].items() if self.idn.startswith(key))) # using the idn from this instrument, determins device type
+        self.device_type = next((value for key, value in devices_config["Device IDNs"].items() if key in self.idn)) # using the idn from this instrument, determins device type
         
         default_settings_filepath = devices_config["Device Default Configs"][self.device_type]
         

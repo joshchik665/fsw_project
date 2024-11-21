@@ -44,7 +44,7 @@ class MainWindow(QMainWindow):
             print(f'Error finding instrument:\n{ex.args[0]}') # Error
             exit()
         
-        device_class = next((value for key, value in instrument_objects.items() if idn.startswith(key)))
+        device_class = next((value for key, value in instrument_objects.items() if key in idn))
         
         # Creates instance of the SettingsManager class that controls the instrument
         self.instrument = device_class(config['ip_address'])

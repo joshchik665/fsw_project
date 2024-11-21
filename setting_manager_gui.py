@@ -1,4 +1,4 @@
-from fsw.settings_manager import SettingsManager
+from device.settings_manager import SettingsManager
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit, QLabel
 from PySide6.QtGui import QIcon
 import sys
