@@ -1,13 +1,11 @@
 from PySide6.QtWidgets import (
     QVBoxLayout,
     QPushButton,
-    QLineEdit,
-    QLabel
+    QMessageBox
 )
 from ui.common_gui.mode_super import ModeSuper
 from ui.common_gui.trace_widget import SpectralWidget
 from ui.common.utilities import save_file_dialog, open_file_dialog
-from ui.common_gui.message_boxes import copy_error, copy_sucess
 from ui.common_gui.spectrogram_window import SpectrogramWindow
 from datetime import datetime
 from pathlib import Path
@@ -93,9 +91,9 @@ class ModeRts(ModeSuper):
         filename = save_file_dialog("Select location to save csv file", str(default_filename), ".csv", self)
         
         if self.instrument.copy_spectrogram(filename):
-            copy_sucess()
+            QMessageBox.warning(self, "Sucess", "Filecopied sucessfully!")
         else:
-            copy_error()
+            QMessageBox.warning(self, "Error", "Eror occured while copying files!")
     
     
     def read_spectrogram_csv(self, file_path):

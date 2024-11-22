@@ -5,12 +5,18 @@ from PySide6.QtWidgets import (
     QMainWindow,
     QTabWidget,
 )
+
 import ui.fsw_gui.mode_spec as FSW43Spec
 import ui.fsw_gui.mode_rts as FSW43Rts
 import ui.fsw_gui.mode_zero_span as FSW43Zs
 import ui.cxa_gui.mode_spec as CXASpec
 import ui.cxa_gui.mode_zero_span as CXAZs
-from fsw.device.settings_manager import SettingsManager
+
+from device.rs_fsw43 import RsFsw43
+from device.kt_cxa import KtCxa
+from device.settings_manager import SettingsManager
+
+from pyvisa import ResourceManager
 import json
 
 
@@ -25,19 +31,37 @@ class MainWindow(QMainWindow):
         """
         super().__init__()
         
-        with open(r"configs\device_types\configs.json", "r") as file:
+        instrument_objects = {
+            "Rohde&Schwarz,FSW-43": RsFsw43,
+            "Keysight Technologies,N9000B": KtCxa
+        }
+        
+        rm = ResourceManager("@py")
+        try:
+            instr = rm.open_resource(f"TCPIP::{config['ip_address']}::INSTR")
+            idn = instr.query('*IDN?')
+            instr.close()
+        except Exception as ex:
+            print(f'Error finding instrument:\n{ex.args[0]}') # Error
+            exit()
+        
+        # NEED TO FIX, I WANT TO USE SETTINGS MANAGER CLASS IF NO DERIVED CLASS FOR THAT INSTRUMENT EXIST. SETTING MANGER ALSO TAKE THE FILEPATH CONFIG
+        try:
+            device_class = next((value for key, value in instrument_objects.items() if key in idn))
+        except KeyError:
+            device_class = SettingsManager
+        
+        # Creates instance of the SettingsManager class that controls the instrument
+        self.instrument = device_class(config['ip_address'])
+        
+        with open(r"configs\device_configs\device_types\configs.json", "r") as file:
             self.devices_config = json.load(file)
         
         self._programmatic_change = False # Flag to change the behavior of the tab change function
         
-        # Creates instance of the SettingsManager class that controls the instrument
-        self.instrument = SettingsManager(
-            config['ip_address']
-            )
-        
         self.modes = self.instrument.modes
         self.device_type = self.instrument.device_type
-        
+
         self._set_title_and_window() # Set the window and label for the main window
         
         self._set_status_bar(config['ip_address']) # Set the status bar
@@ -55,7 +79,7 @@ class MainWindow(QMainWindow):
     def _set_title_and_window(self) -> None:
         """Set the title and window
         """
-        self.setWindowTitle(self.devices_config["Device Titles"][self.device_type])
+        self.setWindowTitle(f"{self.device_type} GUI")
         my_icon = QIcon()
         my_icon.addFile('images\\crc_icon.ico')
         self.setWindowIcon(my_icon)
@@ -69,7 +93,7 @@ class MainWindow(QMainWindow):
         """
         status_bar = self.statusBar()
         status_bar.showMessage(
-            f'{self.devices_config["Device Status Message"][self.device_type]} {ip_address}', 
+            f'Connected to {self.device_type} @ {ip_address}', 
             timeout=0
             )
     
@@ -77,12 +101,12 @@ class MainWindow(QMainWindow):
     def _create_tabs(self) -> None:
         """Creats the tab widget and initiates the individual tab widgets"""
         tab_widgets = {
-            "RSFSW43": {
+            "Rhode & Schwarz FSW-43": {
                 "Spectrum": FSW43Spec.ModeSpec,
                 "Real-Time Spectrum": FSW43Rts.ModeRts,
                 "Zero-Span": FSW43Zs.ModeZs
             },
-            "KTCXA": {
+            "Keysight Technoloties CXA N9000B": {
                 "Spectrum": CXASpec.ModeSpec,
                 "Zero-Span": CXAZs.ModeZs
             }

@@ -1,7 +1,6 @@
 # utilities.py
 
-from PySide6.QtWidgets import QFileDialog
-from ui.common_gui.message_boxes import invalid_filetype
+from PySide6.QtWidgets import QFileDialog, QMessageBox
 from pathlib import Path
 
 
@@ -31,14 +30,14 @@ def open_file_dialog(prompt: str, default_file_path: str, filetype: str, parent 
             )
         
     except KeyError:
-        invalid_filetype()
+        QMessageBox.warning(parent, "Invalid Filetype", "Invalid Filetype")
         return ''
     
     # Only returns filepath if it is the correct type and exists
     if not file_path:
         return ''
     elif not file_path.endswith(filetype):
-        invalid_filetype()
+        QMessageBox.warning(parent, "Invalid Filetype", "Invalid Filetype")
         return ''
     else:
         return file_path
@@ -69,7 +68,7 @@ def save_file_dialog(prompt:str, default_file_path: str, filetype:str, parent = 
             filetypes[filetype]
             )
     except KeyError:
-        invalid_filetype()
+        QMessageBox.warning(parent, "Invalid Filetype", "Invalid Filetype")
         return ''
     
     return file_path

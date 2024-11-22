@@ -1,0 +1,181 @@
+{
+    "Device Name": "Keysight Technologies CXA N9000B",
+    "Default Mode": "Spectrum",
+    "Modes": [
+        "Spectrum",
+        "Zero-Span"
+    ],
+    "Modes SCPI Commands": {
+        "Spectrum": "SANALYZER",
+        "Zero-Span": "SANALYZER"
+    },
+    "Settings": {
+        "Center Frequency": {
+            "measure": "frequency",
+            "applicable_modes": [
+                "Spectrum",
+                "Zero-Span"
+            ],
+            "setting_type": "numerical",
+            "default_value": "3755000000",
+            "write_command": "FREQ:CENT",
+            "query_command": "FREQ:CENT?"
+        },
+        "Reference Level": {
+            "measure": "power",
+            "applicable_modes": [
+                "Spectrum",
+                "Zero-Span"
+            ],
+            "setting_type": "numerical",
+            "default_value": "0",
+            "write_command": "DISP:WIND:TRAC:Y:SCAL:RLEV",
+            "query_command": "DISP:WIND:TRAC:Y:SCAL:RLEV?"
+        },
+        "Frequency Span": {
+            "measure": "frequency",
+            "applicable_modes": [
+                "Spectrum",
+                "Zero-Span"
+            ],
+            "setting_type": "numerical",
+            "default_value": "7490000000",
+            "write_command": "FREQ:SPAN",
+            "query_command": "FREQ:SPAN?"
+        },
+        "Resolution Bandwidth": {
+            "measure": "frequency",
+            "applicable_modes": [
+                "Spectrum",
+                "Zero-Span"
+            ],
+            "setting_type": "numerical",
+            "default_value": "3000000",
+            "write_command": "BAND",
+            "query_command": "BAND?"
+        },
+        "Sweep Time": {
+            "measure": "time",
+            "applicable_modes": [
+                "Spectrum",
+                "Zero-Span"
+            ],
+            "setting_type": "numerical",
+            "default_value": "0.0032667",
+            "write_command": "SWE:TIME",
+            "query_command": "SWE:TIME?"
+        },
+        "Number of Points": {
+            "measure": "number",
+            "applicable_modes": [
+                "Spectrum",
+                "Zero-Span"
+            ],
+            "setting_type": "numerical",
+            "default_value": "1001",
+            "write_command": "SWE:POIN",
+            "query_command": "SWE:POIN?"
+        },
+        "Video Bandwidth": {
+            "measure": "frequency",
+            "applicable_modes": [
+                "Spectrum",
+                "Zero-Span"
+            ],
+            "setting_type": "numerical",
+            "default_value": "3000000",
+            "write_command": "BAND:VID",
+            "query_command": "BAND:VID?"
+        },
+        "Attenuation": {
+        "measure": "number",
+        "applicable_modes": [
+            "Spectrum",
+            "Zero-Span"
+        ],
+        "setting_type": "numerical",
+        "default_value": "10",
+        "write_command": "INP:ATT",
+        "query_command": "INP:ATT?"
+        },
+        "Sweep Time Auto": {
+            "applicable_modes": [
+                "Spectrum",
+                "Zero-Span"
+            ],
+            "setting_type": "mode",
+            "default_value": "1",
+            "write_commands": {
+                "1": "SWE:TIME:AUTO ON",
+                "0": "SWE:TIME:AUTO OFF"
+            },
+            "alias": {
+                "ON": "1",
+                "OFF": "0"
+            },
+            "query_command": "SWE:TIME:AUTO?"
+        },
+        "Attenuation Auto": {
+            "applicable_modes": [
+                "Spectrum",
+                "Real-Time Spectrum",
+                "Zero-Span"
+            ],
+            "setting_type": "mode",
+            "default_value": "1",
+            "write_commands": {
+                "1": "INP:ATT:AUTO ON",
+                "0": "INP:ATT:AUTO OFF"
+            },
+            "alias": {
+                "ON": "1",
+                "OFF": "0"
+            },
+            "query_command": "INP:ATT:AUTO?"
+        },
+        "Detector": {
+            "applicable_modes": [
+                "Spectrum",
+                "Real-Time Spectrum",
+                "Zero-Span"
+            ],
+            "setting_type": "mode",
+            "default_value": "NORM",
+            "write_commands": {
+                "NORM":"DET NORM",
+                "AVER":"DET AVER",
+                "SAMP":"DET SAMP",
+                "POS":"DET POS",
+                "NEG":"DET NEG",
+                "RAV":"DET RAV"
+            },
+            "alias": {
+                "Normal": "NORM",
+                "Positive Peak": "POS",
+                "Negative Peak": "NEG",
+                "RMS": "RAV",
+                "Average": "AVER",
+                "Sample": "SAMP"
+            },
+            "query_command": "DET?"
+        },
+        "Sweep": {
+            "applicable_modes": [
+                "Spectrum",
+                "Real-Time Spectrum",
+                "Zero-Span"
+            ],
+            "setting_type": "mode",
+            "default_value": "1",
+            "write_commands": {
+                "1":"INIT:CONT ON",
+                "0": "INIT:CONT OFF"
+            },
+            "alias": {
+                "Continuous": "1",
+                "Single": "0"
+            },
+            "query_command": "INIT:CONT?"
+        }
+    }
+}

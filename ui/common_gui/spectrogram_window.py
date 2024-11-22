@@ -1,9 +1,5 @@
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QPushButton
-from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QWidget, QVBoxLayout
 from PySide6.QtGui import QIcon
-import sys
-import numpy as np
-import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 

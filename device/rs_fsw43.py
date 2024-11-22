@@ -1,50 +1,18 @@
-# device.py
+# rs_fsw.py
 
-from pyvisa import ResourceManager
+from device.settings_manager import SettingsManager
+import json
 
-class Instrument():
+class RsFsw43(SettingsManager):
     def __init__(self, ip_address:str):
-        """ Initialize the Instrument
-
-        Args:
-            ip_address (str): String with the IP address of the instrument
-            visa_timeout (int): Visa timeout in milliseconds
-            opc_timeout (int): OPC timeout in milliseconds
-        """
-        self.rm = ResourceManager("@py")
-        try:
-            self.instrument = self.rm.open_resource(f"TCPIP::{ip_address}::hislip0")
-        except Exception as ex:
-            print(f'Error initializing the instrument session:\n{ex.args[0]}') # Error
-            exit()
         
-        self.idn = self.instrument.query('*IDN?')
-        print(f'Hello I am: {self.idn}') # Asks the FSW it's ID
+        with open(r"configs\device_configs\device_types\configs.json") as file:
+            config = json.load(file)
         
-        self.write_command('*RST') # Reset the instrument
+        self.device_type = "Rhode & Schwarz FSW-43"
         
-        self.ip_address = ip_address # Store the ip address
+        super().__init__(ip_address, config["Device Default Configs"][self.device_type])
     
-    
-    def write_command(self, command:str) -> None:
-        """Write a command to the instrument
-
-        Args:
-            command (str): The command to be written
-        """
-        self.instrument.write(command)
-    
-    
-    def query_command(self, command:str) -> str:
-        """Send a Query to the instrument
-
-        Args:
-            command (str): The query command
-
-        Returns:
-            str: The value returned from the instrument
-        """
-        return self.instrument.query(command)
     
     
     def abort(self) -> None:
@@ -106,9 +74,3 @@ class Instrument():
             return True
         except:
             return False
-    
-    
-    def close(self) -> None:
-        """Closes the instrument session"""
-        self.instrument.close()
-    

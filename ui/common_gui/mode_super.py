@@ -17,7 +17,7 @@ from PySide6.QtCore import (
 )
 from ui.common_gui.setting_widgets import NumericalSettingBox, ModeSettingBox
 from ui.common.utilities import save_file_dialog, open_file_dialog
-from fsw.device.settings_manager import SettingsManager
+from device.settings_manager import SettingsManager
 import json
 
 class ModeSuper(QWidget):
@@ -64,10 +64,7 @@ class ModeSuper(QWidget):
     
     def _set_title(self) -> None:
         """Set the Title of this widget"""
-        
-        with open(r"configs\device_types\configs.json", "r") as file:
-            devices_config = json.load(file)
-        title = QLabel(devices_config["Device Titles"][self.device_type])
+        title = QLabel(f"{self.device_type} GUI")
         title.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         title.setObjectName('title')
         

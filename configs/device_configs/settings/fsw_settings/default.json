@@ -1,10 +1,6 @@
 {
+    "Device Name": "Rhode & Schwarz FSW-43",
     "Default Mode": "Spectrum",
-    "Modes": [
-        "Spectrum",
-        "Real-Time Spectrum",
-        "Zero-Span"
-    ],
     "Modes SCPI Commands": {
         "Spectrum": "SANALYZER",
         "Real-Time Spectrum": "RTIM",
@@ -152,12 +148,12 @@
             "setting_type": "mode",
             "default_value": "APE",
             "write_commands": {
-                "APE":"SENS:WIND1:DET1:FUNC APE",
-                "POS":"SENS:WIND1:DET1:FUNC POS",
-                "NEG":"SENS:WIND1:DET1:FUNC NEG",
-                "RMS":"SENS:WIND1:DET1:FUNC RMS",
-                "AVER":"SENS:WIND1:DET1:FUNC AVER",
-                "SAMP":"SENS:WIND1:DET1:FUNC SAMP"
+                "APE": "SENS:WIND1:DET1:FUNC APE",
+                "POS": "SENS:WIND1:DET1:FUNC POS",
+                "NEG": "SENS:WIND1:DET1:FUNC NEG",
+                "RMS": "SENS:WIND1:DET1:FUNC RMS",
+                "AVER": "SENS:WIND1:DET1:FUNC AVER",
+                "SAMP": "SENS:WIND1:DET1:FUNC SAMP"
             },
             "alias": {
                 "Auto Peak": "APE",
@@ -168,9 +164,28 @@
                 "Sample": "SAMP"
             },
             "custom_modes": {
-                "Spectrum": ["Auto Peak", "Positive Peak", "Negative Peak", "RMS", "Average", "Sample"],
-                "Real-Time Spectrum": ["Positive Peak", "Negative Peak", "Average", "Sample"],
-                "Zero-Span": ["Auto Peak", "Positive Peak", "Negative Peak", "RMS", "Average", "Sample"]
+                "Spectrum": [
+                    "Auto Peak",
+                    "Positive Peak",
+                    "Negative Peak",
+                    "RMS",
+                    "Average",
+                    "Sample"
+                ],
+                "Real-Time Spectrum": [
+                    "Positive Peak",
+                    "Negative Peak",
+                    "Average",
+                    "Sample"
+                ],
+                "Zero-Span": [
+                    "Auto Peak",
+                    "Positive Peak",
+                    "Negative Peak",
+                    "RMS",
+                    "Average",
+                    "Sample"
+                ]
             },
             "query_command": "SENS:WIND1:DET1:FUNC?"
         },
@@ -233,7 +248,7 @@
             "setting_type": "mode",
             "default_value": "1",
             "write_commands": {
-                "1":"INIT:CONT ON",
+                "1": "INIT:CONT ON",
                 "0": "INIT:CONT OFF"
             },
             "alias": {
