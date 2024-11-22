@@ -14,6 +14,7 @@ import ui.cxa_gui.mode_zero_span as CXAZs
 
 from device.rs_fsw43 import RsFsw43
 from device.kt_cxa import KtCxa
+from device.settings_manager import SettingsManager
 
 from pyvisa import ResourceManager
 import json
@@ -44,7 +45,11 @@ class MainWindow(QMainWindow):
             print(f'Error finding instrument:\n{ex.args[0]}') # Error
             exit()
         
-        device_class = next((value for key, value in instrument_objects.items() if key in idn))
+        # NEED TO FIX, I WANT TO USE SETTINGS MANAGER CLASS IF NO DERIVED CLASS FOR THAT INSTRUMENT EXIST. SETTING MANGER ALSO TAKE THE FILEPATH CONFIG
+        try:
+            device_class = next((value for key, value in instrument_objects.items() if key in idn))
+        except KeyError:
+            device_class = SettingsManager
         
         # Creates instance of the SettingsManager class that controls the instrument
         self.instrument = device_class(config['ip_address'])

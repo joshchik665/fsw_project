@@ -165,7 +165,10 @@ class CreateDialog(QDialog):
                 json.dump(device_types, file, indent=4)
             
             default_data = {
-                "Device Name": self.name_entry.text()
+                "Device Name": self.name_entry.text(),
+                "Default Mode": "",
+                "Modes SCPI Commands": self.mode_edit.get_value(),
+                "Settings": {}
             }
             
             with open(default_json_path, 'w') as json_file:
@@ -276,8 +279,11 @@ class DictEdit(QWidget):
 
 
 class SettingEdit(QWidget):
-    def __init__(self, name:str, value:str):
+    def __init__(self, name:str, value:str, requried:bool):
         super().__init__()
+        
+        self.name = name
+        self.required = requried
         
         layout = QHBoxLayout()
         
@@ -287,14 +293,28 @@ class SettingEdit(QWidget):
         
         self.entry = QLineEdit()
         self.entry.setFixedSize(500, 25)
+        if self.required:
+            self.entry.textEdited.connect(self.set_status)
         self.entry.setText(value)
         layout.addWidget(self.entry)
         
         self.setLayout(layout)
+        
+        self.set_status()
+    
+    
+    def set_status(self):
+        if not self.entry.text():
+            self.entry.setStyleSheet("QLineEdit {border-radius: 5px; padding: 5px; border: 1px solid #8f8f91; background-color: #FDACB8;}")
+        else:
+            self.entry.setStyleSheet("QLineEdit {border-radius: 5px; padding: 5px; border: 1px solid #8f8f91; background-color: white;}")
     
     
     def get_value(self):
-        return self.entry.text()
+        text = self.entry.text()
+        if self.required and not text:
+            print(f"Setting: {self.name} is required!")
+        return text
 
 
 class MainWindow(QMainWindow):
@@ -341,10 +361,10 @@ class MainWindow(QMainWindow):
     def _set_info_layout(self):
         self.info_widgets = {}
         
-        self.info_widgets["Device Name"] = SettingEdit("Device Name", self.config["Device Name"])
+        self.info_widgets["Device Name"] = SettingEdit("Device Name", self.config["Device Name"], True)
         self.info_layout.addWidget(self.info_widgets["Device Name"])
         
-        self.info_widgets["Default Mode"] = SettingEdit("Default Mode", self.config["Default Mode"])
+        self.info_widgets["Default Mode"] = SettingEdit("Default Mode", self.config["Default Mode"], True)
         self.info_layout.addWidget(self.info_widgets["Default Mode"])
         
         self.info_widgets["Modes SCPI Commands"] = DictEdit("Device Modes and SCPI Commands", self.config["Modes SCPI Commands"])
