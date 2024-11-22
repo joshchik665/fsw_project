@@ -1,10 +1,6 @@
 {
     "Device Name": "Keysight Technologies CXA N9000B",
     "Default Mode": "Spectrum",
-    "Modes": [
-        "Spectrum",
-        "Zero-Span"
-    ],
     "Modes SCPI Commands": {
         "Spectrum": "SANALYZER",
         "Zero-Span": "SANALYZER"

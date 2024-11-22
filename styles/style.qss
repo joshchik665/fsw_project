@@ -5,6 +5,13 @@ QPushButton {
     background-color: #2596be;
     color: white;
 }
+QPushButton#delete-button {
+    border-radius: 5px;
+    padding: 5px;
+    border: 0px solid #8f8f91;
+    background-color: red;
+    color: white;
+}
 QLineEdit {
     border-radius: 5px;
     padding: 5px;

@@ -82,7 +82,7 @@ class EditDialog(QDialog):
         
         if selected_button:
             device = selected_button.text()
-            self.filepath = self.device_configs_filepaths[device]
+            self.filepath = self.device_configs["Device Default Configs"][device]
         else:
             self.filepath = ""
         
@@ -101,12 +101,6 @@ class CreateDialog(QDialog):
         
         self.name_entry = QLineEdit()
         layout.addWidget(self.name_entry)
-        
-        key_label = QLabel("Enter a short key to represent device type ex) RSFSW43: ")
-        layout.addWidget(key_label)
-        
-        self.key_entry = QLineEdit()
-        layout.addWidget(self.key_entry)
         
         idn_label = QLabel("Enter the IDN from the instrument, if you don't know the IDN, use the search IDN box: ")
         layout.addWidget(idn_label)
@@ -130,6 +124,9 @@ class CreateDialog(QDialog):
         layout.addLayout(ip_layout)
         
         
+        self.mode_edit = DictEdit("Device Modes: ", {"Mode name": "[SCPI command to set this mode]"})
+        layout.addWidget(self.mode_edit)
+        
         self.button = QPushButton("Create new device")
         self.button.pressed.connect(self.select_or_create_folder)
         layout.addWidget(self.button)
@@ -150,7 +147,7 @@ class CreateDialog(QDialog):
         folder_path = QFileDialog.getExistingDirectory(
             self, 
             "Select or Create Folder", 
-            str(Path.home() / "fsw_project" / "configs" / "device_configs"),
+            str(Path.home() / "fsw_project" / "configs" / "device_configs" / "settings"),
             QFileDialog.ShowDirsOnly | QFileDialog.DontResolveSymlinks
         )
         
@@ -160,22 +157,12 @@ class CreateDialog(QDialog):
             with open(r"configs\device_configs\device_types\configs.json", "r") as file:
                 device_types = json.load(file)
             
-            device_types["Device IDNs"][self.idn_entry.text()] = self.key_entry.text()
+            device_types["Device IDNs"][self.idn_entry.text()] = self.name_entry.text()
             
-            device_types["Device Names"][self.key_entry.text()] = self.name_entry.text()
-            
-            device_types["Device Default Configs"][self.key_entry.text()] = default_json_path
+            device_types["Device Default Configs"][self.name_entry.text()] = default_json_path
             
             with open(r"configs\device_configs\device_types\configs.json", "w") as file:
                 json.dump(device_types, file, indent=4)
-            
-            with open(r"device_manager_config\config.json", "r") as file:
-                config = json.load(file)
-            
-            config[self.name_entry.text()] = default_json_path
-            
-            with open(r"device_manager_config\config.json", "w") as file:
-                json.dump(config, file, indent=4)
             
             default_data = {
                 "Device Name": self.name_entry.text()
@@ -187,6 +174,127 @@ class CreateDialog(QDialog):
         self.filepath = default_json_path
         
         self.accept()
+
+
+class DictEdit(QWidget):
+    def __init__(self, name:str, dictionary:dict):
+        super().__init__()
+        
+        self.widget_layout = QVBoxLayout()
+        
+        self.dictionary = dictionary
+        
+        self.key_widgets = {}
+        self.value_widgets = {}
+        self.layouts = {}
+        self.delete_buttons = {}
+        
+        layout1 = QHBoxLayout()
+        
+        self.name_label = QLabel(name)
+        layout1.addWidget(self.name_label)
+        
+        layout1.addStretch(1)
+        
+        self.add_button = QPushButton("Add entry")
+        self.add_button.pressed.connect(self.add_entry)
+        layout1.addWidget(self.add_button)
+        
+        self.widget_layout.addLayout(layout1)
+        
+        for key, value in self.dictionary.items():
+            layout = QHBoxLayout()
+            self.layouts[key] = layout
+            
+            key_widget = QLineEdit()
+            key_widget.setText(key)
+            self.key_widgets[key] = key_widget
+            layout.addWidget(key_widget)
+            
+            value_widget = QLineEdit()
+            value_widget.setText(value)
+            self.value_widgets[key] = value_widget
+            layout.addWidget(value_widget)
+            
+            button = QPushButton("Delete")
+            self.delete_buttons[key] = button
+            button.setObjectName("delete-button")
+            button.pressed.connect(lambda: self.delete(key))
+            layout.addWidget(button)
+            
+            self.widget_layout.addLayout(layout)
+        
+        self.setLayout(self.widget_layout)
+    
+    
+    def add_entry(self):
+        layout = QHBoxLayout()
+        
+        key_widget = QLineEdit()
+        layout.addWidget(key_widget)
+        
+        value_widget = QLineEdit()
+        layout.addWidget(value_widget)
+        
+        button = QPushButton(" Add ")
+        button.pressed.connect(lambda: self.add(layout, key_widget, value_widget, button))
+        layout.addWidget(button)
+        
+        self.widget_layout.addLayout(layout)
+
+    
+    def add(self, layout, key_widget, value_widget, button):
+        key = key_widget.text()
+        self.layouts[key] = layout
+        self.key_widgets[key] = key_widget
+        self.value_widgets[key] = value_widget
+        
+        button.setObjectName("delete-button")
+        button.style().polish(button)
+        self.delete_buttons[key] = button
+        self.delete_buttons[key].setText("Delete")
+        button.pressed.connect(lambda: self.delete(key))
+    
+    
+    def delete(self, key:str):
+        self.key_widgets[key].deleteLater()
+        self.value_widgets[key].deleteLater()
+        self.delete_buttons[key].deleteLater()
+        self.widget_layout.removeItem(self.layouts[key])
+        
+        self.key_widgets.pop(key)
+        self.value_widgets.pop(key)
+        self.delete_buttons.pop(key)
+        self.layouts.pop(key)
+    
+    
+    def get_value(self):
+        dict = {}
+        for key in self.key_widgets.keys():
+            dict[self.key_widgets[key].text()] = self.value_widgets[key].text()
+        return dict
+
+
+class SettingEdit(QWidget):
+    def __init__(self, name:str, value:str):
+        super().__init__()
+        
+        layout = QHBoxLayout()
+        
+        label = QLabel(name)
+        label.setFixedSize(200, 25)
+        layout.addWidget(label)
+        
+        self.entry = QLineEdit()
+        self.entry.setFixedSize(500, 25)
+        self.entry.setText(value)
+        layout.addWidget(self.entry)
+        
+        self.setLayout(layout)
+    
+    
+    def get_value(self):
+        return self.entry.text()
 
 
 class MainWindow(QMainWindow):
@@ -233,10 +341,14 @@ class MainWindow(QMainWindow):
     def _set_info_layout(self):
         self.info_widgets = {}
         
-        self._create_place_info_setting("Device Name", self.info_layout)
-        self._create_place_info_setting("Default Mode", self.info_layout)
-        self._create_place_info_setting("Modes", self.info_layout)
-        self._create_place_info_setting("Modes SCPI Commands", self.info_layout)
+        self.info_widgets["Device Name"] = SettingEdit("Device Name", self.config["Device Name"])
+        self.info_layout.addWidget(self.info_widgets["Device Name"])
+        
+        self.info_widgets["Default Mode"] = SettingEdit("Default Mode", self.config["Default Mode"])
+        self.info_layout.addWidget(self.info_widgets["Default Mode"])
+        
+        self.info_widgets["Modes SCPI Commands"] = DictEdit("Device Modes and SCPI Commands", self.config["Modes SCPI Commands"])
+        self.info_layout.addWidget(self.info_widgets["Modes SCPI Commands"])
         
         self.apply_info_button = QPushButton("Apply Info Settings")
         self.apply_info_button.pressed.connect(self.apply_info)
@@ -247,7 +359,7 @@ class MainWindow(QMainWindow):
     
     def apply_info(self):
         for key, value in self.info_widgets.items():
-            self.config[key] = value.text()
+            self.config[key] = value.get_value()
             
         with open(self.filepath, "w") as file:
             json.dump(self.config, file, indent=4)
@@ -297,8 +409,7 @@ class MainWindow(QMainWindow):
                 self.label_widgets[name].deleteLater()
                 self.entry_widgets[name].deleteLater()
                 self.settings_layout.removeItem(self.layouts[name])
-        
-        
+
 
 class EditSettingDialog(QDialog):
     def __init__(self, setting_name:str, config:dict):

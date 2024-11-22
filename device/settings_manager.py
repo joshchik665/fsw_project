@@ -24,9 +24,9 @@ class SettingsManager(Instrument):
         
         self.current_mode = config["Default Mode"] # Default mode on startup
         
-        self.modes = config["Modes"]
-        
         self.mode_scpi = config["Modes SCPI Commands"] # Scpi commands to change modes
+        
+        self.modes = self.mode_scpi.keys()
         
         # Initializes the Setting objects and puts them into dictionaries. The dictionaries are combined together into joint dictionary
         self.numerical_settings = {name: NumericalSetting.from_dict(name,**setting) for name, setting in config["Settings"].items() if setting["setting_type"] == "numerical"}
