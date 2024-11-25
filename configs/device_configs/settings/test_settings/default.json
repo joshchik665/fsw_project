@@ -1,0 +1,19 @@
+{
+    "Device Name": "This is a test",
+    "Default Mode": "mode 2",
+    "Modes SCPI Commands": {
+        "Mode name": "[SCPI command to set this mode]"
+    },
+    "Settings": {
+        "Setting1": {
+            "default_value": "1",
+            "write_command": "Write",
+            "query_command": "Q",
+            "measure": "time",
+            "applicable_modes": [
+                "Mode name"
+            ],
+            "setting_type": "numerical"
+        }
+    }
+}

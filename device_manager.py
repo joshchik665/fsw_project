@@ -463,7 +463,15 @@ class MainWindow(QMainWindow):
         self.apply_info_button.pressed.connect(self.apply_info)
         self.info_layout.addWidget(self.apply_info_button)
         
+        self.delete_device_button = QPushButton("Delete This Device")
+        self.delete_device_button.pressed.connect(self.delete_device)
+        self.info_layout.addWidget(self.delete_device_button)
+        
         self.info_layout.addStretch(1)
+    
+    
+    def delete_device(self):
+        pass
     
     
     def apply_info(self):
@@ -475,6 +483,10 @@ class MainWindow(QMainWindow):
     
     
     def _create_place_setting_box(self, name, parent_layout):
+        parent_layout.addLayout(self._create_setting_box(name))
+    
+    
+    def _create_setting_box(self, name):
         layout = QHBoxLayout()
         
         label = QLabel(name)
@@ -489,7 +501,7 @@ class MainWindow(QMainWindow):
         
         self.layouts[name] = layout
         
-        parent_layout.addLayout(layout)
+        return layout
     
     
     def _set_setting_layout(self):
@@ -511,15 +523,14 @@ class MainWindow(QMainWindow):
         dialog = EditSettingDialog("", self.config)
         
         if dialog.exec() == QDialog.Accepted:
-            self.config = dialog.config
+            self.config = dialog.global_config
             
             with open(self.filepath, 'w') as file:
                 json.dump(self.config, file, indent=4)
             
-            # if dialog.deleted:
-            #     self.label_widgets[name].deleteLater()
-            #     self.entry_widgets[name].deleteLater()
-            #     self.settings_layout.removeItem(self.layouts[name])
+            layout = self._create_setting_box(dialog.setting_name)
+            
+            self.settings_layout.insertLayout(layout.count() - 1, layout)
     
     
     def edit_setting(self, name):
@@ -687,7 +698,7 @@ class EditSettingDialog(QDialog):
     
     
     def delete(self):
-        self.config["Settings"].pop(self.setting_name)
+        self.global_config["Settings"].pop(self.setting_name)
         
         self.deleted = True
         
@@ -704,12 +715,14 @@ class EditSettingDialog(QDialog):
     def apply(self):
         current_index = self.stacked_widget.currentIndex()
         
+        self.setting_name = self.name_widget.get_value()
+        
         if current_index == 0:
             self.config = {name: widget.get_value() for name, widget in self.numerical_widgets.items() if widget.get_value()}
         elif current_index == 1:
             self.config = {name: widget.get_value() for name, widget in self.mode_widgets.items() if widget.get_value()}
         
-        self.global_config["Settings"][self.name_widget.get_value()] = self.config
+        self.global_config["Settings"][self.setting_name] = self.config
         
         self.deleted = False
         
