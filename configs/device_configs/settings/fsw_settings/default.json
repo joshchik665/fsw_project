@@ -8,16 +8,16 @@
     },
     "Settings": {
         "Center Frequency": {
+            "default_value": "21500000000",
+            "write_command": "FREQ:CENT",
+            "query_command": "FREQ:CENT?",
             "measure": "frequency",
             "applicable_modes": [
                 "Spectrum",
                 "Real-Time Spectrum",
                 "Zero-Span"
             ],
-            "setting_type": "numerical",
-            "default_value": "21500000000",
-            "write_command": "FREQ:CENT",
-            "query_command": "FREQ:CENT?"
+            "setting_type": "numerical"
         },
         "Dwell Time": {
             "measure": "time",

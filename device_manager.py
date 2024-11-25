@@ -12,8 +12,12 @@ from PySide6.QtWidgets import (
     QDialog,
     QButtonGroup,
     QRadioButton,
-    QFileDialog
+    QFileDialog,
+    QComboBox,
+    QCheckBox,
+    QStackedWidget
 )
+from PySide6.QtCore import Signal
 from PySide6.QtGui import QIcon
 import os
 import sys
@@ -215,7 +219,7 @@ class DictEdit(QWidget):
             layout.addWidget(key_widget)
             
             value_widget = QLineEdit()
-            value_widget.setText(value)
+            value_widget.setText(str(value))
             self.value_widgets[key] = value_widget
             layout.addWidget(value_widget)
             
@@ -317,6 +321,91 @@ class SettingEdit(QWidget):
         return text
 
 
+class SettingEditCombo(QWidget):
+    
+    valueChanged = Signal(str)
+    
+    def __init__(self, name:str, value:str, requried:bool, values:tuple):
+        super().__init__()
+        
+        self.name = name
+        self.values = values
+        self.required = requried
+        
+        layout = QHBoxLayout()
+        
+        label = QLabel(name)
+        label.setFixedSize(200, 25)
+        layout.addWidget(label)
+        
+        self.entry = QComboBox()
+        self.entry.setFixedSize(500, 25)
+        
+        self.entry.addItems(values)
+        
+        if self.required:
+            self.entry.currentIndexChanged.connect(self.set_status)
+        
+        self.entry.setCurrentText(value)
+        
+        layout.addWidget(self.entry)
+        
+        self.setLayout(layout)
+        
+        self.set_status(0)
+    
+    
+    def set_status(self, index):
+        text = self.entry.currentText()
+        
+        self.valueChanged.emit(text)
+        
+        if self.entry.currentText() == "None":
+            self.entry.setStyleSheet("QComboBox {border-radius: 5px; padding: 5px; border: 1px solid #8f8f91; background-color: #FDACB8;}")
+        else:
+            self.entry.setStyleSheet("QComboBox {border-radius: 5px; padding: 5px; border: 1px solid #8f8f91; background-color: white;}")
+    
+    
+    def get_value(self):
+        text = self.entry.currentText()
+        if self.required and not text:
+            print(f"Setting: {self.name} is required!")
+        return text
+
+
+class toggleList(QWidget):
+    def __init__(self, options, checked_options = [], parent=None):
+        super().__init__(parent)
+        
+        layout = QVBoxLayout(self)
+        
+        self._checkboxes = []
+        
+        for option in options:
+            checkbox = QCheckBox(str(option))
+            layout.addWidget(checkbox)
+            self._checkboxes.append(checkbox)
+            if str(option) in checked_options:
+                checkbox.setChecked(True)
+        
+        layout.addStretch(1)
+        
+        self.setLayout(layout)
+    
+    def get_value(self):
+        """
+        Returns a list of checked items
+        
+        Returns:
+            list: List of checked item texts
+        """
+        return [
+            checkbox.text() 
+            for checkbox in self._checkboxes 
+            if checkbox.isChecked()
+        ]
+
+
 class MainWindow(QMainWindow):
     def __init__(self, filepath):
         super().__init__()
@@ -401,17 +490,36 @@ class MainWindow(QMainWindow):
         self.layouts[name] = layout
         
         parent_layout.addLayout(layout)
-        
+    
     
     def _set_setting_layout(self):
         self.layouts = {}
         self.label_widgets = {}
         self.entry_widgets = {}
         
+        self.create_setting_button = QPushButton("Create new setting")
+        self.create_setting_button.pressed.connect(self.create_new_setting)
+        self.settings_layout.addWidget(self.create_setting_button)
+        
         for setting_name in self.config["Settings"].keys():
             self._create_place_setting_box(setting_name, self.settings_layout)
         
         self.settings_layout.addStretch(1)
+    
+    
+    def create_new_setting(self):
+        dialog = EditSettingDialog("", self.config)
+        
+        if dialog.exec() == QDialog.Accepted:
+            self.config = dialog.config
+            
+            with open(self.filepath, 'w') as file:
+                json.dump(self.config, file, indent=4)
+            
+            # if dialog.deleted:
+            #     self.label_widgets[name].deleteLater()
+            #     self.entry_widgets[name].deleteLater()
+            #     self.settings_layout.removeItem(self.layouts[name])
     
     
     def edit_setting(self, name):
@@ -420,7 +528,7 @@ class MainWindow(QMainWindow):
         dialog = EditSettingDialog(name, self.config)
         
         if dialog.exec() == QDialog.Accepted:
-            self.config = dialog.config
+            self.config = dialog.global_config
             
             with open(self.filepath, 'w') as file:
                 json.dump(self.config, file, indent=4)
@@ -432,18 +540,56 @@ class MainWindow(QMainWindow):
 
 
 class EditSettingDialog(QDialog):
-    def __init__(self, setting_name:str, config:dict):
+    def __init__(self, setting_name:str = "", config:dict = {}):
         super().__init__()
         
         self.setting_name = setting_name
-        self.config = config
+        self.global_config = config
+        self.settings_config = config["Settings"]
         
-        self.entry_boxes = {}
+        self.is_new = not bool(setting_name)
+        
+        if not self.is_new:
+            self.config = self.settings_config[setting_name]
+        else:
+            self.config = {}
+        
+        self.mode_widgets = {}
+        self.numerical_widgets = {}
         
         layout = QVBoxLayout()
         
-        for setting_param in self.config["Settings"][self.setting_name].keys():
-            self._create_place_info_setting(setting_param, layout)
+        self.name_widget = SettingEdit("Setting Name", setting_name, True)
+        layout.addWidget(self.name_widget)
+        
+        self.setting_types = {"numerical": 0, "mode": 1, "None": 2}
+        
+        self.stacked_widget = QStackedWidget()
+        self.stacked_widget.addWidget(self.create_numerical_layout())
+        self.stacked_widget.addWidget(self.create_mode_layout())
+        self.stacked_widget.addWidget(self.create_none_layout())
+        
+        if self.exists("setting_type"):
+            if self.config["setting_type"] == "numerical":
+                setting_type_widget = SettingEditCombo("setting_type", "numerical", True, self.setting_types.keys())
+                setting_type_widget.valueChanged.connect(self.create_setting)
+                self.create_setting("numerical")
+                layout.addWidget(setting_type_widget)
+            else:
+                setting_type_widget = SettingEditCombo("setting_type", "mode", True, self.setting_types.keys())
+                setting_type_widget.valueChanged.connect(self.create_setting)
+                self.create_setting("mode")
+                layout.addWidget(setting_type_widget)
+        else:
+            setting_type_widget = SettingEditCombo("setting_type", "None", True, self.setting_types.keys())
+            setting_type_widget.valueChanged.connect(self.create_setting)
+            self.create_setting("None")
+            layout.addWidget(setting_type_widget)
+        
+        self.mode_widgets["setting_type"] = setting_type_widget
+        self.numerical_widgets["setting_type"] = setting_type_widget
+        
+        layout.addWidget(self.stacked_widget)
         
         self.apply_button = QPushButton("Apply Settings")
         self.apply_button.pressed.connect(self.apply)
@@ -460,6 +606,86 @@ class EditSettingDialog(QDialog):
         self.setLayout(layout)
     
     
+    def create_setting(self, text):
+        self.stacked_widget.setCurrentIndex(self.setting_types[text])
+    
+    
+    def create_mode_layout(self):
+        container = QWidget()
+        layout = QVBoxLayout()
+        container.setLayout(layout)
+        
+        default_value = SettingEdit("default_value", self.config.get("default_value", ""), True)
+        layout.addWidget(default_value)
+        self.mode_widgets["default_value"] = default_value
+        
+        write_commands = DictEdit("write_commands", self.config.get("write_commands", {}))
+        layout.addWidget(write_commands)
+        self.mode_widgets["write_commands"] = write_commands
+        
+        query_command = SettingEdit("query_command", self.config.get("query_command", ""), True)
+        layout.addWidget(query_command)
+        self.mode_widgets["query_command"] = query_command
+        
+        applicable_modes = toggleList(self.global_config["Modes SCPI Commands"].keys(), self.config.get("applicable_modes", []))
+        layout.addWidget(applicable_modes)
+        self.mode_widgets["applicable_modes"] = applicable_modes
+        
+        alias = DictEdit("alias", self.config.get("alias", {}))
+        layout.addWidget(alias)
+        self.mode_widgets["alias"] = alias
+        
+        custom_modes = DictEdit("custom_modes", self.config.get("custom_modes", {}))
+        layout.addWidget(custom_modes)
+        self.mode_widgets["custom_modes"] = custom_modes
+        
+        return container
+    
+    
+    def create_numerical_layout(self):
+        container = QWidget()
+        layout = QVBoxLayout()
+        container.setLayout(layout)
+        
+        default_value = SettingEdit("default_value", self.config.get("default_value", ""), True)
+        layout.addWidget(default_value)
+        self.numerical_widgets["default_value"] = default_value
+        
+        write_command = SettingEdit("write_command", self.config.get("write_command", ""), True)
+        layout.addWidget(write_command)
+        self.numerical_widgets["write_command"] = write_command
+        
+        query_command = SettingEdit("query_command", self.config.get("query_command", ""), True)
+        layout.addWidget(query_command)
+        self.numerical_widgets["query_command"] = query_command
+        
+        measure = SettingEdit("measure", self.config.get("measure", ""), True)
+        layout.addWidget(measure)
+        self.numerical_widgets["measure"] = measure
+        
+        applicable_modes = toggleList(self.global_config["Modes SCPI Commands"].keys(), self.config.get("applicable_modes", []))
+        layout.addWidget(applicable_modes)
+        self.numerical_widgets["applicable_modes"] = applicable_modes
+        
+        return container
+    
+    
+    def create_none_layout(self):
+        container = QWidget()
+        layout = QVBoxLayout()
+        container.setLayout(layout)
+        
+        return container
+    
+    
+    def exists(self, key:str) -> bool:
+        try:
+            value = self.config[key]
+            return True
+        except KeyError:
+            return False
+    
+    
     def delete(self):
         self.config["Settings"].pop(self.setting_name)
         
@@ -474,29 +700,20 @@ class EditSettingDialog(QDialog):
         
         self.accept()
     
+    
     def apply(self):
-        for setting_atr, entry in self.entry_boxes.items():
-            self.config["Settings"][self.setting_name][setting_atr] = entry.text()
+        current_index = self.stacked_widget.currentIndex()
+        
+        if current_index == 0:
+            self.config = {name: widget.get_value() for name, widget in self.numerical_widgets.items() if widget.get_value()}
+        elif current_index == 1:
+            self.config = {name: widget.get_value() for name, widget in self.mode_widgets.items() if widget.get_value()}
+        
+        self.global_config["Settings"][self.name_widget.get_value()] = self.config
         
         self.deleted = False
         
         self.accept()
-    
-    
-    def _create_place_info_setting(self, name:str, parent_layout):
-        layout = QHBoxLayout()
-        
-        label = QLabel(name)
-        label.setFixedSize(125, 25)
-        layout.addWidget(label)
-        
-        entry = QLineEdit()
-        entry.setFixedSize(200, 25)
-        self.entry_boxes[name] = entry
-        entry.setText(str(self.config["Settings"][self.setting_name][name]))
-        layout.addWidget(entry)
-        
-        parent_layout.addLayout(layout)
 
 
 app = QApplication(sys.argv)
