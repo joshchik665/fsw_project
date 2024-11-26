@@ -26,6 +26,7 @@ import json
 from pathlib import Path
 from pyvisa import ResourceManager
 import shutil
+import ast
 
 
 def load_stylesheet(filename):
@@ -228,9 +229,9 @@ class DictEdit(QWidget):
             
             button = QPushButton("Delete")
             self.delete_buttons[key] = button
-            button.setObjectName("delete-button")
-            button.pressed.connect(lambda: self.delete(key))
-            layout.addWidget(button)
+            self.delete_buttons[key].setObjectName("delete-button")
+            self.delete_buttons[key].pressed.connect(lambda key=key: self.delete(key))
+            layout.addWidget(self.delete_buttons[key])
             
             self.widget_layout.addLayout(layout)
         
@@ -263,7 +264,7 @@ class DictEdit(QWidget):
         button.style().polish(button)
         self.delete_buttons[key] = button
         self.delete_buttons[key].setText("Delete")
-        button.pressed.connect(lambda: self.delete(key))
+        self.delete_buttons[key].pressed.connect(lambda: self.delete(key))
     
     
     def delete(self, key:str):
@@ -767,7 +768,19 @@ class EditSettingDialog(QDialog):
         if current_index == 0:
             self.config = {name: widget.get_value() for name, widget in self.numerical_widgets.items() if widget.get_value()}
         elif current_index == 1:
-            self.config = {name: widget.get_value() for name, widget in self.mode_widgets.items() if widget.get_value()}
+            self.config = {name: widget.get_value() for name, widget in self.mode_widgets.items() if widget.get_value() and not name == "custom_modes"}
+            
+            dict = self.mode_widgets["custom_modes"].get_value()
+            
+            if dict:
+                self.config["custom_modes"] = {}
+                for key, text in dict.items():
+                    try:
+                        string_list = ast.literal_eval(text)
+                        if isinstance(string_list, list) and all(isinstance(i, str) for i in string_list):
+                            self.config["custom_modes"][key] = string_list
+                    except (ValueError, SyntaxError):
+                        print(f"Invalid input format. Please enter a valid list of strings.{text}")
         
         self.global_config["Settings"][self.setting_name] = self.config
         
