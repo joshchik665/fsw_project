@@ -5,6 +5,7 @@
         "Spectrum": "SANALYZER",
         "Zero-Span": "SANALYZER"
     },
+    "IDN": "Keysight Technologies,N9000B",
     "Settings": {
         "Center Frequency": {
             "measure": "frequency",

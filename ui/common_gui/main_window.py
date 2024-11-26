@@ -54,8 +54,8 @@ class MainWindow(QMainWindow):
         # Creates instance of the SettingsManager class that controls the instrument
         self.instrument = device_class(config['ip_address'])
         
-        with open(r"configs\device_configs\device_types\configs.json", "r") as file:
-            self.devices_config = json.load(file)
+        # with open(r"configs\device_configs\device_types\configs.json", "r") as file:
+        #     self.devices_config = json.load(file)
         
         self._programmatic_change = False # Flag to change the behavior of the tab change function
         

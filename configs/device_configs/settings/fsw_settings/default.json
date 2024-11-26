@@ -6,6 +6,7 @@
         "Real-Time Spectrum": "RTIM",
         "Zero-Span": "SANALYZER"
     },
+    "IDN": "Rohde&Schwarz,FSW-43",
     "Settings": {
         "Center Frequency": {
             "default_value": "21500000000",

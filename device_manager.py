@@ -15,7 +15,8 @@ from PySide6.QtWidgets import (
     QFileDialog,
     QComboBox,
     QCheckBox,
-    QStackedWidget
+    QStackedWidget,
+    QMessageBox
 )
 from PySide6.QtCore import Signal
 from PySide6.QtGui import QIcon
@@ -24,6 +25,7 @@ import sys
 import json
 from pathlib import Path
 from pyvisa import ResourceManager
+import shutil
 
 
 def load_stylesheet(filename):
@@ -70,7 +72,7 @@ class EditDialog(QDialog):
         self.button_group = QButtonGroup()
         self.button_group.setExclusive(True)
         
-        for key in self.device_configs["Device Default Configs"].keys():
+        for key in self.device_configs.keys():
             radio_btn = QRadioButton(str(key))
             radio_btn.setChecked(True)
             self.button_group.addButton(radio_btn)
@@ -86,7 +88,7 @@ class EditDialog(QDialog):
         
         if selected_button:
             device = selected_button.text()
-            self.filepath = self.device_configs["Device Default Configs"][device]
+            self.filepath = self.device_configs[device]
         else:
             self.filepath = ""
         
@@ -161,9 +163,9 @@ class CreateDialog(QDialog):
             with open(r"configs\device_configs\device_types\configs.json", "r") as file:
                 device_types = json.load(file)
             
-            device_types["Device IDNs"][self.idn_entry.text()] = self.name_entry.text()
+            #device_types["Device IDNs"][self.idn_entry.text()] = self.name_entry.text()
             
-            device_types["Device Default Configs"][self.name_entry.text()] = default_json_path
+            device_types[self.name_entry.text()] = default_json_path
             
             with open(r"configs\device_configs\device_types\configs.json", "w") as file:
                 json.dump(device_types, file, indent=4)
@@ -172,6 +174,7 @@ class CreateDialog(QDialog):
                 "Device Name": self.name_entry.text(),
                 "Default Mode": "",
                 "Modes SCPI Commands": self.mode_edit.get_value(),
+                "IDN": self.idn_entry.text(),
                 "Settings": {}
             }
             
@@ -411,9 +414,13 @@ class MainWindow(QMainWindow):
         super().__init__()
         
         self.filepath = filepath
+        self.json_filepath = r"configs\device_configs\device_types\configs.json"
         
         with open(filepath, "r") as file:
             self.config = json.load(file)
+        
+        with open(self.json_filepath, "r") as file:
+            self.json_config = json.load(file)
         
         self.window_layout = QGridLayout()
         
@@ -471,10 +478,50 @@ class MainWindow(QMainWindow):
     
     
     def delete_device(self):
-        pass
+        reply = QMessageBox.question(
+            self, 
+            'Confirm Deletion', 
+            'Are you sure you want to delete the configuration?\n'
+            'This action cannot be undone.',
+            QMessageBox.Yes | QMessageBox.No, 
+            QMessageBox.No
+        )
+        if reply == QMessageBox.Yes:
+            try:
+                filepath = self.json_config.pop(self.config["Device Name"])
+                
+                print(filepath)
+                
+                folder_path = os.path.dirname(filepath)
+                
+                print(folder_path)
+                
+                if os.path.exists(folder_path):
+                    shutil.rmtree(folder_path)
+                
+                with open(self.json_filepath, 'w') as file:
+                    json.dump(self.json_config, file, indent=4)
+                
+                QMessageBox.information(
+                    self, 
+                    'Deletion Successful', 
+                    'Configuration has been deleted successfully.'
+                )
+                
+                self.close()
+                
+            except Exception as e:
+                QMessageBox.critical(
+                    self, 
+                    'Deletion Error', 
+                    f'An error occurred: {str(e)}'
+                )
     
     
     def apply_info(self):
+        filepath = self.json_config.pop(self.config["Device Name"])
+        self.json_config[self.info_widgets["Device Name"].get_value()] = filepath
+        
         for key, value in self.info_widgets.items():
             self.config[key] = value.get_value()
             
