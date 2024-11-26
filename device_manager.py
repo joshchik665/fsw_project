@@ -25,7 +25,6 @@ import sys
 import json
 from pathlib import Path
 from pyvisa import ResourceManager
-import shutil
 import ast
 
 
@@ -38,16 +37,23 @@ class Dialog(QDialog):
     def __init__(self):
         super().__init__()
         
-        layout = QHBoxLayout()
+        layout = QVBoxLayout()
         self.setLayout(layout)
+        
+        button_layout = QHBoxLayout()
+        
+        title = QLabel("Device Config Wizard")
+        layout.addWidget(title)
         
         self.edit_device_button = QPushButton("Edit existing device config")
         self.edit_device_button.pressed.connect(self.edit_device)
-        layout.addWidget(self.edit_device_button)
+        button_layout.addWidget(self.edit_device_button)
         
         self.create_device_button = QPushButton("Create new device")
         self.create_device_button.pressed.connect(self.create_device)
-        layout.addWidget(self.create_device_button)
+        button_layout.addWidget(self.create_device_button)
+        
+        layout.addLayout(button_layout)
     
     
     def edit_device(self):
@@ -67,7 +73,7 @@ class EditDialog(QDialog):
         layout = QVBoxLayout()
         self.setLayout(layout)
         
-        with open(r"configs\device_configs\device_types\configs.json", "r") as file:
+        with open(r"device\configs\device_types\configs.json", "r") as file:
             self.device_configs = json.load(file)
         
         self.button_group = QButtonGroup()
@@ -151,30 +157,22 @@ class CreateDialog(QDialog):
     
     
     def select_or_create_folder(self):
-        # folder_path = QFileDialog.getExistingDirectory(
-        #     self, 
-        #     "Select or Create Folder", 
-        #     str(Path.home() / "fsw_project" / "configs" / "device_configs" / "settings"),
-        #     QFileDialog.ShowDirsOnly | QFileDialog.DontResolveSymlinks
-        # )
         
         filepath, _ = QFileDialog.getSaveFileName(
             self, 
             "Create JSON file", 
-            str(Path.home() / "fsw_project" / "configs" / "device_configs" / "settings"), 
+            str(Path.home() / "fsw_project"  / "device" / "configs" / "settings"), 
             "JSON Files (*.json);;All Files (*)"
             )
         
         if filepath:
             
-            with open(r"configs\device_configs\device_types\configs.json", "r") as file:
+            with open(r"device\configs\device_types\configs.json", "r") as file:
                 device_types = json.load(file)
-            
-            #device_types["Device IDNs"][self.idn_entry.text()] = self.name_entry.text()
             
             device_types[self.name_entry.text()] = filepath
             
-            with open(r"configs\device_configs\device_types\configs.json", "w") as file:
+            with open(r"device\configs\device_types\configs.json", "w") as file:
                 json.dump(device_types, file, indent=4)
             
             default_data = {
@@ -421,7 +419,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         
         self.filepath = filepath
-        self.json_filepath = r"configs\device_configs\device_types\configs.json"
+        self.json_filepath = r"device\configs\device_types\configs.json"
         
         with open(filepath, "r") as file:
             self.config = json.load(file)

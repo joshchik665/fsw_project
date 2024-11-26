@@ -6,9 +6,10 @@ from device.mode_setting import ModeSetting
 
 import json
 import math
+import os
 
 class SettingsManager(Instrument):
-    def __init__(self, ip_address:str, settings_config_filepath:str):
+    def __init__(self, ip_address:str, settings_config_filepath:str = None):
         """Initializes the Setting Manager instrument that controls all the settings on the instrument
 
         Args:
@@ -19,8 +20,21 @@ class SettingsManager(Instrument):
         """
         super().__init__(ip_address)
         
-        with open(settings_config_filepath, 'r') as file: # Opens file containing all the settings
-            config = json.load(file)
+        if not settings_config_filepath:
+            directory = r"device\configs\settings"
+            
+            for filename in os.listdir(directory):
+                filepath = os.path.join(directory, filename)
+                
+                if filename.endswith('.json') and os.path.isfile(filepath):
+                    with open(filepath, 'r') as file:
+                        data = json.load(file)
+                    
+                    if self.idn in data["IDN"]:
+                        config = data
+        else:
+            with open(settings_config_filepath, 'r') as file: # Opens file containing all the settings
+                config = json.load(file)
         
         self.current_mode = config["Default Mode"] # Default mode on startup
         
