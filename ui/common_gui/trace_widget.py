@@ -11,7 +11,6 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import QTimer
 from PySide6.QtGui import QIntValidator
-from device.settings_manager import SettingsManager
 from ui.common.utilities import remove_trailing_zeros
 from ui.common_gui.csv_logger import TraceLogger
 from pathlib import Path
@@ -20,7 +19,7 @@ import numpy as np
 
 
 class SpectralWidget(QWidget):
-    def __init__(self, device: SettingsManager, mode: str):
+    def __init__(self, device, mode: str):
         super().__init__()
         
         self.device = device

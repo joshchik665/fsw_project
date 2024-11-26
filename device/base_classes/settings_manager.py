@@ -1,8 +1,8 @@
 # settings_manager.py
 
-from device.device import Instrument
-from device.numerical_setting import NumericalSetting
-from device.mode_setting import ModeSetting
+from device.base_classes.device import Instrument
+from device.setting_classes.numerical_setting import NumericalSetting
+from device.setting_classes.mode_setting import ModeSetting
 
 import json
 import math

@@ -1,6 +1,6 @@
 # rs_fsw.py
 
-from device.settings_manager import SettingsManager
+from device.base_classes.settings_manager import SettingsManager
 import json
 
 class RsFsw43(SettingsManager):

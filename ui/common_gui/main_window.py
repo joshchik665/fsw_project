@@ -12,12 +12,11 @@ import ui.fsw_gui.mode_zero_span as FSW43Zs
 import ui.cxa_gui.mode_spec as CXASpec
 import ui.cxa_gui.mode_zero_span as CXAZs
 
-from device.rs_fsw43 import RsFsw43
-from device.kt_cxa import KtCxa
-from device.settings_manager import SettingsManager
+from device.device_classes.rs_fsw43 import RsFsw43
+from device.device_classes.kt_cxa import KtCxa
+from device.base_classes.settings_manager import SettingsManager
 
 from pyvisa import ResourceManager
-import json
 
 
 class MainWindow(QMainWindow):

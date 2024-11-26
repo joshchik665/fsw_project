@@ -8,15 +8,14 @@ from PySide6.QtWidgets import (
     QComboBox,
 )
 from PySide6.QtGui import QDoubleValidator
-from device.numerical_setting import NumericalSetting
-from device.mode_setting import ModeSetting
-from device.settings_manager import SettingsManager
+from device.setting_classes.numerical_setting import NumericalSetting
+from device.setting_classes.mode_setting import ModeSetting
 from ui.common.utilities import remove_trailing_zeros
 from typing import Union
 
 
 class NumericalSettingBox(QWidget):
-    def __init__(self, instrument:SettingsManager, setting:Union[NumericalSetting,ModeSetting], parent=None):
+    def __init__(self, instrument, setting:Union[NumericalSetting,ModeSetting], parent=None):
         """Initializes the setting box widget
 
         Args:
@@ -154,7 +153,7 @@ class NumericalSettingBox(QWidget):
 
 
 class ModeSettingBox(QWidget):
-    def __init__(self, instrument:SettingsManager, setting:Union[NumericalSetting,ModeSetting], mode: str, parent=None):
+    def __init__(self, instrument, setting:Union[NumericalSetting,ModeSetting], mode: str, parent=None):
         """Initializes the setting box widget
 
         Args:

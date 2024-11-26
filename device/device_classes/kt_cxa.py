@@ -1,6 +1,6 @@
 # kt_cxa.py
 
-from device.settings_manager import SettingsManager
+from device.base_classes.settings_manager import SettingsManager
 import json
 
 class KtCxa(SettingsManager):
