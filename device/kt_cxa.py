@@ -5,10 +5,10 @@ import json
 
 class KtCxa(SettingsManager):
     def __init__(self, ip_address:str):
-        with open(r"configs\device_configs\device_types\configs.json") as file:
+        with open(r"device\configs\device_types\configs.json") as file:
             config = json.load(file)
         
-        self.device_type = "Keysight Technoloties CXA N9000B"
+        self.device_type = "Keysight Technologies CXA N9000B"
         
         super().__init__(ip_address, config[self.device_type])
     

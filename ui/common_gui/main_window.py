@@ -106,7 +106,7 @@ class MainWindow(QMainWindow):
                 "Real-Time Spectrum": FSW43Rts.ModeRts,
                 "Zero-Span": FSW43Zs.ModeZs
             },
-            "Keysight Technoloties CXA N9000B": {
+            "Keysight Technologies CXA N9000B": {
                 "Spectrum": CXASpec.ModeSpec,
                 "Zero-Span": CXAZs.ModeZs
             }

@@ -6,7 +6,7 @@ import json
 class RsFsw43(SettingsManager):
     def __init__(self, ip_address:str):
         
-        with open(r"configs\device_configs\device_types\configs.json") as file:
+        with open(r"device\configs\device_types\configs.json") as file:
             config = json.load(file)
         
         self.device_type = "Rhode & Schwarz FSW-43"

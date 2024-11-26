@@ -85,15 +85,15 @@
             "query_command": "BAND:VID?"
         },
         "Attenuation": {
-        "measure": "number",
-        "applicable_modes": [
-            "Spectrum",
-            "Zero-Span"
-        ],
-        "setting_type": "numerical",
-        "default_value": "10",
-        "write_command": "INP:ATT",
-        "query_command": "INP:ATT?"
+            "measure": "number",
+            "applicable_modes": [
+                "Spectrum",
+                "Zero-Span"
+            ],
+            "setting_type": "numerical",
+            "default_value": "10",
+            "write_command": "INP:ATT",
+            "query_command": "INP:ATT?"
         },
         "Sweep Time Auto": {
             "applicable_modes": [
@@ -139,12 +139,12 @@
             "setting_type": "mode",
             "default_value": "NORM",
             "write_commands": {
-                "NORM":"DET NORM",
-                "AVER":"DET AVER",
-                "SAMP":"DET SAMP",
-                "POS":"DET POS",
-                "NEG":"DET NEG",
-                "RAV":"DET RAV"
+                "NORM": "DET NORM",
+                "AVER": "DET AVER",
+                "SAMP": "DET SAMP",
+                "POS": "DET POS",
+                "NEG": "DET NEG",
+                "RAV": "DET RAV"
             },
             "alias": {
                 "Normal": "NORM",
@@ -165,7 +165,7 @@
             "setting_type": "mode",
             "default_value": "1",
             "write_commands": {
-                "1":"INIT:CONT ON",
+                "1": "INIT:CONT ON",
                 "0": "INIT:CONT OFF"
             },
             "alias": {
