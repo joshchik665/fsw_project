@@ -616,7 +616,11 @@ class EditSettingDialog(QDialog):
         self.mode_widgets = {}
         self.numerical_widgets = {}
         
+        self.widget_layout = QGridLayout()
         layout = QVBoxLayout()
+        layout1 = QVBoxLayout()
+        self.widget_layout.addLayout(layout, 0, 1)
+        self.widget_layout.addLayout(layout1, 0, 0)
         
         self.name_widget = SettingEdit("Setting Name", setting_name, True)
         layout.addWidget(self.name_widget)
@@ -650,19 +654,23 @@ class EditSettingDialog(QDialog):
         
         layout.addWidget(self.stacked_widget)
         
+        layout1.addStretch(1)
+        
         self.apply_button = QPushButton("Apply Settings")
         self.apply_button.pressed.connect(self.apply)
-        layout.addWidget(self.apply_button)
+        layout1.addWidget(self.apply_button)
         
         self.cancel_button = QPushButton("Cancel Edit")
         self.cancel_button.pressed.connect(self.cancel)
-        layout.addWidget(self.cancel_button)
+        layout1.addWidget(self.cancel_button)
         
         self.delete_button = QPushButton("Delete Setting")
         self.delete_button.pressed.connect(self.delete)
-        layout.addWidget(self.delete_button)
+        layout1.addWidget(self.delete_button)
         
-        self.setLayout(layout)
+        layout1.addStretch(1)
+        
+        self.setLayout(self.widget_layout)
     
     
     def create_setting(self, text):
@@ -685,6 +693,9 @@ class EditSettingDialog(QDialog):
         query_command = SettingEdit("query_command", self.config.get("query_command", ""), True)
         layout.addWidget(query_command)
         self.mode_widgets["query_command"] = query_command
+        
+        applicable_modes_label = QLabel("Applicable Modes:")
+        layout.addWidget(applicable_modes_label)
         
         applicable_modes = toggleList(self.global_config["Modes SCPI Commands"].keys(), self.config.get("applicable_modes", []))
         layout.addWidget(applicable_modes)
@@ -721,6 +732,9 @@ class EditSettingDialog(QDialog):
         measure = SettingEdit("measure", self.config.get("measure", ""), True)
         layout.addWidget(measure)
         self.numerical_widgets["measure"] = measure
+        
+        applicable_modes_label = QLabel("Applicable Modes:")
+        layout.addWidget(applicable_modes_label)
         
         applicable_modes = toggleList(self.global_config["Modes SCPI Commands"].keys(), self.config.get("applicable_modes", []))
         layout.addWidget(applicable_modes)
