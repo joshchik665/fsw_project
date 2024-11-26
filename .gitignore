@@ -53,5 +53,5 @@ docs/_build/
 *.csv
 
 # the user config folder
-folder_name/*
-!folder_name/
+user_configs/*
+!user_configs/
