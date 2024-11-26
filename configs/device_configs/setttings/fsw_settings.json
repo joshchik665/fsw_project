@@ -1,28 +1,24 @@
 {
     "Device Name": "Rhode & Schwarz FSW-43",
     "Default Mode": "Spectrum",
-    "Modes": [
-        "Spectrum",
-        "Real-Time Spectrum",
-        "Zero-Span"
-    ],
     "Modes SCPI Commands": {
         "Spectrum": "SANALYZER",
         "Real-Time Spectrum": "RTIM",
         "Zero-Span": "SANALYZER"
     },
+    "IDN": "Rohde&Schwarz,FSW-43",
     "Settings": {
         "Center Frequency": {
+            "default_value": "21500000000",
+            "write_command": "FREQ:CENT",
+            "query_command": "FREQ:CENT?",
             "measure": "frequency",
             "applicable_modes": [
                 "Spectrum",
                 "Real-Time Spectrum",
                 "Zero-Span"
             ],
-            "setting_type": "numerical",
-            "default_value": "21500000000",
-            "write_command": "FREQ:CENT",
-            "query_command": "FREQ:CENT?"
+            "setting_type": "numerical"
         },
         "Dwell Time": {
             "measure": "time",
@@ -153,12 +149,12 @@
             "setting_type": "mode",
             "default_value": "APE",
             "write_commands": {
-                "APE":"SENS:WIND1:DET1:FUNC APE",
-                "POS":"SENS:WIND1:DET1:FUNC POS",
-                "NEG":"SENS:WIND1:DET1:FUNC NEG",
-                "RMS":"SENS:WIND1:DET1:FUNC RMS",
-                "AVER":"SENS:WIND1:DET1:FUNC AVER",
-                "SAMP":"SENS:WIND1:DET1:FUNC SAMP"
+                "APE": "SENS:WIND1:DET1:FUNC APE",
+                "POS": "SENS:WIND1:DET1:FUNC POS",
+                "NEG": "SENS:WIND1:DET1:FUNC NEG",
+                "RMS": "SENS:WIND1:DET1:FUNC RMS",
+                "AVER": "SENS:WIND1:DET1:FUNC AVER",
+                "SAMP": "SENS:WIND1:DET1:FUNC SAMP"
             },
             "alias": {
                 "Auto Peak": "APE",
@@ -169,9 +165,28 @@
                 "Sample": "SAMP"
             },
             "custom_modes": {
-                "Spectrum": ["Auto Peak", "Positive Peak", "Negative Peak", "RMS", "Average", "Sample"],
-                "Real-Time Spectrum": ["Positive Peak", "Negative Peak", "Average", "Sample"],
-                "Zero-Span": ["Auto Peak", "Positive Peak", "Negative Peak", "RMS", "Average", "Sample"]
+                "Spectrum": [
+                    "Auto Peak",
+                    "Positive Peak",
+                    "Negative Peak",
+                    "RMS",
+                    "Average",
+                    "Sample"
+                ],
+                "Real-Time Spectrum": [
+                    "Positive Peak",
+                    "Negative Peak",
+                    "Average",
+                    "Sample"
+                ],
+                "Zero-Span": [
+                    "Auto Peak",
+                    "Positive Peak",
+                    "Negative Peak",
+                    "RMS",
+                    "Average",
+                    "Sample"
+                ]
             },
             "query_command": "SENS:WIND1:DET1:FUNC?"
         },
@@ -234,7 +249,7 @@
             "setting_type": "mode",
             "default_value": "1",
             "write_commands": {
-                "1":"INIT:CONT ON",
+                "1": "INIT:CONT ON",
                 "0": "INIT:CONT OFF"
             },
             "alias": {

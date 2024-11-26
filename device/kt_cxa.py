@@ -10,7 +10,7 @@ class KtCxa(SettingsManager):
         
         self.device_type = "Keysight Technoloties CXA N9000B"
         
-        super().__init__(ip_address, config["Device Default Configs"][self.device_type])
+        super().__init__(ip_address, config[self.device_type])
     
     
     def abort(self) -> None:

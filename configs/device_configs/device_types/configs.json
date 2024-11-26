@@ -1,4 +1,4 @@
 {
-    "Rhode & Schwarz FSW-43": "configs\\device_configs\\settings\\fsw_settings\\default.json",
-    "Keysight Technoloties CXA N9000B": "configs\\device_configs\\settings\\cxa_settings\\default.json"
+    "Rhode & Schwarz FSW-43": "configs\\device_configs\\settings\\fsw_settings.json",
+    "Keysight Technoloties CXA N9000B": "configs\\device_configs\\settings\\cxa_settings.json"
 }

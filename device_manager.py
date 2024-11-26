@@ -151,22 +151,28 @@ class CreateDialog(QDialog):
     
     
     def select_or_create_folder(self):
-        folder_path = QFileDialog.getExistingDirectory(
-            self, 
-            "Select or Create Folder", 
-            str(Path.home() / "fsw_project" / "configs" / "device_configs" / "settings"),
-            QFileDialog.ShowDirsOnly | QFileDialog.DontResolveSymlinks
-        )
+        # folder_path = QFileDialog.getExistingDirectory(
+        #     self, 
+        #     "Select or Create Folder", 
+        #     str(Path.home() / "fsw_project" / "configs" / "device_configs" / "settings"),
+        #     QFileDialog.ShowDirsOnly | QFileDialog.DontResolveSymlinks
+        # )
         
-        if folder_path:
-            default_json_path = os.path.join(folder_path, "default.json")
+        filepath, _ = QFileDialog.getSaveFileName(
+            self, 
+            "Create JSON file", 
+            str(Path.home() / "fsw_project" / "configs" / "device_configs" / "settings"), 
+            "JSON Files (*.json);;All Files (*)"
+            )
+        
+        if filepath:
             
             with open(r"configs\device_configs\device_types\configs.json", "r") as file:
                 device_types = json.load(file)
             
             #device_types["Device IDNs"][self.idn_entry.text()] = self.name_entry.text()
             
-            device_types[self.name_entry.text()] = default_json_path
+            device_types[self.name_entry.text()] = filepath
             
             with open(r"configs\device_configs\device_types\configs.json", "w") as file:
                 json.dump(device_types, file, indent=4)
@@ -179,10 +185,10 @@ class CreateDialog(QDialog):
                 "Settings": {}
             }
             
-            with open(default_json_path, 'w') as json_file:
+            with open(filepath, 'w') as json_file:
                 json.dump(default_data, json_file, indent=4)
         
-        self.filepath = default_json_path
+        self.filepath = filepath
         
         self.accept()
 
@@ -491,14 +497,8 @@ class MainWindow(QMainWindow):
             try:
                 filepath = self.json_config.pop(self.config["Device Name"])
                 
-                print(filepath)
-                
-                folder_path = os.path.dirname(filepath)
-                
-                print(folder_path)
-                
-                if os.path.exists(folder_path):
-                    shutil.rmtree(folder_path)
+                if os.path.exists(filepath):
+                    os.remove(filepath)
                 
                 with open(self.json_filepath, 'w') as file:
                     json.dump(self.json_config, file, indent=4)

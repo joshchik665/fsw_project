@@ -11,7 +11,7 @@ class RsFsw43(SettingsManager):
         
         self.device_type = "Rhode & Schwarz FSW-43"
         
-        super().__init__(ip_address, config["Device Default Configs"][self.device_type])
+        super().__init__(ip_address, config[self.device_type])
     
     
     
