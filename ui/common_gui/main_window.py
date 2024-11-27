@@ -12,6 +12,8 @@ import ui.fsw_gui.mode_zero_span as FSW43Zs
 import ui.cxa_gui.mode_spec as CXASpec
 import ui.cxa_gui.mode_zero_span as CXAZs
 
+import ui.common_gui.mode_default as Default
+
 from device.device_classes.rs_fsw43 import RsFsw43
 from device.device_classes.kt_cxa import KtCxa
 from device.base_classes.settings_manager import SettingsManager
@@ -47,7 +49,7 @@ class MainWindow(QMainWindow):
         # NEED TO FIX, I WANT TO USE SETTINGS MANAGER CLASS IF NO DERIVED CLASS FOR THAT INSTRUMENT EXIST. SETTING MANGER ALSO TAKE THE FILEPATH CONFIG
         try:
             device_class = next((value for key, value in instrument_objects.items() if key in idn))
-        except KeyError:
+        except StopIteration:
             device_class = SettingsManager
         
         # Creates instance of the SettingsManager class that controls the instrument
@@ -120,7 +122,8 @@ class MainWindow(QMainWindow):
         self.current_tab_index = 0
         
         for mode in self.modes:
-            self.tab_widget.addTab(tab_widgets[self.device_type][mode](self.instrument, self.tab_widget), f"{mode} Mode")
+            tab = tab_widgets.get(self.device_type, {}).get(mode, Default.ModeDefault)
+            self.tab_widget.addTab(tab(self.instrument, self.tab_widget), f"{mode} Mode")
         
         # When the tab changes, function called
         self.tab_widget.currentChanged.connect(self.on_tab_changed)

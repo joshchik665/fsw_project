@@ -58,6 +58,9 @@ class NumericalSettingBox(QWidget):
             'number': {
                 'Units': 1
             },
+            "decibel": {
+                "dB": 1
+            }
         }
         self.units = self.all_units[self.setting.measure]
         
@@ -153,7 +156,7 @@ class NumericalSettingBox(QWidget):
 
 
 class ModeSettingBox(QWidget):
-    def __init__(self, instrument, setting:Union[NumericalSetting,ModeSetting], mode: str, parent=None):
+    def __init__(self, instrument, setting:NumericalSetting | ModeSetting, mode: str, parent=None):
         """Initializes the setting box widget
 
         Args:

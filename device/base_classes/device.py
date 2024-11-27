@@ -13,7 +13,7 @@ class Instrument():
         """
         self.rm = ResourceManager("@py")
         try:
-            self.instrument = self.rm.open_resource(f"TCPIP::{ip_address}::hislip0")
+            self.instrument = self.rm.open_resource(f"TCPIP::{ip_address}::INSTR")
         except Exception as ex:
             print(f'Error initializing the instrument session:\n{ex.args[0]}') # Error
             exit()

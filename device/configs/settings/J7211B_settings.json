@@ -1,0 +1,20 @@
+{
+    "Device Name": "Agilent Technologies J7211B",
+    "Default Mode": "Default",
+    "Modes SCPI Commands": {
+        "Default": ""
+    },
+    "IDN": "AGILENT TECHNOLOGIES, J7211B",
+    "Settings": {
+        "Attenuation": {
+            "default_value": "121",
+            "write_command": "ATT",
+            "query_command": "ATT?",
+            "measure": "decibel",
+            "applicable_modes": [
+                "Default"
+            ],
+            "setting_type": "numerical"
+        }
+    }
+}

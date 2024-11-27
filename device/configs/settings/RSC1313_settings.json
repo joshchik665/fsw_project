@@ -1,0 +1,30 @@
+{
+    "Device Name": "Rhode & Schwarz RSC 1313",
+    "Default Mode": "Default",
+    "Modes SCPI Commands": {
+        "Default": ""
+    },
+    "IDN": "Rohde&Schwarz,RSC,1313.8004.04",
+    "Settings": {
+        "Attenuation": {
+            "default_value": "139.9",
+            "write_command": "ATT1:ATT",
+            "query_command": "ATT1:ATT?",
+            "measure": "power",
+            "applicable_modes": [
+                "Default"
+            ],
+            "setting_type": "numerical"
+        },
+        "Frequency": {
+            "default_value": "0",
+            "write_command": "ATT:FREQ",
+            "query_command": "ATT:FREQ?",
+            "measure": "frequency",
+            "applicable_modes": [
+                "Default"
+            ],
+            "setting_type": "numerical"
+        }
+    }
+}

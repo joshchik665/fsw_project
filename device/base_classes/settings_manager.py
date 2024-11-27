@@ -24,14 +24,16 @@ class SettingsManager(Instrument):
             directory = r"device\configs\settings"
             
             for filename in os.listdir(directory):
+                
                 filepath = os.path.join(directory, filename)
                 
                 if filename.endswith('.json') and os.path.isfile(filepath):
                     with open(filepath, 'r') as file:
                         data = json.load(file)
                     
-                    if self.idn in data["IDN"]:
+                    if data.get("IDN","") in self.idn:
                         config = data
+                        self.device_type = data.get("Device Name")
         else:
             with open(settings_config_filepath, 'r') as file: # Opens file containing all the settings
                 config = json.load(file)
