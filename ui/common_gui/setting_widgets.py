@@ -10,12 +10,91 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QDoubleValidator
 from device.setting_classes.numerical_setting import NumericalSetting
 from device.setting_classes.mode_setting import ModeSetting
+from device.setting_classes.display_setting import DisplaySetting
 from ui.common.utilities import remove_trailing_zeros
 from typing import Union
 
 
+class DisplaySettingBox(QWidget):
+    def __init__(self, instrument, setting:DisplaySetting, mode: str, parent=None):
+        super().__init__(parent)
+        
+        self.setting = setting # Store the setting object
+        
+        # The layout for this widget
+        layout = QHBoxLayout()
+        self.setLayout(layout)
+        
+        # Setting name widget
+        label = QLabel(self.setting.name)
+        label.setFixedWidth(150)
+        layout.addWidget(label)
+        
+        self.entry = QLineEdit()
+        self.entry.setFixedWidth(115)
+        self.entry.setDisabled(True)
+        layout.addWidget(self.entry)
+        
+        layout.addStretch(1)
+        
+        self.instrument = instrument
+        
+        self.changed = False # value is never changed by the user
+        
+        self.all_units = {
+            'frequency': {
+                'mHz': 1e-3,
+                'Hz': 1,
+                'kHz': 1e3,
+                'MHz': 1e6,
+                'GHz': 1e9,
+                'THz': 1e12,
+            },
+            'power': {
+                'dBm': 1,
+            },
+            'time': {
+                'ms': 1e-3,
+                's': 1,
+            },
+            'number': {
+                'Units': 1
+            },
+            "decibel": {
+                "dB": 1
+            }
+        }
+        self.units = self.all_units[self.setting.measure]
+    
+    
+    def set_value(self, value:str):
+        value = float(value)
+        
+        # Get all the units that are less than or equal to the value
+        eligible_units = {k: v for k, v in self.units.items() if v <= value}
+        
+        # gets the largest possible unit that is less that the value
+        if not eligible_units:
+            unit = max(self.units, key=self.units.get)
+        else:
+            unit = max(eligible_units, key=eligible_units.get)
+        
+        value = value / self.units[unit] # Convert the value to the correct unit
+        
+        # Create the text to write on the display
+        text = f"{value:.5f}"
+        text = remove_trailing_zeros(text)
+        
+        # Set the value on the widget
+        self.entry.setText(f"{text} {unit}")
+    
+    
+    def set_status(self, *args) -> None:
+        pass # Nothing needs to happen
+
+
 class NumericalSettingBox(QWidget):
-    def __init__(self, instrument, setting:Union[NumericalSetting,ModeSetting], parent=None):
+    def __init__(self, instrument, setting:NumericalSetting, parent=None):
         """Initializes the setting box widget
 
         Args:
@@ -156,7 +235,7 @@ class NumericalSettingBox(QWidget):
 
 
 class ModeSettingBox(QWidget):
-    def __init__(self, instrument, setting:NumericalSetting | ModeSetting, mode: str, parent=None):
+    def __init__(self, instrument, setting:ModeSetting, mode: str, parent=None):
         """Initializes the setting box widget
 
         Args:

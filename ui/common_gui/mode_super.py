@@ -15,7 +15,7 @@ from PySide6.QtGui import (
 from PySide6.QtCore import (
     Qt,
 )
-from ui.common_gui.setting_widgets import NumericalSettingBox, ModeSettingBox
+from ui.common_gui.setting_widgets import NumericalSettingBox, ModeSettingBox, DisplaySettingBox
 from ui.common.utilities import save_file_dialog, open_file_dialog
 from device.base_classes.settings_manager import SettingsManager
 import json
@@ -127,6 +127,8 @@ class ModeSuper(QWidget):
         
         if setting.setting_type == "numerical":
             widget = NumericalSettingBox(self.instrument,setting,self)
+        elif setting.setting_type == "display":
+            widget = DisplaySettingBox(self.instrument,setting,self.mode,self)
         else:
             widget = ModeSettingBox(self.instrument,setting,self.mode,self)
         widget.set_value(setting.current_value)
@@ -238,7 +240,7 @@ class ModeSuper(QWidget):
                     'ip_address': self.instrument.ip_address,
                     'mode': self.instrument.current_mode,
                 }
-                current_settings = {name: setting.get_value() for name, setting in self.settings_widgets.items()}
+                current_settings = {name: setting.get_value() for name, setting in self.settings_widgets.items() if isinstance(setting, (NumericalSettingBox, ModeSettingBox))}
                 config['data'] = current_settings
                 
                 json.dump(config, file, indent=4)

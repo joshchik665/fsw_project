@@ -196,6 +196,7 @@ class EditSettingDialog(QDialog):
         
         self.mode_widgets = {}
         self.numerical_widgets = {}
+        self.display_widgets = {}
         
         self.widget_layout = QGridLayout()
         layout = QVBoxLayout()
@@ -206,10 +207,11 @@ class EditSettingDialog(QDialog):
         self.name_widget = SettingEdit("Setting Name", setting_name, True)
         layout.addWidget(self.name_widget)
         
-        self.setting_types = {"numerical": 0, "mode": 1, "None": 2}
+        self.setting_types = {"numerical": 0, "display": 1, "mode": 2, "none": 3}
         
         self.stacked_widget = QStackedWidget()
         self.stacked_widget.addWidget(self.create_numerical_layout())
+        self.stacked_widget.addWidget(self.create_display_layout())
         self.stacked_widget.addWidget(self.create_mode_layout())
         self.stacked_widget.addWidget(self.create_none_layout())
         
@@ -219,19 +221,25 @@ class EditSettingDialog(QDialog):
                 setting_type_widget.valueChanged.connect(self.create_setting)
                 self.create_setting("numerical")
                 layout.addWidget(setting_type_widget)
+            elif self.config["setting_type"] == "display":
+                setting_type_widget = SettingEditCombo("setting_type", "display", True, self.setting_types.keys())
+                setting_type_widget.valueChanged.connect(self.create_setting)
+                self.create_setting("display")
+                layout.addWidget(setting_type_widget)
             else:
                 setting_type_widget = SettingEditCombo("setting_type", "mode", True, self.setting_types.keys())
                 setting_type_widget.valueChanged.connect(self.create_setting)
                 self.create_setting("mode")
                 layout.addWidget(setting_type_widget)
         else:
-            setting_type_widget = SettingEditCombo("setting_type", "None", True, self.setting_types.keys())
+            setting_type_widget = SettingEditCombo("setting_type", "none", True, self.setting_types.keys())
             setting_type_widget.valueChanged.connect(self.create_setting)
-            self.create_setting("None")
+            self.create_setting("none")
             layout.addWidget(setting_type_widget)
         
         self.mode_widgets["setting_type"] = setting_type_widget
         self.numerical_widgets["setting_type"] = setting_type_widget
+        self.display_widgets["setting_type"] = setting_type_widget
         
         layout.addWidget(self.stacked_widget)
         
@@ -324,6 +332,33 @@ class EditSettingDialog(QDialog):
         return container
     
     
+    def create_display_layout(self):
+        container = QWidget()
+        layout = QVBoxLayout()
+        container.setLayout(layout)
+        
+        default_value = SettingEdit("default_value", self.config.get("default_value", ""), True)
+        layout.addWidget(default_value)
+        self.display_widgets["default_value"] = default_value
+        
+        query_command = SettingEdit("query_command", self.config.get("query_command", ""), True)
+        layout.addWidget(query_command)
+        self.display_widgets["query_command"] = query_command
+        
+        measure = SettingEdit("measure", self.config.get("measure", ""), True)
+        layout.addWidget(measure)
+        self.display_widgets["measure"] = measure
+        
+        applicable_modes_label = QLabel("Applicable Modes:")
+        layout.addWidget(applicable_modes_label)
+        
+        applicable_modes = toggleList(self.global_config["Modes SCPI Commands"].keys(), self.config.get("applicable_modes", []))
+        layout.addWidget(applicable_modes)
+        self.display_widgets["applicable_modes"] = applicable_modes
+        
+        return container
+    
+    
     def create_none_layout(self):
         container = QWidget()
         layout = QVBoxLayout()
@@ -363,6 +398,8 @@ class EditSettingDialog(QDialog):
         if current_index == 0:
             self.config = {name: widget.get_value() for name, widget in self.numerical_widgets.items() if widget.get_value()}
         elif current_index == 1:
+            self.config = {name: widget.get_value() for name, widget in self.display_widgets.items() if widget.get_value()}
+        elif current_index == 2:
             self.config = {name: widget.get_value() for name, widget in self.mode_widgets.items() if widget.get_value() and not name == "custom_modes"}
             
             dict = self.mode_widgets["custom_modes"].get_value()

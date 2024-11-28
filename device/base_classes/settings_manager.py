@@ -3,6 +3,7 @@
 from device.base_classes.device import Instrument
 from device.setting_classes.numerical_setting import NumericalSetting
 from device.setting_classes.mode_setting import ModeSetting
+from device.setting_classes.display_setting import DisplaySetting
 
 import json
 import math
@@ -47,7 +48,9 @@ class SettingsManager(Instrument):
         # Initializes the Setting objects and puts them into dictionaries. The dictionaries are combined together into joint dictionary
         self.numerical_settings = {name: NumericalSetting.from_dict(name,**setting) for name, setting in config["Settings"].items() if setting["setting_type"] == "numerical"}
         self.mode_settings = {name: ModeSetting.from_dict(name,**setting) for name, setting in config["Settings"].items() if setting["setting_type"] == "mode"}
-        self.settings = self.mode_settings | self.numerical_settings
+        self.display_settings = {name: DisplaySetting.from_dict(name,**setting) for name, setting in config["Settings"].items() if setting["setting_type"] == "display"}
+        
+        self.settings = self.mode_settings | self.numerical_settings | self.display_settings
     
     
     def setting_known(self, setting_name:str) -> bool:
@@ -62,7 +65,7 @@ class SettingsManager(Instrument):
         return setting_name in self.settings.keys()
     
     
-    def get_setting_object(self, setting_name:str) -> NumericalSetting | ModeSetting:
+    def get_setting_object(self, setting_name:str) -> NumericalSetting | ModeSetting | DisplaySetting:
         """Returns the setting object from the settings dictionary
 
         Args:
@@ -74,7 +77,7 @@ class SettingsManager(Instrument):
         return self.settings[setting_name]
     
     
-    def set_all_settings(self, settings:dict[str,str]) -> dict[str,tuple[bool, str]]:
+    def set_all_settings(self, settings:dict[str,str]) -> dict[str, tuple[bool, str]]:
         """Sets a whole dictionary of settings on the instrument
 
         Args:

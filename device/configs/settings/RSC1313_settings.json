@@ -10,7 +10,7 @@
             "default_value": "139.9",
             "write_command": "ATT1:ATT",
             "query_command": "ATT1:ATT?",
-            "measure": "power",
+            "measure": "decibel",
             "applicable_modes": [
                 "Default"
             ],
@@ -25,6 +25,15 @@
                 "Default"
             ],
             "setting_type": "numerical"
+        },
+        "Deviation": {
+            "default_value": "0",
+            "query_command": "ATT:DEV?",
+            "measure": "decibel",
+            "applicable_modes": [
+                "Default"
+            ],
+            "setting_type": "display"
         }
     }
 }
