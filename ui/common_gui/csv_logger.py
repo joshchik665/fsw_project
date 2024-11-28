@@ -39,7 +39,7 @@ class TraceLogger(QObject):
             Path object if file was selected, None if cancelled
         """
         # Generate default filename with timestamp
-        default_filename = Path("traces") / f"trace_log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+        default_filename = Path("data") / "traces" / f"trace_log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
         
         # Open file dialog
         filepath = save_file_dialog("Save to CSV file: ", str(default_filename), '.csv', self.parent())

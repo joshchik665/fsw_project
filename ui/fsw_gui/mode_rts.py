@@ -87,7 +87,7 @@ class ModeRts(ModeSuper):
     def get_save_spectrogram(self):
         self.instrument.save_spectrogram()
         
-        default_filename = Path("spectrograms") / f"trace_log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+        default_filename = Path("data") / "spectrograms" / f"trace_log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
         filename = save_file_dialog("Select location to save csv file", str(default_filename), ".csv", self)
         
         if self.instrument.copy_spectrogram(filename):
