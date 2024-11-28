@@ -13,7 +13,6 @@ def load_stylesheet(filename):
     with open(filename, "r") as file:
         return file.read()
 
-
 def main():
     # create app and set the style sheet
     app = QApplication(sys.argv)
@@ -46,7 +45,6 @@ def main():
             sys.exit()
     else:
         sys.exit()
-
 
 if __name__ == "__main__":
     main()

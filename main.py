@@ -1,6 +1,7 @@
 # main.py
 
 from PySide6.QtWidgets import QApplication, QDialog
+
 from ui.common_gui.main_window import MainWindow
 from ui.common_gui.connect_dialog import IpEntryDialog
 from pathlib import Path

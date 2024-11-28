@@ -16,6 +16,7 @@ from PySide6.QtCore import Signal
 
 class DictEdit(QWidget):
     def __init__(self, name:str, dictionary:dict):
+        """Creates a widget that allows editing of a dictionary containing str:str"""
         super().__init__()
         
         self.widget_layout = QVBoxLayout()
@@ -66,6 +67,7 @@ class DictEdit(QWidget):
     
     
     def add_entry(self):
+        """Add a new entry to the dictionary"""
         layout = QHBoxLayout()
         
         key_widget = QLineEdit()
@@ -82,6 +84,7 @@ class DictEdit(QWidget):
 
     
     def add(self, layout, key_widget, value_widget, button):
+        """Add a line to the dictionary"""
         key = key_widget.text()
         self.layouts[key] = layout
         self.key_widgets[key] = key_widget
@@ -95,6 +98,7 @@ class DictEdit(QWidget):
     
     
     def delete(self, key:str):
+        """Delete an entry from the dictionary"""
         self.key_widgets[key].deleteLater()
         self.value_widgets[key].deleteLater()
         self.delete_buttons[key].deleteLater()
@@ -107,6 +111,7 @@ class DictEdit(QWidget):
     
     
     def get_value(self):
+        """Return the dictionary"""
         dict = {}
         for key in self.key_widgets.keys():
             dict[self.key_widgets[key].text()] = self.value_widgets[key].text()
@@ -115,6 +120,7 @@ class DictEdit(QWidget):
 
 class SettingEdit(QWidget):
     def __init__(self, name:str, value:str, requried:bool):
+        """Creates a custom widget where the user can enter a string"""
         super().__init__()
         
         self.name = name
@@ -138,14 +144,16 @@ class SettingEdit(QWidget):
         self.set_status()
     
     
-    def set_status(self):
+    def set_status(self) -> None:
+        """If the setting is required, it will highlight the field in red"""
         if not self.entry.text():
             self.entry.setStyleSheet("QLineEdit {border-radius: 5px; padding: 5px; border: 1px solid #8f8f91; background-color: #FDACB8;}")
         else:
             self.entry.setStyleSheet("QLineEdit {border-radius: 5px; padding: 5px; border: 1px solid #8f8f91; background-color: white;}")
     
     
-    def get_value(self):
+    def get_value(self) -> str:
+        """Returns the current falue as a string"""
         text = self.entry.text()
         if self.required and not text:
             print(f"Setting: {self.name} is required!")
@@ -157,6 +165,7 @@ class SettingEditCombo(QWidget):
     valueChanged = Signal(str)
     
     def __init__(self, name:str, value:str, requried:bool, values:tuple):
+        """Custom widget that allows user to select between a list of entries"""
         super().__init__()
         
         self.name = name
@@ -187,17 +196,19 @@ class SettingEditCombo(QWidget):
     
     
     def set_status(self, index):
+        """if the fiels is required and filed is none, highlights in red"""
         text = self.entry.currentText()
         
         self.valueChanged.emit(text)
         
-        if self.entry.currentText() == "None":
+        if self.entry.currentText() == "none":
             self.entry.setStyleSheet("QComboBox {border-radius: 5px; padding: 5px; border: 1px solid #8f8f91; background-color: #FDACB8;}")
         else:
             self.entry.setStyleSheet("QComboBox {border-radius: 5px; padding: 5px; border: 1px solid #8f8f91; background-color: white;}")
     
     
     def get_value(self):
+        """Returns the current value"""
         text = self.entry.currentText()
         if self.required and not text:
             print(f"Setting: {self.name} is required!")
@@ -206,6 +217,7 @@ class SettingEditCombo(QWidget):
 
 class toggleList(QWidget):
     def __init__(self, options, checked_options = [], parent=None):
+        """Creates a field of checkboxes that the user can select"""
         super().__init__(parent)
         
         layout = QVBoxLayout(self)
@@ -222,6 +234,7 @@ class toggleList(QWidget):
         layout.addStretch(1)
         
         self.setLayout(layout)
+    
     
     def get_value(self):
         """

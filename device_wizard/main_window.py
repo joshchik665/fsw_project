@@ -67,6 +67,7 @@ class MainWindow(QMainWindow):
     
     
     def _set_info_layout(self):
+        """Places all the widgets for the device wide config"""
         self.info_widgets = {}
         
         self.info_widgets["Device Name"] = SettingEdit("Device Name", self.config["Device Name"], True)
@@ -90,6 +91,7 @@ class MainWindow(QMainWindow):
     
     
     def delete_device(self):
+        """deletes this device"""
         reply = QMessageBox.question(
             self, 
             'Confirm Deletion', 
@@ -125,6 +127,7 @@ class MainWindow(QMainWindow):
     
     
     def apply_info(self):
+        """Apply all the info settings and writes them to the json file"""
         filepath = self.json_config.pop(self.config["Device Name"])
         self.json_config[self.info_widgets["Device Name"].get_value()] = filepath
         
@@ -136,10 +139,12 @@ class MainWindow(QMainWindow):
     
     
     def _create_place_setting_box(self, name, parent_layout):
+        """Creates then places an entry in the list of settings"""
         parent_layout.addLayout(self._create_setting_box(name))
     
     
     def _create_setting_box(self, name):
+        """Creates the setting entry object"""
         layout = QHBoxLayout()
         
         label = QLabel(name)
@@ -158,6 +163,7 @@ class MainWindow(QMainWindow):
     
     
     def _set_setting_layout(self):
+        """Creates all the widgets for each of the settings in the config file"""
         self.layouts = {}
         self.label_widgets = {}
         self.entry_widgets = {}
@@ -173,6 +179,7 @@ class MainWindow(QMainWindow):
     
     
     def create_new_setting(self):
+        """Creates a new empty setting and adds it to the layout"""
         dialog = EditSettingDialog("", self.config)
         
         if dialog.exec() == QDialog.Accepted:
