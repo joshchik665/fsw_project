@@ -24,7 +24,7 @@ class IpEntryDialog(QDialog):
     
     def _set_title_and_window(self) -> None:
         """Set the title of the widget an icon"""
-        self.setWindowTitle('Signal Analyzer GUI')
+        self.setWindowTitle('Lab automation GUI')
         my_icon = QIcon()
         my_icon.addFile('images\\crc_icon.ico')
         self.setWindowIcon(my_icon)
