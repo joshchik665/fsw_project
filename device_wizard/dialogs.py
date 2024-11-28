@@ -23,6 +23,7 @@ from device_wizard.widgets import DictEdit, SettingEdit, SettingEditCombo, toggl
 
 class EntryDialog(QDialog):
     def __init__(self):
+        """Prompts the user to either edit or create new setting"""
         super().__init__()
         
         layout = QVBoxLayout()
@@ -56,6 +57,7 @@ class EntryDialog(QDialog):
 
 class EditDialog(QDialog):
     def __init__(self):
+        """Prompts the user for the device to edit"""
         super().__init__()
         
         layout = QVBoxLayout()
@@ -92,18 +94,19 @@ class EditDialog(QDialog):
 
 class CreateDialog(QDialog):
     def __init__(self):
+        """Creates a new device from the info provided"""
         super().__init__()
         
         layout = QVBoxLayout()
         self.setLayout(layout)
         
-        title = QLabel("Enter name of instrument to create: ")
+        title = QLabel("Enter name of device to create: ")
         layout.addWidget(title)
         
         self.name_entry = QLineEdit()
         layout.addWidget(self.name_entry)
         
-        idn_label = QLabel("Enter the IDN from the instrument, if you don't know the IDN, use the search IDN box: ")
+        idn_label = QLabel("Enter the device's IDN: ")
         layout.addWidget(idn_label)
         
         self.idn_entry = QLineEdit()
@@ -112,7 +115,7 @@ class CreateDialog(QDialog):
         
         ip_layout = QHBoxLayout()
         
-        ip_label = QLabel("Enter an IP address to query the IDN of that device, (IP is not recoreded) (Optional, only for getting the IDN): ")
+        ip_label = QLabel("(Optional) Query the IDN from the device (IP is not recoreded): ")
         layout.addWidget(ip_label)
         
         self.ip_entry = QLineEdit()
@@ -129,11 +132,12 @@ class CreateDialog(QDialog):
         layout.addWidget(self.mode_edit)
         
         self.button = QPushButton("Create new device")
-        self.button.pressed.connect(self.select_or_create_folder)
+        self.button.pressed.connect(self.select_or_create_config)
         layout.addWidget(self.button)
     
     
     def query_idn(self):
+        """Query the IDN from the instrument and puts it in the text edit"""
         rm = ResourceManager("@py")
         try:
             instr = rm.open_resource(f"TCPIP::{self.ip_entry.text()}::INSTR")
@@ -144,8 +148,8 @@ class CreateDialog(QDialog):
             print(f'Error querying the instrument session:\n{ex.args[0]}') # Error
     
     
-    def select_or_create_folder(self):
-        
+    def select_or_create_config(self):
+        """Creates a json file to save device config"""
         filepath, _ = QFileDialog.getSaveFileName(
             self, 
             "Create JSON file", 
@@ -155,6 +159,7 @@ class CreateDialog(QDialog):
         
         if filepath:
             
+            # Add the new config file to the device_types config file
             with open(r"device\configs\device_types\configs.json", "r") as file:
                 device_types = json.load(file)
             
@@ -163,6 +168,7 @@ class CreateDialog(QDialog):
             with open(r"device\configs\device_types\configs.json", "w") as file:
                 json.dump(device_types, file, indent=4)
             
+            # default data
             default_data = {
                 "Device Name": self.name_entry.text(),
                 "Default Mode": "",
@@ -171,6 +177,7 @@ class CreateDialog(QDialog):
                 "Settings": {}
             }
             
+            # write to the new config file
             with open(filepath, 'w') as json_file:
                 json.dump(default_data, json_file, indent=4)
         
@@ -181,9 +188,17 @@ class CreateDialog(QDialog):
 
 class EditSettingDialog(QDialog):
     def __init__(self, setting_name:str = "", config:dict = {}):
+        """Dialog to edit a setting
+
+        Args:
+            setting_name (str, optional): Name of the setting to edit. Defaults to "".
+            config (dict, optional): Complete dictionary of the device's config. Defaults to {}.
+        """
         super().__init__()
         
         self.setting_name = setting_name
+        
+        # Gets the configs specifically for the setting as self.config, if setting is new, ={}
         self.global_config = config
         self.settings_config = config["Settings"]
         
@@ -194,19 +209,42 @@ class EditSettingDialog(QDialog):
         else:
             self.config = {}
         
+        # Inits dictionary of widgets for each possible type the setting could be
         self.mode_widgets = {}
         self.numerical_widgets = {}
         self.display_widgets = {}
         
-        self.widget_layout = QGridLayout()
-        layout = QVBoxLayout()
-        layout1 = QVBoxLayout()
-        self.widget_layout.addLayout(layout, 0, 1)
-        self.widget_layout.addLayout(layout1, 0, 0)
+        self.widget_layout = QGridLayout() # layout for the window
         
-        self.name_widget = SettingEdit("Setting Name", setting_name, True)
-        layout.addWidget(self.name_widget)
         
+        button_layout = QVBoxLayout()
+        
+        button_layout.addStretch(1)
+        
+        self.apply_button = QPushButton("Apply Settings")
+        self.apply_button.pressed.connect(self.apply)
+        button_layout.addWidget(self.apply_button)
+        
+        self.cancel_button = QPushButton("Cancel Edit")
+        self.cancel_button.pressed.connect(self.cancel)
+        button_layout.addWidget(self.cancel_button)
+        
+        self.delete_button = QPushButton("Delete Setting")
+        self.delete_button.pressed.connect(self.delete)
+        button_layout.addWidget(self.delete_button)
+        
+        button_layout.addStretch(1)
+        
+        self.widget_layout.addLayout(button_layout, 0, 0)
+        
+        
+        config_layout = QVBoxLayout()
+        
+        # creates setting edit specifically for the setting name, is the same for all modes
+        self.name_widget = SettingEdit("Setting Name", self.setting_name, True)
+        config_layout.addWidget(self.name_widget)
+        
+        # create the stacked widget and the layouts for each
         self.setting_types = {"numerical": 0, "display": 1, "mode": 2, "none": 3}
         
         self.stacked_widget = QStackedWidget()
@@ -215,58 +253,32 @@ class EditSettingDialog(QDialog):
         self.stacked_widget.addWidget(self.create_mode_layout())
         self.stacked_widget.addWidget(self.create_none_layout())
         
+        # Creates a custom combo box with all the types the setting could be
         if self.exists("setting_type"):
-            if self.config["setting_type"] == "numerical":
-                setting_type_widget = SettingEditCombo("setting_type", "numerical", True, self.setting_types.keys())
-                setting_type_widget.valueChanged.connect(self.create_setting)
-                self.create_setting("numerical")
-                layout.addWidget(setting_type_widget)
-            elif self.config["setting_type"] == "display":
-                setting_type_widget = SettingEditCombo("setting_type", "display", True, self.setting_types.keys())
-                setting_type_widget.valueChanged.connect(self.create_setting)
-                self.create_setting("display")
-                layout.addWidget(setting_type_widget)
-            else:
-                setting_type_widget = SettingEditCombo("setting_type", "mode", True, self.setting_types.keys())
-                setting_type_widget.valueChanged.connect(self.create_setting)
-                self.create_setting("mode")
-                layout.addWidget(setting_type_widget)
+            self.setting_type_widget = SettingEditCombo("setting_type", self.config["setting_type"], True, self.setting_types.keys())
+            self.setting_type_widget.valueChanged.connect(self.set_setting_type)
+            self.set_setting_type(self.config["setting_type"])
+            config_layout.addWidget(self.setting_type_widget)
         else:
-            setting_type_widget = SettingEditCombo("setting_type", "none", True, self.setting_types.keys())
-            setting_type_widget.valueChanged.connect(self.create_setting)
-            self.create_setting("none")
-            layout.addWidget(setting_type_widget)
+            self.setting_type_widget = SettingEditCombo("setting_type", "none", True, self.setting_types.keys())
+            self.setting_type_widget.valueChanged.connect(self.set_setting_type)
+            self.set_setting_type("none")
+            config_layout.addWidget(self.setting_type_widget)
         
-        self.mode_widgets["setting_type"] = setting_type_widget
-        self.numerical_widgets["setting_type"] = setting_type_widget
-        self.display_widgets["setting_type"] = setting_type_widget
+        config_layout.addWidget(self.stacked_widget)
         
-        layout.addWidget(self.stacked_widget)
-        
-        layout1.addStretch(1)
-        
-        self.apply_button = QPushButton("Apply Settings")
-        self.apply_button.pressed.connect(self.apply)
-        layout1.addWidget(self.apply_button)
-        
-        self.cancel_button = QPushButton("Cancel Edit")
-        self.cancel_button.pressed.connect(self.cancel)
-        layout1.addWidget(self.cancel_button)
-        
-        self.delete_button = QPushButton("Delete Setting")
-        self.delete_button.pressed.connect(self.delete)
-        layout1.addWidget(self.delete_button)
-        
-        layout1.addStretch(1)
+        self.widget_layout.addLayout(config_layout, 0, 1)
         
         self.setLayout(self.widget_layout)
     
     
-    def create_setting(self, text):
+    def set_setting_type(self, text):
+        """Set the index of the stacked widget"""
         self.stacked_widget.setCurrentIndex(self.setting_types[text])
     
     
     def create_mode_layout(self):
+        """Create and returns the widget for the mode setting type"""
         container = QWidget()
         layout = QVBoxLayout()
         container.setLayout(layout)
@@ -302,6 +314,7 @@ class EditSettingDialog(QDialog):
     
     
     def create_numerical_layout(self):
+        """Create and returns the widget for the numerical setting type"""
         container = QWidget()
         layout = QVBoxLayout()
         container.setLayout(layout)
@@ -333,6 +346,7 @@ class EditSettingDialog(QDialog):
     
     
     def create_display_layout(self):
+        """Create and returns the widget for the display setting type"""
         container = QWidget()
         layout = QVBoxLayout()
         container.setLayout(layout)
@@ -360,6 +374,7 @@ class EditSettingDialog(QDialog):
     
     
     def create_none_layout(self):
+        """Create and returns the widget for the none setting type"""
         container = QWidget()
         layout = QVBoxLayout()
         container.setLayout(layout)
@@ -368,6 +383,7 @@ class EditSettingDialog(QDialog):
     
     
     def exists(self, key:str) -> bool:
+        """Checks to see if a key exists in self.config"""
         try:
             value = self.config[key]
             return True
@@ -376,6 +392,7 @@ class EditSettingDialog(QDialog):
     
     
     def delete(self):
+        """Delete the setting from the global config"""
         self.global_config["Settings"].pop(self.setting_name)
         
         self.deleted = True
@@ -384,17 +401,19 @@ class EditSettingDialog(QDialog):
     
     
     def cancel(self):
-        
+        """Just closes the window"""
         self.deleted = False
         
         self.accept()
     
     
     def apply(self):
+        """Saves and applies the values in this widget"""
         current_index = self.stacked_widget.currentIndex()
         
         self.setting_name = self.name_widget.get_value()
         
+        # gets the config from the values on the entry widget
         if current_index == 0:
             self.config = {name: widget.get_value() for name, widget in self.numerical_widgets.items() if widget.get_value()}
         elif current_index == 1:
@@ -404,6 +423,7 @@ class EditSettingDialog(QDialog):
             
             dict = self.mode_widgets["custom_modes"].get_value()
             
+            # takes the list in the custom_modes entry and converts it to a literal list
             if dict:
                 self.config["custom_modes"] = {}
                 for key, text in dict.items():
@@ -413,6 +433,9 @@ class EditSettingDialog(QDialog):
                             self.config["custom_modes"][key] = string_list
                     except (ValueError, SyntaxError):
                         print(f"Invalid input format. Please enter a valid list of strings.{text}")
+        
+        # adds in the setting type value to the config
+        self.config["setting_type"] = self.setting_type_widget.get_value()
         
         self.global_config["Settings"][self.setting_name] = self.config
         

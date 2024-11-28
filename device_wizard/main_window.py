@@ -13,25 +13,25 @@ from PySide6.QtWidgets import (
     QMessageBox
 )
 import os
-
 import json
-
 
 from device_wizard.widgets import SettingEdit, DictEdit
 from device_wizard.dialogs import EditSettingDialog
 
 class MainWindow(QMainWindow):
     def __init__(self, filepath):
+        """MainWindow for the device manager wizard"""
         super().__init__()
         
         self.filepath = filepath
         self.json_filepath = r"device\configs\device_types\configs.json"
         
-        with open(filepath, "r") as file:
+        with open(self.filepath, "r") as file:
             self.config = json.load(file)
         
         with open(self.json_filepath, "r") as file:
             self.json_config = json.load(file)
+        
         
         self.window_layout = QGridLayout()
         
@@ -50,6 +50,7 @@ class MainWindow(QMainWindow):
     
     
     def _create_place_info_setting(self, name:str, parent_layout):
+        """Creates and Places a text edit field"""
         layout = QHBoxLayout()
         
         label = QLabel(name)
@@ -186,8 +187,7 @@ class MainWindow(QMainWindow):
     
     
     def edit_setting(self, name):
-        print(f"Editing: {name}")
-        
+        """Edit a setting"""
         dialog = EditSettingDialog(name, self.config)
         
         if dialog.exec() == QDialog.Accepted:

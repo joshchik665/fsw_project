@@ -15,22 +15,29 @@ def load_stylesheet(filename):
 
 
 def main():
+    # create app and set the style sheet
     app = QApplication(sys.argv)
     stylesheet = load_stylesheet("styles/style.qss")
     app.setStyleSheet(stylesheet)
-
-    dialog = EntryDialog()
+    
+    dialog = EntryDialog() # first dialog
     if dialog.exec() == QDialog.Accepted:
+        
+        # checks the selected response from the entry dialog and creates the correct next dialog
         if dialog.choice == "edit":
             next_dialog = EditDialog()
         elif dialog.choice == "create":
             next_dialog = CreateDialog()
+        else:
+            sys.exit()
         
+        # get the config filepath from the dialog
         if next_dialog.exec() == QDialog.Accepted:
             config_filepath = next_dialog.filepath
         else:
             sys.exit()
         
+        # creates the mainwindow
         if config_filepath:
             window = MainWindow(config_filepath)
             window.show()
