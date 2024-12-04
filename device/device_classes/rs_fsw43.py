@@ -63,14 +63,21 @@ class RsFsw43(SettingsManager):
         Returns:
             bool: Copied sucessfully
         """
+        original_timeout = self.instrument.timeout
+        
+        self.instrument.timeout = 10000
+        
         try:
-            self.instrument.write(f'MMEM:DATA? "test.csv"')
+            self.instrument.write(r"MMEM:DATA? 'C:\Users\Instrument\Documents\lab_automation\test.CSV'")
             data = self.instrument.read_raw()  # Read binary data
-
+            
             # Save to local file
             with open(filename, 'wb') as f:
                 f.write(data)
             
+            self.instrument.timeout = original_timeout
+            
             return True
         except:
+            self.instrument.timeout = original_timeout
             return False

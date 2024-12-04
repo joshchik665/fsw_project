@@ -363,6 +363,11 @@ class EditSettingDialog(QDialog):
         layout.addWidget(measure)
         self.display_widgets["measure"] = measure
         
+        # force_value = SettingEditCombo("Force Value", "OFF", True, ("OFF","ON"))
+        # layout.addWidget(force_value)
+        # If I had time, I wanted to make it so that the user could make a display setting that sets the value to a particular value
+        
+        
         applicable_modes_label = QLabel("Applicable Modes:")
         layout.addWidget(applicable_modes_label)
         
