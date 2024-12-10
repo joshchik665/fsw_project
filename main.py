@@ -21,12 +21,17 @@ def main():
     stylesheet = load_stylesheet(stylesheet_path)
     app.setStyleSheet(stylesheet)
     
+    # Creates the IP entry dialog
     ip_dialog = IpEntryDialog()
-    if ip_dialog.exec() == QDialog.Accepted:
-        config = ip_dialog.config
+    if ip_dialog.exec() == QDialog.Accepted: # When the dialog is closed
+        
+        config = ip_dialog.config # Gets the config out from the IP dialog
+        
+        # Creates the main window
         window = MainWindow(config)
         window.show()
-        sys.exit(window.close(app.exec()))
+        
+        sys.exit(window.close(app.exec())) # When the main window closes, exit the app
     else:
         sys.exit()
 
