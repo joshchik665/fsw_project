@@ -1,14 +1,9 @@
 from PySide6.QtWidgets import (
-    QVBoxLayout,
-    QPushButton,
-    QLabel
+    QVBoxLayout
 )
 from ui.common_gui.mode_super import ModeSuper
 from ui.common_gui.trace_widget import SpectralWidget
 
-import numpy as np
-from ui.common_gui.spectrogram_window import SpectrogramWindow
-from ui.common.utilities import open_file_dialog
 
 class ModeSpec(ModeSuper):
     def __init__(self, device, parent=None):
