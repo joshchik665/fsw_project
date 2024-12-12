@@ -6,6 +6,10 @@ from PySide6.QtWidgets import (
 from ui.common_gui.mode_super import ModeSuper
 from ui.common_gui.trace_widget import SpectralWidget
 
+import numpy as np
+from ui.common_gui.spectrogram_window import SpectrogramWindow
+from ui.common.utilities import open_file_dialog
+
 class ModeSpec(ModeSuper):
     def __init__(self, device, parent=None):
         super().__init__('Spectrum', device, parent)
@@ -39,24 +43,3 @@ class ModeSpec(ModeSuper):
         
         self.content_layout.addLayout(self.graph_layout, 0, 2, 2, 1)
         
-        
-        # self.func_layout = QVBoxLayout()
-        
-        # self.abort_button = QPushButton("Abort")
-        # self.abort_button.setFixedSize(150, 30)
-        # self.abort_button.pressed.connect(self.instrument.abort)
-        # self.func_layout.addWidget(self.abort_button)
-        
-        # self.sweep_button = QPushButton("Run Sweep")
-        # self.sweep_button.setFixedSize(150, 30)
-        # self.sweep_button.pressed.connect(self.instrument.sweep)
-        # self.func_layout.addWidget(self.sweep_button)
-        
-        # self.func_layout.addStretch(1)
-        
-        # self.content_layout.addLayout(self.func_layout, 0, 3, 2, 1)
-
-
-
-
-
